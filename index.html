@@ -321,23 +321,23 @@
         <div class="max-w-7xl mx-auto flex justify-between items-center px-4 sm:px-6 lg:px-8">
             <button id="back-button" class="hidden text-gray-600 dark:text-gray-300 hover:text-primary-blue dark:hover:text-secondary-blue transition duration-200 flex items-center space-x-2 rtl:space-x-reverse" onclick="goBack()">
                 <svg class="w-6 h-6 transform rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                <span id="back-text" data-en="Back" data-ar="عودة">Back</span>
+                <span id="back-text" data-i18n="nav.back">Back</span>
             </button>
 
             <div id="app-title-container" class="flex items-center space-x-2 rtl:space-x-reverse">
                 <svg class="w-8 h-8 text-primary-blue dark:text-secondary-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.468 9.244 5 7.5 5 5.225 5 3 6.571 3 8.857v10.286c0 1.956 2.057 3.57 4.5 3.57h9c2.443 0 4.5-1.614 4.5-3.57V8.857C21 6.571 18.775 5 16.5 5c-1.744 0-3.332.468-4.5 1.253z"></path></svg>
-                <span class="text-xl font-bold text-gray-800 dark:text-gray-100" data-en="NIES LMS" data-ar="نظام NIES التعليمي">NIES LMS</span>
+                <span class="text-xl font-bold text-gray-800 dark:text-gray-100" data-i18n="nav.title">NIES LMS</span>
             </div>
 
             <div class="flex items-center space-x-3 rtl:space-x-reverse ml-auto">
-                 <button id="theme-toggle" class="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition duration-200">
+                <button id="theme-toggle" class="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition duration-200">
                     <svg id="theme-icon-light" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                     <svg id="theme-icon-dark" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
                 </button>
                 <button id="lang-toggle" class="px-3 py-1 bg-secondary-blue text-white text-sm font-semibold rounded-full hover:bg-primary-blue dark:hover:bg-blue-500 transition duration-200 shadow">
-                    <span data-en="AR" data-ar="EN">AR</span>
+                    <span>AR</span>
                 </button>
-                <a href="index2.html" id="logout-link" class="p-2 text-gray-600 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 transition duration-200" data-en="Log Out" data-ar="تسجيل الخروج" title="Log Out">
+                <a href="index2.html" id="logout-link" class="p-2 text-gray-600 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 transition duration-200" data-i18n-title="nav.logoutTitle" aria-label="Log Out" title="Log Out">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
                 </a>
             </div>
@@ -348,9 +348,9 @@
 
         <div id="dashboard-view">
             <header class="dashboard-hero text-center py-12 px-6 rounded-3xl shadow-2xl mb-10 border border-transparent relative overflow-hidden">
-                <span class="floating-chip mb-4" data-en="Personalized for Grade 6" data-ar="مصمم خصيصًا للصف السادس">Personalized for Grade 6</span>
-                <h1 class="text-4xl sm:text-5xl font-extrabold text-primary-blue dark:text-secondary-blue mb-4" data-en="Welcome, Student!" data-ar="مرحباً بك، أيها الطالب/الطالبة!">Welcome, Student!</h1>
-                <p class="text-lg sm:text-xl text-gray-600 dark:text-gray-200 max-w-2xl mx-auto" data-en="Choose a subject to continue your Grade 6 learning journey:" data-ar="اختر مادة لمتابعة رحلتك التعليمية للصف السادس:">Choose a subject to continue your Grade 6 learning journey:</p>
+                <span class="floating-chip mb-4" data-i18n="hero.badge">Personalized for Grade 6</span>
+                <h1 class="text-4xl sm:text-5xl font-extrabold text-primary-blue dark:text-secondary-blue mb-4" data-i18n="hero.title">Welcome, Student!</h1>
+                <p class="text-lg sm:text-xl text-gray-600 dark:text-gray-200 max-w-2xl mx-auto" data-i18n="hero.subtitle">Choose a subject to continue your Grade 6 learning journey:</p>
             </header>
             <div id="subject-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 </div>
@@ -363,7 +363,7 @@
                 <p id="subject-description-blocks" class="text-lg text-gray-600 dark:text-gray-300"></p>
                 <div class="mt-6 max-w-lg mx-auto px-4">
                     <div class="relative">
-                        <input type="text" id="blocks-search" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary-blue focus:border-primary-blue dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Search Blocks..." oninput="filterBlocks()">
+                        <input type="text" id="blocks-search" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary-blue focus:border-primary-blue dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Search Blocks..." data-i18n-placeholder="blocks.searchPlaceholder" oninput="filterBlocks()">
                         <div class="absolute inset-y-0 flex items-center pointer-events-none rtl:right-3 ltr:left-3">
                              <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                         </div>
@@ -374,7 +374,7 @@
             <div id="blocks-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 </div>
             <div id="no-blocks-results" class="hidden text-center p-8 bg-white dark:bg-secondary-dark rounded-xl shadow-lg mt-8 text-gray-500 dark:text-gray-400">
-                <p data-en="No blocks matched your search criteria." data-ar="لا توجد بلوكات مطابقة لمعايير البحث.">No blocks matched your search criteria.</p>
+                <p data-i18n="blocks.noResults">No blocks matched your search criteria.</p>
             </div>
         </div>
 
@@ -387,7 +387,7 @@
                 <div id="block-resources-button-container" class="mt-4"></div>
                 <div class="mt-6 max-w-lg mx-auto px-4">
                     <div class="relative">
-                        <input type="text" id="lessons-search" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary-blue focus:border-primary-blue dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Search Lessons..." oninput="filterLessons()">
+                        <input type="text" id="lessons-search" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary-blue focus:border-primary-blue dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Search Lessons..." data-i18n-placeholder="lessons.searchPlaceholder" oninput="filterLessons()">
                         <div class="absolute inset-y-0 flex items-center pointer-events-none rtl:right-3 ltr:left-3">
                             <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                         </div>
@@ -398,7 +398,7 @@
             <div id="lessons-list" class="space-y-4">
                 </div>
             <div id="no-lessons-results" class="hidden text-center p-8 bg-white dark:bg-secondary-dark rounded-xl shadow-lg mt-8 text-gray-500 dark:text-gray-400">
-                <p data-en="No lessons matched your search criteria." data-ar="لا توجد دروس مطابقة لمعايير البحث.">No lessons matched your search criteria.</p>
+                <p data-i18n="lessons.noResults">No lessons matched your search criteria.</p>
             </div>
         </div>
 
@@ -415,7 +415,7 @@
                 </div>
 
             <div class="mb-8">
-                <h2 class="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-4" data-en="Exercises" data-ar="التمارين">Exercises</h2>
+                <h2 class="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-4" data-i18n="lesson.exercises">Exercises</h2>
                 <div id="lesson-content-exercises" class="space-y-4">
                     </div>
             </div>
@@ -425,7 +425,7 @@
             <header id="block-sheets-header" class="section-hero text-center py-10 px-6 rounded-3xl shadow-2xl mb-10 border-t-4 border-primary-blue dark:border-secondary-blue">
                 <div id="block-sheets-icon" class="text-5xl mb-2"></div>
                 <h2 id="block-sheets-title" class="text-3xl font-extrabold text-primary-blue dark:text-secondary-blue mb-1"></h2>
-                <p id="block-sheets-description" class="text-lg text-gray-600 dark:text-gray-300 px-4" data-en="Select a sheet to view:" data-ar="اختر ملفاً لعرضه:">Select a sheet to view:</p>
+                <p id="block-sheets-description" class="text-lg text-gray-600 dark:text-gray-300 px-4" data-i18n="blockSheets.description">Select a sheet to view:</p>
 
                 <div id="block-sheets-extra-resources" class="mt-4 flex flex-wrap gap-4 justify-center">
                     </div>
@@ -439,7 +439,7 @@
     </main>
 
     <footer class="relative z-10 mt-12 mx-auto max-w-4xl p-6 text-center text-sm text-gray-500 dark:text-gray-400 bg-white/80 dark:bg-secondary-dark/70 backdrop-blur-xl rounded-3xl shadow-lg border border-white/40 dark:border-white/10">
-        <p data-en="NIES Learning Management System &copy; 2025" data-ar="نظام NIES لإدارة التعلم &copy; 2025">NIES Learning Management System &copy; 2025</p>
+        <p data-i18n="footer.copy">NIES Learning Management System &copy; 2025</p>
     </footer>
 
     <div id="modal-overlay" class="hidden fixed inset-0 bg-black/70 dark:bg-black/80 z-40 transition-opacity duration-300" onclick="closeModal()"></div>
@@ -456,6 +456,153 @@
         // بيانات المواد التعليمية (كائن JSON مركزي)
         // ====================================================================
 
+        const SUPPORTED_LANGUAGES = ['en', 'ar'];
+        const FALLBACK_LANGUAGE = 'en';
+        const NEXT_LANGUAGE_LABEL = { en: 'AR', ar: 'EN' };
+
+        const TRANSLATIONS = {
+            en: {
+                'nav.back': 'Back',
+                'nav.title': 'NIES LMS',
+                'nav.logout': 'Log Out',
+                'nav.logoutTitle': 'Log Out',
+                'hero.badge': 'Personalized for Grade 6',
+                'hero.title': 'Welcome, Student!',
+                'hero.subtitle': 'Choose a subject to continue your Grade 6 learning journey:',
+                'page.dashboardTitle': 'NIES LMS Dashboard',
+                'blocks.searchPlaceholder': 'Search Blocks...',
+                'blocks.noResults': 'No blocks matched your search criteria.',
+                'blocks.lessonCountLabel': 'Lessons',
+                'lessons.searchPlaceholder': 'Search Lessons...',
+                'lessons.noResults': 'No lessons matched your search criteria.',
+                'lessons.emptyState': 'This block does not contain any lessons yet.',
+                'lesson.exercises': 'Exercises',
+                'lesson.contentUnavailable': 'Lesson content is not available yet.',
+                'blockSheets.description': 'Select a sheet to view:',
+                'footer.copy': 'NIES Learning Management System © 2025',
+                'language.switchToArabic': 'Switch to Arabic',
+                'language.switchToEnglish': 'Switch to English',
+                'quiz.noQuestions': 'No quiz questions available.',
+                'quiz.title': 'Interactive Quiz',
+                'quiz.questionLabel': 'Question',
+                'quiz.submit': 'Submit Answers',
+                'quiz.resultTitle': 'Quiz Result',
+                'quiz.scoreLabel': 'You scored:',
+                'quiz.reviewTitle': 'Answers Review',
+                'quiz.yourAnswer': 'Your answer:',
+                'quiz.correctAnswer': 'Correct answer:',
+                'quiz.unanswered': 'You did not answer this question.',
+                'quiz.retake': 'Retake Quiz',
+                'quiz.review': 'Review Questions',
+                'quiz.startLesson': 'Start Quiz',
+                'quiz.score': 'Score',
+                'quiz.centerHeading': 'Quiz Center',
+                'quiz.centerDescription': 'Preview the questions, start the quiz, or revisit your progress.',
+                'quiz.questionsLabel': 'Questions',
+                'quiz.lastScore': 'Last Score',
+                'quiz.overviewTab': 'Overview',
+                'quiz.previewTab': 'Preview',
+                'quiz.takeTab': 'Take Quiz',
+                'quiz.overviewTitle': 'Get ready to ace this quiz!',
+                'quiz.overviewDescription': 'Take a quick look at the essentials before you begin.',
+                'quiz.overviewTip1': 'Preview the questions to prepare your strategy.',
+                'quiz.overviewTip2': 'Answer each question carefully and review before submitting.',
+                'quiz.overviewTip3': 'Return anytime to improve your score.',
+                'quiz.overviewStart': 'Start the Quiz',
+                'quiz.correctAnswerShort': 'Correct answer',
+                'quiz.previewMode': 'Preview mode',
+                'common.close': 'Close',
+                'common.couldNotLoad': 'Could not load content.',
+                'video.loadError': 'Could not load video.',
+                'video.unsupportedTag': 'Your browser does not support the video tag.',
+                'resource.invalidDrive': 'Invalid Google Drive link.',
+                'blockSheets.title': 'Block Sheets',
+                'blockSheets.startQuiz': 'Start Block Quiz',
+                'blockSheets.noPdfs': 'No PDF sheets found for this block.',
+                'media.watchVideo': 'Watch Video',
+                'media.pdfFile': 'PDF File',
+                'media.video': 'Video'
+            },
+            ar: {
+                'nav.back': 'عودة',
+                'nav.title': 'نظام NIES التعليمي',
+                'nav.logout': 'تسجيل الخروج',
+                'nav.logoutTitle': 'تسجيل الخروج',
+                'hero.badge': 'مصمم خصيصًا للصف السادس',
+                'hero.title': 'مرحباً بك، أيها الطالب/الطالبة!',
+                'hero.subtitle': 'اختر مادة لمتابعة رحلتك التعليمية للصف السادس:',
+                'page.dashboardTitle': 'لوحة تحكم نظام NIES التعليمي',
+                'blocks.searchPlaceholder': 'البحث في البلوكات...',
+                'blocks.noResults': 'لا توجد بلوكات مطابقة لمعايير البحث.',
+                'blocks.lessonCountLabel': 'درس/دروس',
+                'lessons.searchPlaceholder': 'البحث في الدروس...',
+                'lessons.noResults': 'لا توجد دروس مطابقة لمعايير البحث.',
+                'lessons.emptyState': 'هذه الوحدة لا تحتوي على أي دروس حالياً.',
+                'lesson.exercises': 'التمارين',
+                'lesson.contentUnavailable': 'محتوى الدرس غير متوفر حالياً.',
+                'blockSheets.description': 'اختر ملفاً لعرضه:',
+                'footer.copy': 'نظام NIES لإدارة التعلم © 2025',
+                'language.switchToArabic': 'التبديل إلى العربية',
+                'language.switchToEnglish': 'التبديل إلى الإنجليزية',
+                'quiz.noQuestions': 'لا توجد أسئلة اختبار متاحة.',
+                'quiz.title': 'اختبار تفاعلي',
+                'quiz.questionLabel': 'السؤال',
+                'quiz.submit': 'إرسال الإجابات',
+                'quiz.resultTitle': 'نتيجة الاختبار',
+                'quiz.scoreLabel': 'نتيجتك هي:',
+                'quiz.reviewTitle': 'مراجعة الإجابات',
+                'quiz.yourAnswer': 'إجابتك:',
+                'quiz.correctAnswer': 'الإجابة الصحيحة:',
+                'quiz.unanswered': 'لم تجب على هذا السؤال.',
+                'quiz.retake': 'إعادة الاختبار',
+                'quiz.review': 'مراجعة الأسئلة',
+                'quiz.startLesson': 'ابدأ الاختبار',
+                'quiz.score': 'النتيجة',
+                'quiz.centerHeading': 'مركز الاختبار',
+                'quiz.centerDescription': 'استعرض الأسئلة، ابدأ الاختبار، أو راجع تقدمك.',
+                'quiz.questionsLabel': 'الأسئلة',
+                'quiz.lastScore': 'آخر نتيجة',
+                'quiz.overviewTab': 'نظرة عامة',
+                'quiz.previewTab': 'استعراض',
+                'quiz.takeTab': 'حل الاختبار',
+                'quiz.overviewTitle': 'استعد للتفوق في هذا الاختبار!',
+                'quiz.overviewDescription': 'ألقِ نظرة سريعة على أهم التفاصيل قبل البدء.',
+                'quiz.overviewTip1': 'استعرض الأسئلة مسبقًا لتحضير استراتيجيتك.',
+                'quiz.overviewTip2': 'أجب عن كل سؤال بعناية وراجع إجاباتك قبل الإرسال.',
+                'quiz.overviewTip3': 'عد في أي وقت لتحسين نتيجتك.',
+                'quiz.overviewStart': 'ابدأ الاختبار الآن',
+                'quiz.correctAnswerShort': 'الإجابة الصحيحة',
+                'quiz.previewMode': 'وضع المعاينة',
+                'common.close': 'إغلاق',
+                'common.couldNotLoad': 'لم نتمكن من تحميل المحتوى.',
+                'video.loadError': 'لم نتمكن من تحميل الفيديو.',
+                'video.unsupportedTag': 'متصفحك لا يدعم عرض الفيديو.',
+                'resource.invalidDrive': 'رابط جوجل درايف غير صالح.',
+                'blockSheets.title': 'ملفات الوحدة',
+                'blockSheets.startQuiz': 'ابدأ اختبار الوحدة',
+                'blockSheets.noPdfs': 'لا توجد ملفات PDF لهذه الوحدة.',
+                'media.watchVideo': 'مشاهدة الفيديو',
+                'media.pdfFile': 'ملف PDF',
+                'media.video': 'فيديو'
+            }
+        };
+
+        let currentLang = FALLBACK_LANGUAGE;
+
+        function resolveLanguage(lang) {
+            if (!lang) return FALLBACK_LANGUAGE;
+            const normalized = lang.toLowerCase();
+            return SUPPORTED_LANGUAGES.includes(normalized) ? normalized : FALLBACK_LANGUAGE;
+        }
+
+        function t(key, langOverride) {
+            const activeLang = resolveLanguage(langOverride || currentLang);
+            const translation = TRANSLATIONS[activeLang]?.[key];
+            if (translation) return translation;
+            const fallbackTranslation = TRANSLATIONS[FALLBACK_LANGUAGE]?.[key];
+            return fallbackTranslation || key;
+        }
+
         // ====================================================================
         // متغيرات الحالة العالمية والتاريخ
         // ====================================================================
@@ -465,9 +612,9 @@
         const htmlElement = document.documentElement;
         const backButton = document.getElementById('back-button');
         const appTitleContainer = document.getElementById('app-title-container');
+        const logoutLink = document.getElementById('logout-link');
 
         // [مهم] استخدام الكوكيز بدلاً من localStorage
-        let currentLang = getCookie('appLang') || 'en';
         let currentTheme = getCookie('appTheme') || 'light';
 
         let stateHistory = []; // لتخزين تاريخ التنقل بين المراحل
@@ -497,6 +644,22 @@
             }
             return null;
         }
+
+        function detectInitialLanguage() {
+            const savedLang = getCookie('appLang');
+            if (savedLang) {
+                return resolveLanguage(savedLang);
+            }
+
+            const browserLang = (navigator.language || navigator.userLanguage || '').toLowerCase();
+            if (browserLang.startsWith('ar')) {
+                return 'ar';
+            }
+
+            return FALLBACK_LANGUAGE;
+        }
+
+        currentLang = detectInitialLanguage();
 
         // ====================================================================
         // وظائف إدارة الثيم (الوضع الليلي/النهاري)
@@ -544,34 +707,59 @@
          * تبديل المحتوى النصي بناءً على اللغة المختارة وحفظها في الكوكيز
          */
         function switchLanguage(lang) {
-            currentLang = lang;
-            setCookie('appLang', lang, 365);
+            const resolvedLang = resolveLanguage(lang);
+            currentLang = resolvedLang;
+            setCookie('appLang', resolvedLang, 365);
 
             // 1. تبديل وضع الجسم (Directionality & Font)
-            if (lang === 'ar') {
+            if (resolvedLang === 'ar') {
                 body.classList.remove('en-mode');
                 body.classList.add('ar-mode');
-                 htmlElement.lang = 'ar';
-                 htmlElement.dir = 'rtl';
+                htmlElement.lang = 'ar';
+                htmlElement.dir = 'rtl';
             } else {
                 body.classList.remove('ar-mode');
                 body.classList.add('en-mode');
-                 htmlElement.lang = 'en';
-                 htmlElement.dir = 'ltr';
+                htmlElement.lang = 'en';
+                htmlElement.dir = 'ltr';
             }
 
-            // 2. تحديث جميع العناصر الثابتة التي تحتوي على سمات اللغة
-            document.querySelectorAll('[data-en], [data-ar]').forEach(element => {
-                const text = getLocalizedText({en: element.dataset.en, ar: element.dataset.ar}, currentLang);
-                if (text && text !== '[...]') {
-                    element.textContent = text;
+            // 2. تحديث جميع العناصر الثابتة التي تحتوي على مفاتيح الترجمة
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.dataset.i18n;
+                if (key) {
+                    element.textContent = t(key, resolvedLang);
                 }
             });
 
-            // 3. تحديث نص زر التبديل
-            langToggle.querySelector('span').textContent = lang === 'en' ? 'AR' : 'EN';
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+                const key = element.dataset.i18nPlaceholder;
+                if (key) {
+                    element.setAttribute('placeholder', t(key, resolvedLang));
+                }
+            });
 
-            // 4. إعادة رسم المحتوى الديناميكي الحالي لضمان تطبيق اللغة الصحيحة
+            document.querySelectorAll('[data-i18n-title]').forEach(element => {
+                const key = element.dataset.i18nTitle;
+                if (key) {
+                    element.setAttribute('title', t(key, resolvedLang));
+                }
+            });
+
+            const ariaLabel = resolvedLang === 'en' ? t('language.switchToArabic', resolvedLang) : t('language.switchToEnglish', resolvedLang);
+            if (langToggle) {
+                const nextLabel = NEXT_LANGUAGE_LABEL[resolvedLang] || NEXT_LANGUAGE_LABEL[FALLBACK_LANGUAGE];
+                langToggle.querySelector('span').textContent = nextLabel;
+                langToggle.setAttribute('aria-label', ariaLabel);
+                langToggle.setAttribute('title', ariaLabel);
+            }
+
+            if (logoutLink) {
+                logoutLink.setAttribute('aria-label', t('nav.logout', resolvedLang));
+                logoutLink.setAttribute('title', t('nav.logoutTitle', resolvedLang));
+            }
+
+            // 3. إعادة رسم المحتوى الديناميكي الحالي لضمان تطبيق اللغة الصحيحة
             changeView(currentState.view, currentState.subjectId, currentState.blockId, currentState.lessonId, false);
         }
 
@@ -679,9 +867,9 @@
                 subjectGrid.appendChild(card);
             });
 
-             document.getElementById('page-title').textContent = getLocalizedText(
-                {en: 'NIES LMS Dashboard', ar: 'لوحة تحكم نظام NIES التعليمي'}, currentLang
-            );
+            const dashboardTitle = t('page.dashboardTitle');
+            document.getElementById('page-title').textContent = dashboardTitle;
+            document.title = dashboardTitle;
         }
 
         /**
@@ -703,7 +891,7 @@
             document.getElementById('subject-title-blocks').textContent = titleText;
             document.getElementById('subject-description-blocks').textContent = descriptionText;
 
-            document.getElementById('blocks-search').placeholder = getLocalizedText({en: 'Search Blocks...', ar: 'البحث في البلوكات...'}, currentLang);
+            document.getElementById('blocks-search').placeholder = t('blocks.searchPlaceholder');
             document.getElementById('blocks-search').value = '';
 
             filterBlocks();
@@ -739,7 +927,7 @@
                             <span class="text-3xl mb-2 font-semibold text-[var(--subject-color)]">#${block.id}</span>
                             <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-2">${getLocalizedText(block.title, currentLang)}</h3>
                             <p class="text-sm text-gray-600 dark:text-gray-300 flex-grow">${getLocalizedText(block.brief, currentLang)}</p>
-                            <span class="mt-4 text-sm font-semibold text-gray-500 dark:text-gray-400">${(block.lessons || []).length} ${getLocalizedText({en: 'Lessons', ar: 'درس/دروس'}, currentLang)}</span>
+                        <span class="mt-4 text-sm font-semibold text-gray-500 dark:text-gray-400">${(block.lessons || []).length} ${t('blocks.lessonCountLabel')}</span>
                         </div>
                     `;
                     blocksGrid.appendChild(blockCard);
@@ -785,7 +973,7 @@
             }
 
 
-            document.getElementById('lessons-search').placeholder = getLocalizedText({en: 'Search Lessons...', ar: 'البحث في الدروس...'}, currentLang);
+            document.getElementById('lessons-search').placeholder = t('lessons.searchPlaceholder');
             document.getElementById('lessons-search').value = '';
 
             filterLessons();
@@ -831,7 +1019,7 @@
             if (lessons.length === 0 && resultsCount === 0) {
                  lessonsList.innerHTML = `
                     <div class="text-center p-8 bg-white dark:bg-secondary-dark rounded-xl shadow-lg mt-4 text-gray-500 dark:text-gray-400">
-                        <p data-en="This block does not contain any lessons yet." data-ar="هذه الوحدة لا تحتوي على أي دروس حالياً.">${getLocalizedText({en:"This block does not contain any lessons yet.", ar:"هذه الوحدة لا تحتوي على أي دروس حالياً."}, currentLang)}</p>
+                        <p>${t('lessons.emptyState')}</p>
                     </div>
                  `;
                   document.getElementById('no-lessons-results').classList.add('hidden');
@@ -869,10 +1057,10 @@
                 if (theoryMarkdown) {
                     theoryContainer.innerHTML = typeof marked !== 'undefined' ? marked.parse(theoryMarkdown) : theoryMarkdown;
                 } else {
-                    theoryContainer.innerHTML = `<p class="text-gray-500 dark:text-gray-400">${getLocalizedText({en: "Lesson content is not available yet.", ar: "محتوى الدرس غير متوفر حالياً."}, currentLang)}</p>`;
+                    theoryContainer.innerHTML = `<p class="text-gray-500 dark:text-gray-400">${t('lesson.contentUnavailable')}</p>`;
                 }
             } else {
-                theoryContainer.innerHTML = `<p class="text-gray-500 dark:text-gray-400">${getLocalizedText({en: "Lesson content is not available yet.", ar: "محتوى الدرس غير متوفر حالياً."}, currentLang)}</p>`;
+                theoryContainer.innerHTML = `<p class="text-gray-500 dark:text-gray-400">${t('lesson.contentUnavailable')}</p>`;
             }
 
             // 4. عرض التمارين (إذا وجدت)
@@ -963,7 +1151,7 @@
 
             pdfItems.forEach(pdf => {
                 if (!pdf || !pdf.url) return;
-                const labelSource = pdf.name || pdf.title || { en: 'PDF File', ar: 'ملف PDF' };
+                const labelSource = pdf.name || pdf.title || { en: t('media.pdfFile', 'en'), ar: t('media.pdfFile', 'ar') };
                 createResourceButton(
                     container,
                     'pdf',
@@ -976,17 +1164,17 @@
             const videoItems = Array.isArray(resources.videos)
                 ? resources.videos
                 : resources.video
-                    ? [{ url: resources.video, title: { en: 'Video', ar: 'فيديو' } }]
+                    ? [{ url: resources.video, title: { en: t('media.video', 'en'), ar: t('media.video', 'ar') } }]
                     : [];
 
             videoItems.forEach(video => {
                 if (!video || !video.url) return;
-                const labelSource = video.title || { en: 'Watch Video', ar: 'مشاهدة الفيديو' };
+                const videoLabel = video.title ? getLocalizedText(video.title, currentLang) : t('media.watchVideo');
                 createResourceButton(
                     container,
                     'video',
                     video.url,
-                    `▶️ ${getLocalizedText(labelSource, currentLang)}`,
+                    `▶️ ${videoLabel}`,
                     'bg-blue-600 hover:bg-blue-700'
                 );
             });
@@ -995,9 +1183,9 @@
             if (quizData.length > 0) {
                 const storageKey = `quizScore-${subjectId}-${blockId}-${lessonId}`;
                 const savedScore = localStorage.getItem(storageKey);
-                let quizButtonText = `📝 ${getLocalizedText({ en: 'Start Quiz', ar: 'ابدأ الاختبار' }, currentLang)}`;
+                let quizButtonText = `📝 ${t('quiz.startLesson')}`;
                 if (savedScore) {
-                    quizButtonText += ` (${getLocalizedText({ en: 'Score', ar: 'النتيجة' }, currentLang)}: ${savedScore})`;
+                    quizButtonText += ` (${t('quiz.score')}: ${savedScore})`;
                 }
                 currentQuizData = quizData;
                 createResourceButton(
@@ -1082,7 +1270,7 @@
 
             } catch (error) {
                  console.error("Error opening modal:", error);
-                 modalContent.innerHTML = `<p class="p-4 text-red-600 dark:text-red-400">${getLocalizedText({en:'Could not load content.', ar:'لم نتمكن من تحميل المحتوى.'}, currentLang)}</p>`;
+                 modalContent.innerHTML = `<p class="p-4 text-red-600 dark:text-red-400">${t('common.couldNotLoad')}</p>`;
                  modalOverlay.classList.remove('hidden');
                  modalContainer.classList.remove('hidden');
                  setTimeout(() => {
@@ -1094,13 +1282,13 @@
 
         function openQuizModal(quizData, subjectId, blockId, lessonId) {
             const totalQuestions = quizData.length;
-            const heading = getLocalizedText({ en: 'Quiz Center', ar: 'مركز الاختبار' }, currentLang);
-            const description = getLocalizedText({ en: 'Preview the questions, start the quiz, or revisit your progress.', ar: 'استعرض الأسئلة، ابدأ الاختبار، أو راجع تقدمك.' }, currentLang);
-            const questionsLabel = getLocalizedText({ en: 'Questions', ar: 'الأسئلة' }, currentLang);
-            const lastScoreLabel = getLocalizedText({ en: 'Last Score', ar: 'آخر نتيجة' }, currentLang);
-            const overviewLabel = getLocalizedText({ en: 'Overview', ar: 'نظرة عامة' }, currentLang);
-            const previewLabel = getLocalizedText({ en: 'Preview', ar: 'استعراض' }, currentLang);
-            const takeLabel = getLocalizedText({ en: 'Take Quiz', ar: 'حل الاختبار' }, currentLang);
+            const heading = t('quiz.centerHeading');
+            const description = t('quiz.centerDescription');
+            const questionsLabel = t('quiz.questionsLabel');
+            const lastScoreLabel = t('quiz.lastScore');
+            const overviewLabel = t('quiz.overviewTab');
+            const previewLabel = t('quiz.previewTab');
+            const takeLabel = t('quiz.takeTab');
 
             const storageKey = `quizScore-${subjectId}-${blockId}-${lessonId}`;
             const savedScore = localStorage.getItem(storageKey);
@@ -1149,14 +1337,14 @@
             });
 
             if (mode === 'overview') {
-                const introTitle = getLocalizedText({ en: 'Get ready to ace this quiz!', ar: 'استعد للتفوق في هذا الاختبار!' }, currentLang);
-                const introDescription = getLocalizedText({ en: 'Take a quick look at the essentials before you begin.', ar: 'ألقِ نظرة سريعة على أهم التفاصيل قبل البدء.' }, currentLang);
+                const introTitle = t('quiz.overviewTitle');
+                const introDescription = t('quiz.overviewDescription');
                 const tips = [
-                    getLocalizedText({ en: 'Preview the questions to prepare your strategy.', ar: 'استعرض الأسئلة مسبقًا لتحضير استراتيجيتك.' }, currentLang),
-                    getLocalizedText({ en: 'Answer each question carefully and review before submitting.', ar: 'أجب عن كل سؤال بعناية وراجع إجاباتك قبل الإرسال.' }, currentLang),
-                    getLocalizedText({ en: 'Return anytime to improve your score.', ar: 'عد في أي وقت لتحسين نتيجتك.' }, currentLang)
+                    t('quiz.overviewTip1'),
+                    t('quiz.overviewTip2'),
+                    t('quiz.overviewTip3')
                 ];
-                const startLabel = getLocalizedText({ en: 'Start the Quiz', ar: 'ابدأ الاختبار الآن' }, currentLang);
+                const startLabel = t('quiz.overviewStart');
 
                 section.innerHTML = `
                     <div class="card-surface p-6 md:p-8 rounded-2xl border border-transparent space-y-5">
@@ -1179,8 +1367,8 @@
             }
 
             if (mode === 'preview') {
-                const questionLabel = getLocalizedText({ en: 'Question', ar: 'السؤال' }, currentLang);
-                const correctLabel = getLocalizedText({ en: 'Correct answer', ar: 'الإجابة الصحيحة' }, currentLang);
+                const questionLabel = t('quiz.questionLabel');
+                const correctLabel = t('quiz.correctAnswerShort');
 
                 let previewHtml = '<div class="space-y-5">';
                 currentQuizData.forEach((q, index) => {
@@ -1188,7 +1376,7 @@
                         <div class="quiz-preview-item">
                             <div class="flex items-center justify-between mb-3">
                                 <span class="text-sm font-semibold uppercase tracking-wide text-[var(--subject-color)]">${questionLabel} ${index + 1}</span>
-                                <span class="text-xs text-gray-500 dark:text-gray-400">${getLocalizedText({ en: 'Preview mode', ar: 'وضع المعاينة' }, currentLang)}</span>
+                                <span class="text-xs text-gray-500 dark:text-gray-400">${t('quiz.previewMode')}</span>
                             </div>
                             <p class="text-base text-gray-700 dark:text-gray-200 mb-3">${getLocalizedText(q.q, currentLang)}</p>
                             <ul class="list-disc rtl:list-disc rtl:mr-5 ltr:list-disc ltr:ml-5 space-y-1 text-sm text-gray-600 dark:text-gray-300">
@@ -1228,7 +1416,7 @@
          */
         function getVideoEmbedHtml(videoUrl) {
             let embedHtml = '';
-            const errorText = getLocalizedText({en:'Could not load video.', ar:'لم نتمكن من تحميل الفيديو.'}, currentLang);
+            const errorText = t('video.loadError');
 
             try {
                 if (!videoUrl) throw new Error("Video URL is empty");
@@ -1236,7 +1424,7 @@
                 if (videoUrl.includes('youtube.com/embed/')) {
                     embedHtml = `<iframe src="${videoUrl}" class="w-full h-full border-0 rounded" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
                 } else if (videoUrl.endsWith('.mp4')) {
-                    const errorTag = getLocalizedText({en:'Your browser does not support the video tag.', ar:'متصفحك لا يدعم عرض الفيديو.'}, currentLang);
+                    const errorTag = t('video.unsupportedTag');
                     embedHtml = `<video controls class="w-full h-full bg-black rounded"><source src="${videoUrl}" type="video/mp4">${errorTag}</video>`;
                 } else if (videoUrl.includes('drive.google.com/file/d/')) {
                     const match = videoUrl.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
@@ -1245,7 +1433,7 @@
                         const embedUrl = `https://drive.google.com/file/d/${fileId}/preview`;
                         embedHtml = `<iframe src="${embedUrl}" class="w-full h-full border-0 rounded" frameborder="0"></iframe>`;
                     } else {
-                         embedHtml = `<p class="p-4 text-red-500">${getLocalizedText({en:'Invalid Google Drive link.', ar:'رابط جوجل درايف غير صالح.'}, currentLang)}</p>`;
+                         embedHtml = `<p class="p-4 text-red-500">${t('resource.invalidDrive')}</p>`;
                     }
                 } else {
                     console.warn("Unknown video URL type, attempting generic iframe embed:", videoUrl);
@@ -1280,7 +1468,7 @@
             document.getElementById('block-sheets-icon').textContent = subjectData.icon;
 
             const blockTitleText = getLocalizedText(block.title, currentLang);
-            const pageTitle = `${getLocalizedText({ en: 'Block Sheets', ar: 'ملفات الوحدة' }, currentLang)}: ${blockTitleText}`;
+            const pageTitle = `${t('blockSheets.title')}: ${blockTitleText}`;
             document.getElementById('block-sheets-title').textContent = pageTitle;
             document.getElementById('page-title').textContent = pageTitle;
 
@@ -1292,7 +1480,7 @@
             const videoItems = Array.isArray(resources.videos)
                 ? resources.videos
                 : resources.video
-                    ? [{ url: resources.video, title: { en: 'Watch Video', ar: 'مشاهدة الفيديو' } }]
+                    ? [{ url: resources.video, title: { en: t('media.watchVideo', 'en'), ar: t('media.watchVideo', 'ar') } }]
                     : [];
 
             videoItems.forEach(video => {
@@ -1301,7 +1489,7 @@
                     extraResourcesContainer,
                     'video',
                     video.url,
-                    `▶️ ${getLocalizedText(video.title || { en: 'Watch Video', ar: 'مشاهدة الفيديو' }, currentLang)}`,
+                    `▶️ ${video.title ? getLocalizedText(video.title, currentLang) : t('media.watchVideo')}`,
                     'bg-blue-600 hover:bg-blue-700'
                 );
             });
@@ -1312,9 +1500,9 @@
                 const storageKey = `quizScore-${subjectId}-${blockId}-${blockQuizId}`;
                 const savedScore = localStorage.getItem(storageKey);
 
-                let quizButtonText = `📝 ${getLocalizedText({ en: 'Start Block Quiz', ar: 'ابدأ اختبار الوحدة' }, currentLang)}`;
+                let quizButtonText = `📝 ${t('blockSheets.startQuiz')}`;
                 if (savedScore) {
-                    quizButtonText += ` (${getLocalizedText({ en: 'Score', ar: 'النتيجة' }, currentLang)}: ${savedScore})`;
+                    quizButtonText += ` (${t('quiz.score')}: ${savedScore})`;
                 }
 
                 createResourceButton(
@@ -1347,7 +1535,7 @@
             pdfItems = pdfItems.filter(pdf => pdf && pdf.url);
 
             if (!pdfItems.length) {
-                grid.innerHTML = `<p class="p-4 text-gray-500 col-span-full text-center">${getLocalizedText({ en: 'No PDF sheets found for this block.', ar: 'لا توجد ملفات PDF لهذه الوحدة.' }, currentLang)}</p>`;
+                grid.innerHTML = `<p class="p-4 text-gray-500 col-span-full text-center">${t('blockSheets.noPdfs')}</p>`;
                 return;
             }
 
@@ -1385,20 +1573,20 @@
              }
 
              if (!quizData || quizData.length === 0) {
-                 container.innerHTML = `<p class="p-4 text-gray-500">${getLocalizedText({en:'No quiz questions available.', ar:'لا توجد أسئلة اختبار متاحة.'}, currentLang)}</p>`;
+                 container.innerHTML = `<p class="p-4 text-gray-500">${t('quiz.noQuestions')}</p>`;
                  return;
              }
 
             container.classList.add('overflow-auto');
 
-            let html = `<div class="p-4 md:p-6"><h2 class="text-3xl font-bold mb-6 text-gray-800 dark:text-gray-100">${getLocalizedText({en: 'Interactive Quiz', ar: 'اختبار تفاعلي'}, currentLang)}</h2>`;
+            let html = `<div class="p-4 md:p-6"><h2 class="text-3xl font-bold mb-6 text-gray-800 dark:text-gray-100">${t('quiz.title')}</h2>`;
             html += `<form id="quiz-form">`;
 
             quizData.forEach((q, index) => {
                 html += `<div class="quiz-question">`;
                 html += `<div class="quiz-question-header">
                             <p>${getLocalizedText(q.q, currentLang)}</p>
-                            <span class="flex-shrink-0 ml-4 rtl:mr-4 rtl:ml-0">${getLocalizedText({en:'Question', ar:'السؤال'}, currentLang)} ${index + 1}/${quizData.length}</span>
+                            <span class="flex-shrink-0 ml-4 rtl:mr-4 rtl:ml-0">${t('quiz.questionLabel')} ${index + 1}/${quizData.length}</span>
                          </div>`;
                 html += `<div class="quiz-options mt-3 space-y-2">`;
 
@@ -1419,7 +1607,7 @@
             const lessonIdParam = typeof lessonId === 'number' ? lessonId : `'${lessonId}'`;
 
             html += `<button type="button" onclick="submitQuiz('${subjectId}', ${blockId}, ${lessonIdParam})" class="mt-8 w-full bg-green-600 text-white p-3 rounded-lg font-semibold hover:bg-green-700 transition duration-200 focus:ring-green-500">
-                ${getLocalizedText({en: 'Submit Answers', ar: 'إرسال الإجابات'}, currentLang)}
+                ${t('quiz.submit')}
             </button>`;
 
             html += `</form></div>`;
@@ -1491,14 +1679,14 @@
 
             let resultHtml = `
                 <div class="text-center p-6 md:p-8 overflow-auto h-full">
-                    <h2 class="text-3xl font-bold mb-4 text-gray-800 dark:text-gray-100">${getLocalizedText({en: 'Quiz Result', ar: 'نتيجة الاختبار'}, currentLang)}</h2>
-                    <p class="text-xl mb-2 text-gray-600 dark:text-gray-300">${getLocalizedText({en: 'You scored:', ar: 'نتيجتك هي:'}, currentLang)}</p>
+                    <h2 class="text-3xl font-bold mb-4 text-gray-800 dark:text-gray-100">${t('quiz.resultTitle')}</h2>
+                    <p class="text-xl mb-2 text-gray-600 dark:text-gray-300">${t('quiz.scoreLabel')}</p>
                     <p class="text-6xl font-extrabold text-[var(--subject-color)] my-4">${score} / ${total}</p>
                     <p class="text-2xl font-semibold text-gray-700 dark:text-gray-200">${scorePercentage}%</p>
 
                     <hr class="my-6 border-gray-200 dark:border-gray-700">
 
-                    <h3 class="text-2xl font-bold mb-4 text-left rtl:text-right text-gray-800 dark:text-gray-100">${getLocalizedText({en: 'Answers Review', ar: 'مراجعة الإجابات'}, currentLang)}</h3>
+                    <h3 class="text-2xl font-bold mb-4 text-left rtl:text-right text-gray-800 dark:text-gray-100">${t('quiz.reviewTitle')}</h3>
                     <div class="text-left rtl:text-right space-y-4">
             `;
 
@@ -1509,30 +1697,30 @@
                 if (res.selected) {
                     if (res.isCorrect) {
                         resultHtml += `<span class="user-answer correct">
-                            ${getLocalizedText({en:'Your answer:', ar:'إجابتك:'}, currentLang)} ${res.selected} (Correct)
+                            ${t('quiz.yourAnswer')} ${res.selected} (Correct)
                         </span>`;
                     } else {
                         resultHtml += `<span class="user-answer incorrect">
-                            ${getLocalizedText({en:'Your answer:', ar:'إجابتك:'}, currentLang)} ${res.selected} (Incorrect)
+                            ${t('quiz.yourAnswer')} ${res.selected} (Incorrect)
                         </span>`;
                         resultHtml += `<div class="correct-answer">
-                            ${getLocalizedText({en:'Correct answer:', ar:'الإجابة الصحيحة:'}, currentLang)} ${res.answer}
+                            ${t('quiz.correctAnswer')} ${res.answer}
                         </div>`;
                     }
                 } else {
                      resultHtml += `<span class="user-answer incorrect">
-                        ${getLocalizedText({en:'You did not answer this question.', ar:'لم تجب على هذا السؤال.'}, currentLang)}
+                        ${t('quiz.unanswered')}
                      </span>`;
                      resultHtml += `<div class="correct-answer">
-                        ${getLocalizedText({en:'Correct answer:', ar:'الإجابة الصحيحة:'}, currentLang)} ${res.answer}
+                        ${t('quiz.correctAnswer')} ${res.answer}
                      </div>`;
                 }
                 resultHtml += `</div>`;
             });
 
-            const retakeLabel = getLocalizedText({en: 'Retake Quiz', ar: 'إعادة الاختبار'}, currentLang);
-            const reviewLabel = getLocalizedText({en: 'Review Questions', ar: 'مراجعة الأسئلة'}, currentLang);
-            const closeLabel = getLocalizedText({en: 'Close', ar: 'إغلاق'}, currentLang);
+            const retakeLabel = t('quiz.retake');
+            const reviewLabel = t('quiz.review');
+            const closeLabel = t('common.close');
 
             resultHtml += `
                     <div class="mt-8 flex flex-wrap gap-3 justify-center">
