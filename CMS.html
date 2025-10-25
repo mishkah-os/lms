@@ -1183,7 +1183,31 @@
                     <i class="fas fa-moon"></i>
                 </button>
             </div>
-            
+
+            <div class="mb-4 space-y-3">
+                <div>
+                    <label for="book-switcher" class="block text-sm font-semibold text-gray-300 mb-1">📚 إدارة الكتب</label>
+                    <select id="book-switcher" class="w-full search-input bg-gray-800 border-gray-700"></select>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <button id="new-book-btn" class="btn btn-secondary text-sm flex items-center justify-center gap-1">
+                        <i class="fas fa-plus"></i> كتاب جديد
+                    </button>
+                    <button id="clone-book-btn" class="btn btn-secondary text-sm flex items-center justify-center gap-1">
+                        <i class="fas fa-copy"></i> استنساخ
+                    </button>
+                    <button id="rename-book-btn" class="btn btn-warning text-sm flex items-center justify-center gap-1">
+                        <i class="fas fa-pen"></i> إعادة التسمية
+                    </button>
+                    <button id="delete-book-btn" class="btn btn-danger text-sm flex items-center justify-center gap-1">
+                        <i class="fas fa-trash"></i> حذف
+                    </button>
+                </div>
+                <button id="export-bundle-btn" class="w-full btn btn-success flex items-center justify-center gap-2">
+                    <i class="fas fa-file-export"></i> تصدير كل المواد (s-data.js)
+                </button>
+            </div>
+
             <h2 class="text-2xl font-bold mb-4 text-center text-yellow-400">فهرس الكتاب</h2>
             
             <div class="mb-4 space-y-3">
@@ -1315,6 +1339,9 @@ min-width :48%;
                                     <input id="chapter-sort-input" class="chapter-sort-input" type="number" placeholder="ترتيب" />
                                     <button onclick="moveChapterFromControls()" class="move-chapter-btn" title="نقل الفصل">
                                         <i class="fas fa-arrow-right"></i>
+                                    </button>
+                                    <button onclick="openActiveChapterResources()" class="move-chapter-btn" title="خصائص الدرس">
+                                        <i class="fas fa-sliders-h"></i>
                                     </button>
                                 </div>
  
@@ -1470,7 +1497,27 @@ min-width :48%;
     <label class="block text-sm font-medium text-gray-300 mb-2">Book Title (English)</label>
     <input type="text" id="book-title-input-en" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Enter book title">
 </div>
-                
+
+<div class="grid md:grid-cols-2 gap-4">
+    <div>
+        <label class="block text-sm font-medium text-gray-300 mb-2">المعرف (Subject ID)</label>
+        <input type="text" id="book-id-input" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="مثال: math">
+        <p class="text-xs text-gray-400 mt-1">يُستخدم كمفتاح داخل ملف s-data.js (بدون مسافات).</p>
+    </div>
+    <div>
+        <label class="block text-sm font-medium text-gray-300 mb-2">الأيقونة التعبيرية</label>
+        <input type="text" id="book-icon-input" maxlength="2" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="مثال: 📘">
+    </div>
+    <div>
+        <label class="block text-sm font-medium text-gray-300 mb-2">لون المادة</label>
+        <input type="color" id="book-color-input" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent" value="#2563eb">
+    </div>
+    <div>
+        <label class="block text-sm font-medium text-gray-300 mb-2">رابط الغلاف (اختياري)</label>
+        <input type="text" id="book-cover-input" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="https://...">
+    </div>
+</div>
+
                <div>
     <label class="block text-sm font-medium text-gray-300 mb-2">مقدمة الكتاب (العربية)</label>
     <textarea id="book-bio-input-ar" rows="10" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-vertical" placeholder="أدخل مقدمة الكتاب..."></textarea>
@@ -1492,6 +1539,100 @@ min-width :48%;
             <div class="flex justify-end space-x-3 mt-6">
                 <button onclick="document.getElementById('book-info-modal').classList.add('hidden')" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700">إلغاء</button>
                 <button onclick="saveBookInfo()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">حفظ</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="book-library-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 items-center justify-center">
+        <div class="bg-gray-800 rounded-lg p-6 w-full max-w-3xl mx-4 max-h-[85vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold text-yellow-300">مكتبة الكتب</h2>
+                <button onclick="toggleBookLibrary(false)" class="text-gray-400 hover:text-white">✕</button>
+            </div>
+            <div id="book-library-list" class="space-y-3"></div>
+            <div class="mt-6 flex flex-wrap gap-2 justify-end">
+                <button id="library-create-btn" class="btn btn-secondary"><i class="fas fa-plus"></i> كتاب جديد</button>
+                <button onclick="toggleBookLibrary(false)" class="btn btn-secondary">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="section-resources-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 items-center justify-center">
+        <div class="bg-gray-800 rounded-lg p-6 w-full max-w-4xl mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold text-yellow-300" id="section-resources-title">موارد الوحدة</h2>
+                <button onclick="toggleSectionResources(false)" class="text-gray-400 hover:text-white">✕</button>
+            </div>
+            <div class="space-y-6">
+                <div>
+                    <label class="block text-sm text-gray-300 mb-2">نبذة عن الوحدة (<span id="section-brief-lang">AR</span>)</label>
+                    <textarea id="section-brief-input" rows="3" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white"></textarea>
+                </div>
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-lg font-semibold text-gray-200">ملفات PDF</h3>
+                        <button class="btn btn-secondary text-sm" onclick="addSectionResource('pdf')"><i class="fas fa-plus"></i> إضافة ملف</button>
+                    </div>
+                    <div id="section-pdfs-list" class="space-y-3"></div>
+                </div>
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-lg font-semibold text-gray-200">فيديوهات</h3>
+                        <button class="btn btn-secondary text-sm" onclick="addSectionResource('video')"><i class="fas fa-plus"></i> إضافة فيديو</button>
+                    </div>
+                    <div id="section-videos-list" class="space-y-3"></div>
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-300 mb-2">كود الاختبار (JavaScript / JSON)</label>
+                    <textarea id="section-quiz-input" rows="6" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white font-mono text-sm" placeholder="مثال: [ { id: 1, ... } ]"></textarea>
+                    <div class="flex gap-2 mt-2">
+                        <button class="btn btn-primary text-sm" onclick="testSectionQuizScript()"><i class="fas fa-play"></i> تجربة</button>
+                        <span id="section-quiz-status" class="text-sm"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 mt-6">
+                <button class="btn btn-secondary" onclick="toggleSectionResources(false)">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="chapter-resources-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 items-center justify-center">
+        <div class="bg-gray-800 rounded-lg p-6 w-full max-w-4xl mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold text-yellow-300" id="chapter-resources-title">موارد الدرس</h2>
+                <button onclick="toggleChapterResources(false)" class="text-gray-400 hover:text-white">✕</button>
+            </div>
+            <div class="space-y-6">
+                <div>
+                    <label class="block text-sm text-gray-300 mb-2">ملخص الدرس (<span id="chapter-brief-lang">AR</span>)</label>
+                    <textarea id="chapter-brief-input" rows="3" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white"></textarea>
+                </div>
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-lg font-semibold text-gray-200">ملفات PDF</h3>
+                        <button class="btn btn-secondary text-sm" onclick="addChapterResource('pdf')"><i class="fas fa-plus"></i> إضافة ملف</button>
+                    </div>
+                    <div id="chapter-pdfs-list" class="space-y-3"></div>
+                </div>
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-lg font-semibold text-gray-200">فيديوهات</h3>
+                        <button class="btn btn-secondary text-sm" onclick="addChapterResource('video')"><i class="fas fa-plus"></i> إضافة فيديو</button>
+                    </div>
+                    <div id="chapter-videos-list" class="space-y-3"></div>
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-300 mb-2">كود الاختبار (JavaScript / JSON)</label>
+                    <textarea id="chapter-quiz-input" rows="6" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white font-mono text-sm" placeholder="مثال: [ { id: 1, ... } ]"></textarea>
+                    <div class="flex gap-2 mt-2">
+                        <button class="btn btn-primary text-sm" onclick="testChapterQuizScript()"><i class="fas fa-play"></i> تجربة</button>
+                        <span id="chapter-quiz-status" class="text-sm"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 mt-6">
+                <button class="btn btn-secondary" onclick="toggleChapterResources(false)">إغلاق</button>
             </div>
         </div>
     </div>
@@ -1622,6 +1763,10 @@ min-width :48%;
     <script>
 
         let bookData = null;
+        let currentBookId = null;
+        let bookLibrary = [];
+        let activeSectionResourcesIndex = null;
+        let activeChapterResourcesPath = { section: null, chapter: null };
         let allLines = [];
         let activePath = { section: null, chapter: null };
         let currentView = 'viewer';
@@ -1675,6 +1820,175 @@ function setLocalizedBookName(book,lang,text){book.name=setInLangArray(book.name
 
 const bookTitleInputEl=document.getElementById('book-title-input');
 if(bookTitleInputEl){bookTitleInputEl.addEventListener('input',e=>{if(bookData)setLocalizedBookName(bookData,currentLanguage||'ar',(e.target.value||'').trim())})}
+
+
+function toLangArray(value) {
+    if (Array.isArray(value)) return value;
+    if (typeof value === 'string') return [{ ar: value }];
+    if (value && typeof value === 'object') {
+        const entries = [];
+        Object.keys(value).forEach(key => {
+            if (typeof value[key] === 'string') {
+                entries.push({ [key]: value[key] });
+            }
+        });
+        return entries.length ? entries : [{ ar: '' }];
+    }
+    return [{ ar: '' }];
+}
+
+function langArrayToObject(arr) {
+    const obj = {};
+    (arr || []).forEach(item => {
+        if (item && typeof item === 'object') {
+            const key = Object.keys(item)[0];
+            if (key) obj[key] = item[key];
+        }
+    });
+    return obj;
+}
+
+function slugify(text) {
+    if (!text) return '';
+    return text
+        .toString()
+        .normalize('NFKD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^\w\s-]/g, '')
+        .trim()
+        .replace(/\s+/g, '-')
+        .toLowerCase();
+}
+
+function ensureResourceItem(item) {
+    const normalized = item && typeof item === 'object' ? { ...item } : {};
+    if (!normalized.id) normalized.id = generateUniqueID();
+    if (!normalized.url) normalized.url = normalized.link || '';
+    normalized.title = toLangArray(normalized.title || normalized.name || normalized.label || '');
+    return normalized;
+}
+
+function ensureSectionSchema(section) {
+    if (!section) return;
+    section.section_name = toLangArray(section.section_name);
+    section.brief = toLangArray(section.brief || section.description || '');
+    if (!Array.isArray(section.Chapters)) section.Chapters = [];
+    if (!section.resources) section.resources = {};
+    const res = section.resources;
+
+    if (!Array.isArray(res.pdfs)) {
+        if (Array.isArray(res.pdfs)) {
+            res.pdfs = res.pdfs.map(ensureResourceItem);
+        } else if (section.block_resources && section.block_resources.pdfs) {
+            const legacy = section.block_resources.pdfs;
+            if (Array.isArray(legacy)) {
+                res.pdfs = legacy.map(ensureResourceItem);
+            } else {
+                res.pdfs = Object.keys(legacy || {}).map(key => ensureResourceItem({
+                    id: key,
+                    title: toLangArray({ ar: key, en: key }),
+                    url: legacy[key]
+                }));
+            }
+        } else {
+            res.pdfs = [];
+        }
+    } else {
+        res.pdfs = res.pdfs.map(ensureResourceItem);
+    }
+
+    if (!Array.isArray(res.videos)) {
+        if (Array.isArray(res.videos)) {
+            res.videos = res.videos.map(ensureResourceItem);
+        } else if (section.block_resources && section.block_resources.video) {
+            const legacyVideo = section.block_resources.video;
+            if (Array.isArray(legacyVideo)) {
+                res.videos = legacyVideo.map(ensureResourceItem);
+            } else {
+                res.videos = [ensureResourceItem({
+                    id: 'video',
+                    title: toLangArray({ ar: 'فيديو', en: 'Video' }),
+                    url: legacyVideo
+                })];
+            }
+        } else {
+            res.videos = [];
+        }
+    } else {
+        res.videos = res.videos.map(ensureResourceItem);
+    }
+
+    if (typeof res.quizScript !== 'string') {
+        if (res.quizScript && typeof res.quizScript === 'object') {
+            try {
+                res.quizScript = JSON.stringify(res.quizScript, null, 2);
+            } catch (e) {
+                res.quizScript = '';
+            }
+        } else if (section.block_resources && section.block_resources.quiz) {
+            try {
+                res.quizScript = JSON.stringify(section.block_resources.quiz, null, 2);
+            } catch (e) {
+                res.quizScript = '';
+            }
+        } else {
+            res.quizScript = res.quizScript || '';
+        }
+    }
+
+    if (!Array.isArray(res.quizPreview) && Array.isArray(res.quiz)) {
+        res.quizPreview = res.quiz;
+    }
+
+    section.resources = res;
+    section.Chapters.forEach(ensureChapterSchema);
+}
+
+function ensureChapterSchema(chapter) {
+    if (!chapter) return;
+    chapter.title = toLangArray(chapter.title);
+    chapter.brief = toLangArray(chapter.brief || chapter.summary || '');
+    if (!Array.isArray(chapter.content)) {
+        chapter.content = [{ type: 'paragraph', data: toLangArray('') }];
+    }
+    if (!chapter.resources) chapter.resources = {};
+    const res = chapter.resources;
+    res.pdfs = Array.isArray(res.pdfs) ? res.pdfs.map(ensureResourceItem) : [];
+    res.videos = Array.isArray(res.videos) ? res.videos.map(ensureResourceItem) : [];
+    if (typeof res.quizScript !== 'string') {
+        if (Array.isArray(res.quiz)) {
+            try {
+                res.quizScript = JSON.stringify(res.quiz, null, 2);
+            } catch (e) {
+                res.quizScript = '';
+            }
+        } else {
+            res.quizScript = res.quizScript || '';
+        }
+    }
+    if (!Array.isArray(res.quizPreview) && Array.isArray(res.quiz)) {
+        res.quizPreview = res.quiz;
+    }
+    chapter.resources = res;
+}
+
+function ensureBookSchema(book) {
+    if (!book) return;
+    book.name = toLangArray(book.name || '');
+    book.bio = toLangArray(book.bio || '');
+    book.icon = book.icon || '📘';
+    book.color = book.color || '#2563eb';
+    if (!book.cover) book.cover = book.cover || '';
+    if (!book.subjectId) {
+        const arName = getFromLangArray(book.name, 'ar') || '';
+        const enName = getFromLangArray(book.name, 'en') || arName;
+        const generated = slugify(book.alias || enName || arName || 'subject');
+        book.subjectId = generated || generateUniqueID();
+    }
+    if (!Array.isArray(book.sections)) book.sections = [];
+    ensureUniqueIDs(book);
+    book.sections.forEach(ensureSectionSchema);
+}
 
 
 function normalizeLangArray(v){if(Array.isArray(v))return v;if(typeof v==='string')return[{ar:v}];if(v&&typeof v==='object'){const a=[];Object.keys(v).forEach(k=>a.push({[k]:v[k]}));return a;}return[{ar:''}];}
@@ -2294,10 +2608,11 @@ function initializeJsonFromTxt() {
         }
 
         function renderApp() {
+            if (bookData) ensureBookSchema(bookData);
             renderTreeView();
             if (activePath.section !== null && activePath.chapter !== null) {
                 renderContent();
-				ensureChapterAIBar();
+                                ensureChapterAIBar();
 
             } else {
                 switchView('viewer');
@@ -2845,19 +3160,23 @@ function editBookInfo() {
         alert("الرجاء تحميل كتاب أولاً.");
         return;
     }
-    
+
     // جلب البيانات متعددة اللغات للاسم
     document.getElementById('book-title-input-ar').value = getLocalizedBookName(bookData, 'ar') || '';
     document.getElementById('book-title-input-en').value = getLocalizedBookName(bookData, 'en') || '';
-    
+
     // جلب البيانات متعددة اللغات للمقدمة
     // نستخدم getFromLangArray لأن bio أصبح الآن بنية بيانات
     document.getElementById('book-bio-input-ar').value = getFromLangArray(bookData.bio, 'ar') || '';
     document.getElementById('book-bio-input-en').value = getFromLangArray(bookData.bio, 'en') || '';
-    
+
     // جلب الاسم المستعار
     document.getElementById('book-alias-input').value = bookData.alias || '';
-    
+    document.getElementById('book-id-input').value = bookData.subjectId || bookData.alias || '';
+    document.getElementById('book-icon-input').value = bookData.icon || '📘';
+    document.getElementById('book-color-input').value = bookData.color || '#2563eb';
+    document.getElementById('book-cover-input').value = bookData.cover || '';
+
     updateBioPreview(); // لتحديث المعاينة (ستعرض النسخة العربية)
     document.getElementById('book-info-modal').classList.remove('hidden');
 }
@@ -2865,7 +3184,7 @@ function editBookInfo() {
 // ⬇️ استبدل الدالة بالكامل
 function saveBookInfo() {
     if (!bookData) return;
-    
+
     // جلب البيانات من الحقول الجديدة
     const newTitleAr = document.getElementById('book-title-input-ar').value.trim();
     const newTitleEn = document.getElementById('book-title-input-en').value.trim();
@@ -2873,6 +3192,10 @@ function saveBookInfo() {
     const newBioEn = document.getElementById('book-bio-input-en').value;
     // تنظيف الاسم المستعار (استبدال المسافات بـ -)
     const newAlias = document.getElementById('book-alias-input').value.trim().replace(/\s+/g, '-');
+    const newSubjectId = document.getElementById('book-id-input').value.trim();
+    const newIcon = document.getElementById('book-icon-input').value.trim() || '📘';
+    const newColor = document.getElementById('book-color-input').value || '#2563eb';
+    const newCover = document.getElementById('book-cover-input').value.trim();
 
     // استخدام setInLangArray لتحديث كائن الاسم
     bookData.name = setInLangArray(bookData.name, 'ar', newTitleAr);
@@ -2881,9 +3204,14 @@ function saveBookInfo() {
     // استخدام setInLangArray لتحديث كائن المقدمة
     bookData.bio = setInLangArray(bookData.bio, 'ar', newBioAr);
     bookData.bio = setInLangArray(bookData.bio, 'en', newBioEn);
-    
+
     // حفظ الاسم المستعار
     bookData.alias = newAlias;
+    bookData.subjectId = slugify(newSubjectId || newAlias || newTitleEn || newTitleAr || 'subject');
+    bookData.icon = newIcon;
+    bookData.color = newColor;
+    bookData.cover = newCover;
+    ensureBookSchema(bookData);
 
     document.getElementById('book-info-modal').classList.add('hidden');
     renderApp(); // لإعادة عرض الشجرة بالاسم الجديد
@@ -3371,7 +3699,8 @@ function printCurrentChapter() {
 
             } else if (type === 'section') {
                 items.push({ label: 'إضافة فصل جديد', action: () => addChapter(parseInt(sectionIndex)) });
-                items.push({ label: 'حذف القسم', action: () => deleteSection(parseInt(sectionIndex)) });
+                                items.push({ label: 'حذف القسم', action: () => deleteSection(parseInt(sectionIndex)) });
+                items.push({ label: 'خصائص الوحدة', action: () => openSectionResources(parseInt(sectionIndex)) });
                 items.push({ label: '───────────', action: null, separator: true });
                 items.push({ label: 'تصدير القسم كـ JSON', action: () => exportSectionAsJSON(parseInt(sectionIndex)) });
                 items.push({ label: 'تصدير القسم كـ TXT', action: () => exportSectionAsTXT(parseInt(sectionIndex)) });
@@ -3380,6 +3709,7 @@ function printCurrentChapter() {
             } else if (type === 'chapter') {
                 items.push({ label: 'نقل الفصل إلى قسم آخر', action: () => showMoveChapterDialog(parseInt(sectionIndex), parseInt(chapterIndex)) });
                 items.push({ label: 'حذف الفصل', action: () => deleteChapter(parseInt(sectionIndex), parseInt(chapterIndex)) });
+                items.push({ label: 'خصائص الدرس', action: () => openChapterResources(parseInt(sectionIndex), parseInt(chapterIndex)) });
             }
             
             items.forEach(item => {
@@ -4673,22 +5003,31 @@ function clearAllBooksFromIndexedDB(cb){
 
             function saveBookToIndexedDB() {
             if (!db || !bookData) return;
-            
+
+            ensureBookSchema(bookData);
+
             const transaction = db.transaction(['books'], 'readwrite');
             const store = transaction.objectStore('books');
-            
+
             const bookToSave = {
+                id: currentBookId || (lastSavedBook && lastSavedBook.id) || undefined,
                 name: bookData.name || 'كتاب بدون عنوان',
                 sections: bookData.sections || [],
                 bio: bookData.bio || '',
+                alias: bookData.alias || '',
+                icon: bookData.icon || '📘',
+                color: bookData.color || '#2563eb',
+                subjectId: bookData.subjectId || slugify(getLocalizedBookName(bookData, 'en') || getLocalizedBookName(bookData, 'ar') || ''),
+                cover: bookData.cover || '',
                 lastModified: new Date().toISOString()
             };
-            
-            if (lastSavedBook && lastSavedBook.id) {
-                bookToSave.id = lastSavedBook.id;
+
+            if (bookToSave.id) {
                 const request = store.put(bookToSave);
                 request.onsuccess = () => {
-                    lastSavedBook = bookToSave;
+                    currentBookId = bookToSave.id;
+                    lastSavedBook = { ...bookToSave };
+                    populateBookSwitcher(currentBookId);
                 };
                 request.onerror = (e) => {
                     console.error('خطأ في تحديث الكتاب:', e);
@@ -4696,7 +5035,10 @@ function clearAllBooksFromIndexedDB(cb){
             } else {
                 const request = store.add(bookToSave);
                 request.onsuccess = () => {
-                    lastSavedBook = { ...bookToSave, id: request.result };
+                    const newId = request.result;
+                    currentBookId = newId;
+                    lastSavedBook = { ...bookToSave, id: newId };
+                    populateBookSwitcher(currentBookId);
                 };
                 request.onerror = (e) => {
                     console.error('خطأ في حفظ الكتاب:', e);
@@ -4705,31 +5047,998 @@ function clearAllBooksFromIndexedDB(cb){
         }
         function loadLastBookFromIndexedDB() {
             if (!db) return;
-            
+
             const transaction = db.transaction(['books'], 'readonly');
             const store = transaction.objectStore('books');
             const index = store.index('lastModified');
-            
+
             const request = index.openCursor(null, 'prev');
             request.onsuccess = (event) => {
                 const cursor = event.target.result;
                 if (cursor) {
                     const savedBook = cursor.value;
-                    bookData = {
-                        name: savedBook.name,
-                        sections: savedBook.sections || [],
-                        bio: savedBook.bio || ''
-                    };
-                    lastSavedBook = savedBook;
-					ensureUniqueIDs(bookData);
+                    currentBookId = savedBook.id;
+                    bookData = { ...savedBook };
+                    ensureBookSchema(bookData);
+                    lastSavedBook = { ...savedBook };
                     normalizeAuditDefaults(bookData);
+                    populateBookSwitcher(currentBookId);
                     renderApp();
+                } else {
+                    currentBookId = null;
+                    bookData = {
+                        name: [{ ar: 'كتاب جديد' }],
+                        sections: [],
+                        bio: [{ ar: '' }],
+                        icon: '📘',
+                        color: '#2563eb'
+                    };
+                    ensureBookSchema(bookData);
+                    renderApp();
+                    populateBookSwitcher(currentBookId);
                 }
             };
-            request.onerror = (e) => {
-                console.error('خطأ في تحميل الكتاب:', e);
+        }
+
+        function loadBookById(bookId) {
+            if (!db || bookId == null) return;
+            const transaction = db.transaction(['books'], 'readonly');
+            const store = transaction.objectStore('books');
+            const request = store.get(Number(bookId));
+            request.onsuccess = (event) => {
+                const savedBook = event.target.result;
+                if (savedBook) {
+                    currentBookId = savedBook.id;
+                    bookData = { ...savedBook };
+                    ensureBookSchema(bookData);
+                    lastSavedBook = { ...savedBook };
+                    normalizeAuditDefaults(bookData);
+                    renderApp();
+                    populateBookSwitcher(currentBookId);
+                }
             };
         }
+
+        function populateBookSwitcher(selectedId) {
+            const switcher = document.getElementById('book-switcher');
+            if (!switcher) return;
+            if (!db) {
+                switcher.innerHTML = '<option value="">لا يوجد اتصال بقاعدة البيانات</option>';
+                switcher.disabled = true;
+                return;
+            }
+
+            const transaction = db.transaction(['books'], 'readonly');
+            const store = transaction.objectStore('books');
+            const request = store.getAll();
+            request.onsuccess = (event) => {
+                const books = event.target.result || [];
+                bookLibrary = books;
+                switcher.innerHTML = '';
+                if (books.length === 0) {
+                    const option = document.createElement('option');
+                    option.value = '';
+                    option.textContent = 'لا توجد كتب محفوظة';
+                    switcher.appendChild(option);
+                    switcher.disabled = true;
+                    return;
+                }
+
+                switcher.disabled = false;
+                books.forEach(book => {
+                    const option = document.createElement('option');
+                    option.value = book.id;
+                    option.textContent = getFromLangArray(book.name, currentLanguage) || getFromLangArray(book.name, 'ar') || `كتاب ${book.id}`;
+                    if (book.id === selectedId) option.selected = true;
+                    switcher.appendChild(option);
+                });
+
+                if (selectedId == null && currentBookId != null) {
+                    switcher.value = currentBookId;
+                }
+                populateBookLibraryList();
+            };
+        }
+
+        function toggleBookLibrary(show = true) {
+            const modal = document.getElementById('book-library-modal');
+            if (!modal) return;
+            if (!show) {
+                modal.classList.add('hidden');
+                return;
+            }
+            populateBookLibraryList();
+            modal.classList.remove('hidden');
+        }
+
+        function populateBookLibraryList() {
+            const list = document.getElementById('book-library-list');
+            if (!list) return;
+            list.innerHTML = '';
+            if (!bookLibrary || bookLibrary.length === 0) {
+                list.innerHTML = '<p class="text-sm text-gray-300">لا توجد كتب محفوظة حالياً.</p>';
+                return;
+            }
+
+            bookLibrary
+                .slice()
+                .sort((a, b) => new Date(b.lastModified || 0) - new Date(a.lastModified || 0))
+                .forEach(book => {
+                    const item = document.createElement('div');
+                    item.className = 'p-3 bg-gray-700 rounded-lg flex flex-col md:flex-row md:items-center md:justify-between gap-3';
+
+                    const info = document.createElement('div');
+                    info.className = 'text-sm text-gray-200';
+                    const title = getFromLangArray(book.name, currentLanguage || 'ar') || `كتاب ${book.id}`;
+                    const subjectKey = book.subjectId || book.alias || '';
+                    info.innerHTML = `<div class="font-semibold">${title}</div><div class="text-xs text-gray-400">${subjectKey}</div>`;
+
+                    const actions = document.createElement('div');
+                    actions.className = 'flex flex-wrap gap-2';
+
+                    const loadBtn = document.createElement('button');
+                    loadBtn.className = 'btn btn-secondary text-sm';
+                    loadBtn.textContent = 'تحميل';
+                    loadBtn.onclick = () => {
+                        toggleBookLibrary(false);
+                        loadBookById(book.id);
+                    };
+
+                    const exportBtn = document.createElement('button');
+                    exportBtn.className = 'btn btn-info text-sm';
+                    exportBtn.textContent = 'تصدير فقط';
+                    exportBtn.onclick = () => {
+                        const subjectData = {};
+                        const clone = JSON.parse(JSON.stringify(book));
+                        ensureBookSchema(clone);
+                        const subjectId = clone.subjectId || slugify(getFromLangArray(clone.name, 'en') || getFromLangArray(clone.name, 'ar') || `subject-${clone.id || generateUniqueID()}`);
+                        subjectData[subjectId || generateUniqueID()] = convertBookToSubject(clone);
+                        const content = 'const SUBJECT_DATA = ' + JSON.stringify(subjectData, null, 4) + ';';
+                        downloadBundle(content, `${subjectId || 'subject'}.js`);
+                    };
+
+                    actions.appendChild(loadBtn);
+                    actions.appendChild(exportBtn);
+
+                    item.appendChild(info);
+                    item.appendChild(actions);
+                    list.appendChild(item);
+                });
+        }
+
+        function createEmptyBook(overrides = {}) {
+            const baseTitle = overrides.titleAr || 'كتاب جديد';
+            const subjectId = overrides.subjectId || slugify(overrides.alias || baseTitle);
+            return {
+                name: setInLangArray([], 'ar', baseTitle),
+                sections: [],
+                bio: setInLangArray([], 'ar', overrides.bioAr || ''),
+                alias: overrides.alias || subjectId,
+                icon: overrides.icon || '📘',
+                color: overrides.color || '#2563eb',
+                subjectId: subjectId || generateUniqueID(),
+                cover: overrides.cover || '',
+                lastModified: new Date().toISOString()
+            };
+        }
+
+        function promptCreateNewBook() {
+            if (!db) return;
+            const titleAr = prompt('أدخل عنوان الكتاب (العربية):', 'كتاب جديد');
+            if (titleAr === null) return;
+            const titleEn = prompt('Enter book title (English):', titleAr || 'New Book');
+            if (titleEn === null) return;
+            const subjectId = prompt('المعرف الفريد للمادة (بدون مسافات):', slugify(titleEn || titleAr || 'subject'));
+            if (subjectId === null) return;
+
+            bookData = createEmptyBook({ titleAr, alias: subjectId, subjectId });
+            bookData.name = setInLangArray(bookData.name, 'en', titleEn || titleAr || 'New Book');
+            ensureBookSchema(bookData);
+            currentBookId = null;
+            lastSavedBook = null;
+            renderApp();
+            saveBookToIndexedDB();
+        }
+
+        function cloneCurrentBook() {
+            if (!db || !bookData) return;
+            const alias = prompt('أدخل معرفاً جديداً للنسخة المستنسخة:', `${bookData.subjectId || bookData.alias || 'book'}-copy`);
+            if (alias === null || alias.trim() === '') return;
+            const cloned = JSON.parse(JSON.stringify(bookData));
+            cloned.alias = alias.trim();
+            cloned.subjectId = slugify(alias.trim());
+            cloned.lastModified = new Date().toISOString();
+            delete cloned.id;
+            ensureBookSchema(cloned);
+
+            const transaction = db.transaction(['books'], 'readwrite');
+            const store = transaction.objectStore('books');
+            const request = store.add(cloned);
+            request.onsuccess = () => {
+                currentBookId = request.result;
+                lastSavedBook = { ...cloned, id: currentBookId };
+                bookData = { ...cloned, id: currentBookId };
+                renderApp();
+                populateBookSwitcher(currentBookId);
+            };
+        }
+
+        function renameCurrentBook() {
+            if (!bookData) return;
+            const newTitleAr = prompt('عنوان الكتاب (العربية):', getLocalizedBookName(bookData, 'ar') || '');
+            if (newTitleAr === null) return;
+            const newTitleEn = prompt('Book title (English):', getLocalizedBookName(bookData, 'en') || newTitleAr);
+            if (newTitleEn === null) return;
+            const newSubjectId = prompt('المعرف (Subject ID):', bookData.subjectId || bookData.alias || slugify(newTitleEn || newTitleAr));
+            if (newSubjectId === null) return;
+
+            bookData.name = setInLangArray(bookData.name, 'ar', newTitleAr.trim());
+            bookData.name = setInLangArray(bookData.name, 'en', newTitleEn.trim());
+            bookData.subjectId = slugify(newSubjectId.trim()) || bookData.subjectId;
+            bookData.alias = bookData.subjectId;
+            ensureBookSchema(bookData);
+            renderApp();
+            saveBookToIndexedDB();
+        }
+
+        function deleteCurrentBook() {
+            if (!db || currentBookId == null) {
+                alert('لا يوجد كتاب محدد للحذف.');
+                return;
+            }
+            if (!confirm('هل أنت متأكد من حذف هذا الكتاب نهائياً؟')) return;
+
+            const transaction = db.transaction(['books'], 'readwrite');
+            const store = transaction.objectStore('books');
+            const request = store.delete(currentBookId);
+            request.onsuccess = () => {
+                currentBookId = null;
+                lastSavedBook = null;
+                loadLastBookFromIndexedDB();
+            };
+        }
+
+        function toggleSectionResources(show) {
+            const modal = document.getElementById('section-resources-modal');
+            if (!modal) return;
+            if (!show) {
+                modal.classList.add('hidden');
+                return;
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function toggleChapterResources(show) {
+            const modal = document.getElementById('chapter-resources-modal');
+            if (!modal) return;
+            if (!show) {
+                modal.classList.add('hidden');
+                return;
+            }
+            modal.classList.remove('hidden');
+        }
+        function evaluateQuizScript(script, fallback = []) {
+            if (script && script.trim()) {
+                try {
+                    const fn = new Function(`return (${script})`);
+                    const result = fn();
+                    if (Array.isArray(result)) {
+                        return result;
+                    }
+                    throw new Error('النتيجة ليست مصفوفة');
+                } catch (error) {
+                    console.warn('خطأ في تفسير كود الاختبار:', error);
+                    if (Array.isArray(fallback)) return fallback;
+                    throw error;
+                }
+            }
+            return Array.isArray(fallback) ? fallback : [];
+        }
+        function openSectionResources(sectionIndex) {
+            if (!bookData || !bookData.sections || !bookData.sections[sectionIndex]) return;
+            activeSectionResourcesIndex = sectionIndex;
+            const section = bookData.sections[sectionIndex];
+            ensureSectionSchema(section);
+
+            const titleEl = document.getElementById('section-resources-title');
+            if (titleEl) {
+                titleEl.textContent = `موارد الوحدة: ${getLocalizedSectionName(section, currentLanguage || 'ar') || ''}`;
+            }
+            const langLabel = document.getElementById('section-brief-lang');
+            if (langLabel) langLabel.textContent = (currentLanguage || 'ar').toUpperCase();
+
+            const briefInput = document.getElementById('section-brief-input');
+            if (briefInput) {
+                briefInput.value = getFromLangArray(section.brief, currentLanguage || 'ar') || '';
+                briefInput.oninput = (e) => {
+                    section.brief = setInLangArray(section.brief, currentLanguage || 'ar', e.target.value);
+                    saveBookToIndexedDB();
+                };
+            }
+
+            const quizInput = document.getElementById('section-quiz-input');
+            if (quizInput) {
+                quizInput.value = section.resources.quizScript || '';
+                quizInput.oninput = (e) => {
+                    section.resources.quizScript = e.target.value;
+                    saveBookToIndexedDB();
+                };
+            }
+            const statusEl = document.getElementById('section-quiz-status');
+            if (statusEl) statusEl.textContent = '';
+
+            renderSectionResourcesUI();
+            toggleSectionResources(true);
+        }
+
+        function renderSectionResourcesUI() {
+            if (activeSectionResourcesIndex == null || !bookData) return;
+            const section = bookData.sections[activeSectionResourcesIndex];
+            if (!section) return;
+            ensureSectionSchema(section);
+
+            const pdfContainer = document.getElementById('section-pdfs-list');
+            const videoContainer = document.getElementById('section-videos-list');
+
+            const buildRow = (item, index, type, container, removeCallback) => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'bg-gray-700 p-3 rounded-lg space-y-2 md:space-y-0 md:flex md:items-center md:gap-3';
+
+                const titleInput = document.createElement('input');
+                titleInput.type = 'text';
+                titleInput.className = 'flex-1 p-2 rounded bg-gray-800 border border-gray-600 text-white';
+                titleInput.placeholder = type === 'pdf' ? 'عنوان الملف' : 'عنوان الفيديو';
+                titleInput.value = getFromLangArray(item.title, currentLanguage || 'ar') || '';
+                titleInput.oninput = (e) => {
+                    item.title = setInLangArray(item.title, currentLanguage || 'ar', e.target.value);
+                    saveBookToIndexedDB();
+                };
+
+                const urlInput = document.createElement('input');
+                urlInput.type = 'text';
+                urlInput.className = 'flex-1 p-2 rounded bg-gray-800 border border-gray-600 text-white';
+                urlInput.placeholder = 'https://...';
+                urlInput.value = item.url || '';
+                urlInput.oninput = (e) => {
+                    item.url = e.target.value.trim();
+                    saveBookToIndexedDB();
+                };
+
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'btn btn-danger text-sm';
+                removeBtn.textContent = 'حذف';
+                removeBtn.onclick = () => {
+                    removeCallback(index);
+                    saveBookToIndexedDB();
+                };
+
+                wrapper.appendChild(titleInput);
+                wrapper.appendChild(urlInput);
+                wrapper.appendChild(removeBtn);
+                container.appendChild(wrapper);
+            };
+
+            if (pdfContainer) {
+                pdfContainer.innerHTML = '';
+                if (!section.resources.pdfs.length) {
+                    const empty = document.createElement('p');
+                    empty.className = 'text-sm text-gray-400';
+                    empty.textContent = 'لا توجد ملفات PDF.';
+                    pdfContainer.appendChild(empty);
+                } else {
+                    section.resources.pdfs.forEach((pdf, index) => {
+                        buildRow(pdf, index, 'pdf', pdfContainer, (idx) => {
+                            section.resources.pdfs.splice(idx, 1);
+                            renderSectionResourcesUI();
+                        });
+                    });
+                }
+            }
+
+            if (videoContainer) {
+                videoContainer.innerHTML = '';
+                if (!section.resources.videos.length) {
+                    const empty = document.createElement('p');
+                    empty.className = 'text-sm text-gray-400';
+                    empty.textContent = 'لا توجد فيديوهات.';
+                    videoContainer.appendChild(empty);
+                } else {
+                    section.resources.videos.forEach((video, index) => {
+                        buildRow(video, index, 'video', videoContainer, (idx) => {
+                            section.resources.videos.splice(idx, 1);
+                            renderSectionResourcesUI();
+                        });
+                    });
+                }
+            }
+        }
+
+        function addSectionResource(type) {
+            if (activeSectionResourcesIndex == null || !bookData) return;
+            const section = bookData.sections[activeSectionResourcesIndex];
+            if (!section) return;
+            ensureSectionSchema(section);
+            const target = type === 'pdf' ? section.resources.pdfs : section.resources.videos;
+            target.push(ensureResourceItem({ title: setInLangArray([], currentLanguage || 'ar', ''), url: '' }));
+            renderSectionResourcesUI();
+            saveBookToIndexedDB();
+        }
+
+        function testSectionQuizScript() {
+            if (activeSectionResourcesIndex == null || !bookData) return;
+            const section = bookData.sections[activeSectionResourcesIndex];
+            if (!section) return;
+            const input = document.getElementById('section-quiz-input');
+            const status = document.getElementById('section-quiz-status');
+            if (!input || !status) return;
+            try {
+                const result = evaluateQuizScript(input.value, section.resources.quizPreview);
+                status.textContent = `✅ تم تحليل ${result.length} سؤالاً`;
+                status.className = 'text-green-400 text-sm';
+            } catch (error) {
+                status.textContent = `❌ ${error.message}`;
+                status.className = 'text-red-400 text-sm';
+            }
+        }
+        function openChapterResources(sectionIndex, chapterIndex) {
+            if (!bookData || !bookData.sections || !bookData.sections[sectionIndex]) return;
+            const section = bookData.sections[sectionIndex];
+            if (!section.Chapters || !section.Chapters[chapterIndex]) return;
+            activeChapterResourcesPath = { section: sectionIndex, chapter: chapterIndex };
+            const chapter = section.Chapters[chapterIndex];
+            ensureChapterSchema(chapter);
+
+            const titleEl = document.getElementById('chapter-resources-title');
+            if (titleEl) {
+                titleEl.textContent = `موارد الدرس: ${getLocalizedTitle(chapter, currentLanguage || 'ar') || ''}`;
+            }
+            const langLabel = document.getElementById('chapter-brief-lang');
+            if (langLabel) langLabel.textContent = (currentLanguage || 'ar').toUpperCase();
+
+            const briefInput = document.getElementById('chapter-brief-input');
+            if (briefInput) {
+                briefInput.value = getFromLangArray(chapter.brief, currentLanguage || 'ar') || '';
+                briefInput.oninput = (e) => {
+                    chapter.brief = setInLangArray(chapter.brief, currentLanguage || 'ar', e.target.value);
+                    saveBookToIndexedDB();
+                };
+            }
+
+            const quizInput = document.getElementById('chapter-quiz-input');
+            if (quizInput) {
+                quizInput.value = chapter.resources.quizScript || '';
+                quizInput.oninput = (e) => {
+                    chapter.resources.quizScript = e.target.value;
+                    saveBookToIndexedDB();
+                };
+            }
+            const statusEl = document.getElementById('chapter-quiz-status');
+            if (statusEl) statusEl.textContent = '';
+
+            renderChapterResourcesUI();
+            toggleChapterResources(true);
+        }
+
+        function openActiveChapterResources() {
+            if (activePath.section == null || activePath.chapter == null) {
+                alert('يرجى اختيار فصل أولاً.');
+                return;
+            }
+            openChapterResources(activePath.section, activePath.chapter);
+        }
+
+        function renderChapterResourcesUI() {
+            if (!bookData) return;
+            const { section, chapter } = activeChapterResourcesPath || {};
+            if (section == null || chapter == null) return;
+            const sec = bookData.sections[section];
+            if (!sec || !sec.Chapters || !sec.Chapters[chapter]) return;
+            const ch = sec.Chapters[chapter];
+            ensureChapterSchema(ch);
+
+            const pdfContainer = document.getElementById('chapter-pdfs-list');
+            const videoContainer = document.getElementById('chapter-videos-list');
+
+            const buildRow = (item, index, type, container, removeCallback) => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'bg-gray-700 p-3 rounded-lg space-y-2 md:space-y-0 md:flex md:items-center md:gap-3';
+
+                const titleInput = document.createElement('input');
+                titleInput.type = 'text';
+                titleInput.className = 'flex-1 p-2 rounded bg-gray-800 border border-gray-600 text-white';
+                titleInput.placeholder = type === 'pdf' ? 'عنوان الملف' : 'عنوان الفيديو';
+                titleInput.value = getFromLangArray(item.title, currentLanguage || 'ar') || '';
+                titleInput.oninput = (e) => {
+                    item.title = setInLangArray(item.title, currentLanguage || 'ar', e.target.value);
+                    saveBookToIndexedDB();
+                };
+
+                const urlInput = document.createElement('input');
+                urlInput.type = 'text';
+                urlInput.className = 'flex-1 p-2 rounded bg-gray-800 border border-gray-600 text-white';
+                urlInput.placeholder = 'https://...';
+                urlInput.value = item.url || '';
+                urlInput.oninput = (e) => {
+                    item.url = e.target.value.trim();
+                    saveBookToIndexedDB();
+                };
+
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'btn btn-danger text-sm';
+                removeBtn.textContent = 'حذف';
+                removeBtn.onclick = () => {
+                    removeCallback(index);
+                    saveBookToIndexedDB();
+                };
+
+                wrapper.appendChild(titleInput);
+                wrapper.appendChild(urlInput);
+                wrapper.appendChild(removeBtn);
+                container.appendChild(wrapper);
+            };
+
+            if (pdfContainer) {
+                pdfContainer.innerHTML = '';
+                if (!ch.resources.pdfs.length) {
+                    const empty = document.createElement('p');
+                    empty.className = 'text-sm text-gray-400';
+                    empty.textContent = 'لا توجد ملفات PDF.';
+                    pdfContainer.appendChild(empty);
+                } else {
+                    ch.resources.pdfs.forEach((pdf, index) => {
+                        buildRow(pdf, index, 'pdf', pdfContainer, (idx) => {
+                            ch.resources.pdfs.splice(idx, 1);
+                            renderChapterResourcesUI();
+                        });
+                    });
+                }
+            }
+
+            if (videoContainer) {
+                videoContainer.innerHTML = '';
+                if (!ch.resources.videos.length) {
+                    const empty = document.createElement('p');
+                    empty.className = 'text-sm text-gray-400';
+                    empty.textContent = 'لا توجد فيديوهات.';
+                    videoContainer.appendChild(empty);
+                } else {
+                    ch.resources.videos.forEach((video, index) => {
+                        buildRow(video, index, 'video', videoContainer, (idx) => {
+                            ch.resources.videos.splice(idx, 1);
+                            renderChapterResourcesUI();
+                        });
+                    });
+                }
+            }
+        }
+
+        function addChapterResource(type) {
+            const { section, chapter } = activeChapterResourcesPath || {};
+            if (section == null || chapter == null || !bookData) return;
+            const sec = bookData.sections[section];
+            if (!sec || !sec.Chapters || !sec.Chapters[chapter]) return;
+            const ch = sec.Chapters[chapter];
+            ensureChapterSchema(ch);
+            const target = type === 'pdf' ? ch.resources.pdfs : ch.resources.videos;
+            target.push(ensureResourceItem({ title: setInLangArray([], currentLanguage || 'ar', ''), url: '' }));
+            renderChapterResourcesUI();
+            saveBookToIndexedDB();
+        }
+
+        function testChapterQuizScript() {
+            const { section, chapter } = activeChapterResourcesPath || {};
+            if (section == null || chapter == null || !bookData) return;
+            const sec = bookData.sections[section];
+            if (!sec || !sec.Chapters || !sec.Chapters[chapter]) return;
+            const ch = sec.Chapters[chapter];
+            const input = document.getElementById('chapter-quiz-input');
+            const status = document.getElementById('chapter-quiz-status');
+            if (!input || !status) return;
+            try {
+                const result = evaluateQuizScript(input.value, ch.resources.quizPreview);
+                status.textContent = `✅ تم تحليل ${result.length} سؤالاً`;
+                status.className = 'text-green-400 text-sm';
+            } catch (error) {
+                status.textContent = `❌ ${error.message}`;
+                status.className = 'text-red-400 text-sm';
+            }
+        }
+
+        function extractTheoryContent(chapter) {
+            if (!chapter || !Array.isArray(chapter.content) || !chapter.content.length) return {};
+            const block = chapter.content[0];
+            if (!block) return {};
+            const data = block.data;
+            if (typeof data === 'string') {
+                return { ar: data };
+            }
+            if (Array.isArray(data)) {
+                return langArrayToObject(data);
+            }
+            return {};
+        }
+
+        function convertResourcesForExport(resources) {
+            if (!resources) return {};
+            const output = {};
+            if (Array.isArray(resources.pdfs) && resources.pdfs.length) {
+                const pdfs = resources.pdfs
+                    .filter(item => item && item.url)
+                    .map(item => ({
+                        id: item.id,
+                        name: langArrayToObject(item.title || []),
+                        url: item.url
+                    }));
+                if (pdfs.length) output.pdfs = pdfs;
+            }
+            if (Array.isArray(resources.videos) && resources.videos.length) {
+                const videos = resources.videos
+                    .filter(item => item && item.url)
+                    .map(item => ({
+                        id: item.id,
+                        title: langArrayToObject(item.title || []),
+                        url: item.url
+                    }));
+                if (videos.length) output.videos = videos;
+            }
+            const quiz = evaluateQuizScript(resources.quizScript || '', resources.quizPreview || resources.quiz || []);
+            if (quiz.length) output.quiz = quiz;
+            if (resources.quizScript && resources.quizScript.trim()) {
+                output.quizScript = resources.quizScript.trim();
+            }
+            return output;
+        }
+
+        function convertBookToSubject(book) {
+            ensureBookSchema(book);
+            const subject = {
+                icon: book.icon || '📘',
+                color: book.color || '#2563eb',
+                title: langArrayToObject(book.name),
+                description: langArrayToObject(book.bio),
+                blocks: []
+            };
+            if (book.cover) subject.cover = book.cover;
+
+            const sections = (book.sections || []).slice().sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0));
+            sections.forEach((section, index) => {
+                ensureSectionSchema(section);
+                const block = {
+                    id: section.id || index + 1,
+                    title: langArrayToObject(section.section_name),
+                    brief: langArrayToObject(section.brief),
+                    lessons: []
+                };
+                const sectionResources = convertResourcesForExport(section.resources);
+                if (Object.keys(sectionResources).length) {
+                    block.block_resources = sectionResources;
+                }
+
+                (section.Chapters || []).forEach((chapter, chapterIndex) => {
+                    ensureChapterSchema(chapter);
+                    const lessonResources = convertResourcesForExport(chapter.resources);
+                    const lesson = {
+                        id: chapter.id || `${block.id}-${chapterIndex + 1}`,
+                        title: langArrayToObject(chapter.title),
+                        brief: langArrayToObject(chapter.brief),
+                        content: {
+                            theory: extractTheoryContent(chapter),
+                            exercises: Array.isArray(chapter.exercises) ? chapter.exercises : (chapter.content && chapter.content.exercises) || []
+                        }
+                    };
+                    if (Object.keys(lessonResources).length) {
+                        lesson.resources = lessonResources;
+                    }
+                    block.lessons.push(lesson);
+                });
+
+                subject.blocks.push(block);
+            });
+
+            return subject;
+        }
+
+        function convertSubjectResourcesToBook(resources) {
+            if (!resources || typeof resources !== 'object') return {};
+
+            const pdfSource = resources.pdfs ?? resources.pdf;
+            const videosSource = resources.videos ?? resources.video;
+            const output = {};
+
+            if (Array.isArray(pdfSource)) {
+                const pdfs = pdfSource
+                    .map((item, index) => {
+                        if (!item) return null;
+                        if (typeof item === 'string') {
+                            return ensureResourceItem({
+                                id: `pdf-${index + 1}`,
+                                name: { en: `PDF ${index + 1}`, ar: `ملف ${index + 1}` },
+                                url: item
+                            });
+                        }
+                        return ensureResourceItem({
+                            id: item.id || `pdf-${index + 1}`,
+                            name: item.name || item.title || {},
+                            url: item.url || item.link || ''
+                        });
+                    })
+                    .filter(item => item && item.url);
+                if (pdfs.length) output.pdfs = pdfs;
+            } else if (pdfSource && typeof pdfSource === 'object') {
+                const pdfs = Object.entries(pdfSource)
+                    .map(([key, value]) => {
+                        if (!value) return null;
+                        if (typeof value === 'string') {
+                            return ensureResourceItem({
+                                id: key,
+                                name: { en: key.toUpperCase(), ar: key.toUpperCase() },
+                                url: value
+                            });
+                        }
+                        return ensureResourceItem({
+                            id: value.id || key,
+                            name: value.name || value.title || { en: key.toUpperCase(), ar: key.toUpperCase() },
+                            url: value.url || value.link || ''
+                        });
+                    })
+                    .filter(item => item && item.url);
+                if (pdfs.length) output.pdfs = pdfs;
+            } else if (typeof pdfSource === 'string' && pdfSource.trim()) {
+                output.pdfs = [ensureResourceItem({
+                    id: 'pdf-1',
+                    name: { en: 'PDF', ar: 'ملف PDF' },
+                    url: pdfSource
+                })];
+            }
+
+            if (Array.isArray(videosSource)) {
+                const videos = videosSource
+                    .map((item, index) => {
+                        if (!item) return null;
+                        if (typeof item === 'string') {
+                            return ensureResourceItem({
+                                id: `video-${index + 1}`,
+                                title: { en: `Video ${index + 1}`, ar: `فيديو ${index + 1}` },
+                                url: item
+                            });
+                        }
+                        return ensureResourceItem({
+                            id: item.id || `video-${index + 1}`,
+                            title: item.title || item.name || {},
+                            url: item.url || item.link || ''
+                        });
+                    })
+                    .filter(item => item && item.url);
+                if (videos.length) output.videos = videos;
+            } else if (videosSource && typeof videosSource === 'object' && !Array.isArray(videosSource)) {
+                const item = videosSource;
+                const normalized = ensureResourceItem({
+                    id: item.id || 'video-1',
+                    title: item.title || item.name || { en: 'Video', ar: 'فيديو' },
+                    url: item.url || item.link || ''
+                });
+                if (normalized.url) output.videos = [normalized];
+            } else if (typeof videosSource === 'string' && videosSource.trim()) {
+                output.videos = [ensureResourceItem({
+                    id: 'video-1',
+                    title: { en: 'Video', ar: 'فيديو' },
+                    url: videosSource
+                })];
+            }
+
+            const quizArray = Array.isArray(resources.quiz)
+                ? resources.quiz
+                : Array.isArray(resources.quizPreview)
+                    ? resources.quizPreview
+                    : [];
+
+            if (quizArray.length) {
+                output.quiz = quizArray;
+                output.quizScript = JSON.stringify(quizArray, null, 2);
+            } else if (typeof resources.quizScript === 'string' && resources.quizScript.trim()) {
+                output.quizScript = resources.quizScript.trim();
+            }
+
+            return output;
+        }
+
+        function convertSubjectToBook(subjectId, subject, index = 0) {
+            const normalizedSubject = subject || {};
+            const title = normalizedSubject.title || {};
+            const fallback = title.en || title.ar || subjectId || 'subject';
+            const normalizedId = normalizedSubject.subjectId || subjectId || slugify(fallback);
+            const book = {
+                name: toLangArray(title),
+                bio: toLangArray(normalizedSubject.description || {}),
+                icon: normalizedSubject.icon || '📘',
+                color: normalizedSubject.color || '#2563eb',
+                alias: normalizedSubject.alias || normalizedId,
+                subjectId: normalizedId || generateUniqueID(),
+                cover: normalizedSubject.cover || '',
+                sections: []
+            };
+
+            const blocks = Array.isArray(normalizedSubject.blocks) ? normalizedSubject.blocks : [];
+            blocks.forEach((block, blockIndex) => {
+                const safeBlock = block || {};
+                const section = {
+                    id: safeBlock.id || blockIndex + 1,
+                    section_name: toLangArray(safeBlock.title || {}),
+                    brief: toLangArray(safeBlock.brief || {}),
+                    sort: blockIndex,
+                    resources: {},
+                    Chapters: []
+                };
+
+                const sectionResources = convertSubjectResourcesToBook(safeBlock.block_resources || safeBlock.resources || {});
+                if (Object.keys(sectionResources).length) {
+                    section.resources = sectionResources;
+                }
+
+                const lessons = Array.isArray(safeBlock.lessons) ? safeBlock.lessons : [];
+                lessons.forEach((lesson, lessonIndex) => {
+                    const safeLesson = lesson || {};
+                    const contentBlock = safeLesson.content || {};
+                    const theoryContent = contentBlock.theory || '';
+                    const exercisesContent = contentBlock.exercises || safeLesson.exercises || [];
+
+                    const chapter = {
+                        id: safeLesson.id || `${section.id}-${lessonIndex + 1}`,
+                        title: toLangArray(safeLesson.title || {}),
+                        brief: toLangArray(safeLesson.brief || {}),
+                        content: [{ type: 'paragraph', data: toLangArray(theoryContent) }],
+                        exercises: Array.isArray(exercisesContent) ? exercisesContent : []
+                    };
+
+                    const lessonResources = convertSubjectResourcesToBook(safeLesson.resources || {});
+                    if (Object.keys(lessonResources).length) {
+                        chapter.resources = lessonResources;
+                    }
+
+                    section.Chapters.push(chapter);
+                });
+
+                book.sections.push(section);
+            });
+
+            ensureBookSchema(book);
+            normalizeAuditDefaults(book);
+            return book;
+        }
+
+        function isSubjectBundlePayload(payload) {
+            if (!payload || typeof payload !== 'object' || Array.isArray(payload)) return false;
+            const values = Object.values(payload);
+            if (!values.length) return false;
+            return values.every(item => item && typeof item === 'object' && Array.isArray(item.blocks));
+        }
+
+        function clearBooksStore() {
+            return new Promise(resolve => {
+                clearAllBooksFromIndexedDB(() => resolve());
+            });
+        }
+
+        function saveImportedBooks(books) {
+            return new Promise((resolve, reject) => {
+                if (!db) {
+                    reject(new Error('قاعدة البيانات غير جاهزة بعد'));
+                    return;
+                }
+                if (!Array.isArray(books) || books.length === 0) {
+                    resolve([]);
+                    return;
+                }
+
+                const tx = db.transaction(['books'], 'readwrite');
+                const store = tx.objectStore('books');
+                const imported = [];
+
+                books.forEach((book, index) => {
+                    ensureBookSchema(book);
+                    const record = {
+                        name: book.name,
+                        sections: book.sections,
+                        bio: book.bio,
+                        alias: book.alias || book.subjectId || '',
+                        icon: book.icon || '📘',
+                        color: book.color || '#2563eb',
+                        subjectId: book.subjectId || slugify(getFromLangArray(book.name, 'en') || getFromLangArray(book.name, 'ar') || `subject-${generateUniqueID()}`),
+                        cover: book.cover || '',
+                        lastModified: new Date().toISOString()
+                    };
+
+                    const request = store.add(record);
+                    request.onsuccess = (event) => {
+                        imported.push({ id: event.target.result, index });
+                    };
+                    request.onerror = (event) => {
+                        console.error('Import book failed', event.target.error);
+                    };
+                });
+
+                tx.oncomplete = () => {
+                    imported.sort((a, b) => a.index - b.index);
+                    resolve(imported);
+                };
+                tx.onerror = () => {
+                    reject(tx.error || new Error('تعذر حفظ الكتب المستوردة'));
+                };
+            });
+        }
+
+        async function importSubjectBundleFromJSON(bundle) {
+            const entries = Object.entries(bundle || {}).filter(([, subject]) => subject && typeof subject === 'object');
+            if (!entries.length) {
+                throw new Error('لا توجد مواد صالحة في الملف.');
+            }
+
+            const books = entries.map(([subjectId, subject], index) => convertSubjectToBook(subjectId, subject, index));
+            await clearBooksStore();
+            const imported = await saveImportedBooks(books);
+            if (imported.length) {
+                const firstId = imported[0].id;
+                loadBookById(firstId);
+            } else {
+                currentBookId = null;
+                bookData = null;
+                renderApp();
+                populateBookSwitcher(null);
+            }
+        }
+
+        async function importSingleBookFromJSON(book) {
+            await clearBooksStore();
+            ensureUniqueIDs(book);
+            normalizeAuditDefaults(book);
+            bookData = book;
+            lastSavedBook = null;
+            activePath = { section: null, chapter: null };
+            migrateOldDataStructure();
+            ensureBookSchema(bookData);
+            renderApp();
+            saveBookToIndexedDB();
+        }
+
+        function downloadBundle(content, filename = 's-data.js') {
+            const blob = new Blob([content], { type: 'application/javascript;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            setTimeout(() => {
+                URL.revokeObjectURL(link.href);
+                link.remove();
+            }, 500);
+        }
+
+        function exportAllBooksBundle() {
+            if (!db) {
+                alert('قاعدة البيانات غير جاهزة بعد.');
+                return;
+            }
+            const transaction = db.transaction(['books'], 'readonly');
+            const store = transaction.objectStore('books');
+            const request = store.getAll();
+            request.onsuccess = (event) => {
+                const books = event.target.result || [];
+                if (!books.length) {
+                    alert('لا توجد كتب محفوظة للتصدير.');
+                    return;
+                }
+                const payload = {};
+                books.forEach(book => {
+                    const clone = JSON.parse(JSON.stringify(book));
+                    ensureBookSchema(clone);
+                    const subjectId = clone.subjectId || slugify(getFromLangArray(clone.name, 'en') || getFromLangArray(clone.name, 'ar') || `subject-${clone.id || generateUniqueID()}`);
+                    payload[subjectId || generateUniqueID()] = convertBookToSubject(clone);
+                });
+                const content = 'const SUBJECT_DATA = ' + JSON.stringify(payload, null, 4) + ';';
+                downloadBundle(content, 's-data.js');
+            };
+        }
+        
 function destroyCurrentBook() {
     if (!confirm('هل أنت متأكد من حذف الكتاب الحالي؟ هذا الإجراء لا يمكن التراجع عنه.')) return;
     if (autoSaveInterval) { clearInterval(autoSaveInterval); autoSaveInterval = null; }
@@ -4892,28 +6201,30 @@ controls.appendChild(trashBtn);
                 }
             });
 document.getElementById('approve-all-btn').addEventListener('click', approveAllChapters);
-            document.getElementById('json-upload').addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if(!file) return;
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-        clearAllBooksFromIndexedDB(() => {
-            try {
-                const data = JSON.parse(ev.target.result);
-                ensureUniqueIDs(data);
-                normalizeAuditDefaults(data);
-                bookData = data;
-                lastSavedBook = null;
-                activePath = { section: null, chapter: null };
-                migrateOldDataStructure();
-                renderApp();
-            } catch (error) {
-                alert('ملف JSON غير صالح');
-            }
-        });
-    };
-    reader.readAsText(file, 'utf-8');
-});
+            document.getElementById('json-upload').addEventListener('change', async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                try {
+                    const text = await file.text();
+                    const raw = JSON.parse(text);
+                    const payload = raw && typeof raw === 'object' && !Array.isArray(raw) && raw.SUBJECT_DATA
+                        ? raw.SUBJECT_DATA
+                        : raw;
+
+                    if (isSubjectBundlePayload(payload)) {
+                        await importSubjectBundleFromJSON(payload);
+                        alert('تم استيراد جميع الكتب بنجاح.');
+                    } else {
+                        await importSingleBookFromJSON(raw);
+                        alert('تم استيراد الكتاب بنجاح.');
+                    }
+                } catch (error) {
+                    console.error('Import failed:', error);
+                    alert('ملف JSON غير صالح');
+                } finally {
+                    e.target.value = '';
+                }
+            });
 
 
             document.getElementById('search-btn').addEventListener('click', openAdvancedSearch);
@@ -5032,10 +6343,32 @@ viewTabBtn.addEventListener('click', () => switchView('viewer'));
             editTabBtn.addEventListener('click', () => switchView('editor'));
             showStatsBtn.addEventListener('click', displayStats);
             exportMapBtn.addEventListener('click', exportChaptersMap);
-            
+
             document.getElementById('edit-book-info-btn').addEventListener('click', editBookInfo);
             document.getElementById('book-bio-input-ar').addEventListener('input', updateBioPreview);
-            
+
+            document.getElementById('new-book-btn')?.addEventListener('click', promptCreateNewBook);
+            document.getElementById('clone-book-btn')?.addEventListener('click', cloneCurrentBook);
+            document.getElementById('rename-book-btn')?.addEventListener('click', renameCurrentBook);
+            document.getElementById('delete-book-btn')?.addEventListener('click', deleteCurrentBook);
+            document.getElementById('export-bundle-btn')?.addEventListener('click', exportAllBooksBundle);
+
+            const switcherEl = document.getElementById('book-switcher');
+            if (switcherEl) {
+                switcherEl.addEventListener('change', (e) => {
+                    const id = parseInt(e.target.value, 10);
+                    if (!isNaN(id)) {
+                        loadBookById(id);
+                    }
+                });
+                switcherEl.addEventListener('dblclick', () => toggleBookLibrary(true));
+            }
+
+            document.getElementById('library-create-btn')?.addEventListener('click', () => {
+                toggleBookLibrary(false);
+                promptCreateNewBook();
+            });
+
             document.getElementById('chapter-section-select').addEventListener('change', saveUserPreferences);
             document.getElementById('chapter-sort-input').addEventListener('input', saveUserPreferences);
             loadUserPreferences();
