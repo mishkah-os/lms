@@ -1259,48 +1259,50 @@
                         <i class="fas fa-moon"></i>
                     </button>
                 </div>
-                <div class="direction-controls" role="group" aria-label="Direction selector">
-                    <button class="direction-btn" data-dir="rtl" onclick="setDirection('rtl', { manual: true })" title="Right to left">
-                        <i class="fas fa-align-right"></i>
-                        <span>RTL</span>
+                <div class="direction-controls" role="group" aria-label="Language selector">
+                    <button class="direction-btn" data-dir="rtl" data-lang="ar" onclick="setLanguage('ar')" title="العربية">
+                        <i class="fas fa-language"></i>
+                        <span>AR</span>
                     </button>
-                    <button class="direction-btn" data-dir="ltr" onclick="setDirection('ltr', { manual: true })" title="Left to right">
-                        <i class="fas fa-align-left"></i>
-                        <span>LTR</span>
+                    <button class="direction-btn" data-dir="ltr" data-lang="en" onclick="setLanguage('en')" title="English">
+                        <i class="fas fa-language"></i>
+                        <span>EN</span>
                     </button>
                 </div>
             </div>
 
             <div class="mb-4 space-y-3">
                 <div>
-                    <label for="book-switcher" class="block text-sm font-semibold text-gray-300 mb-1">📚 إدارة الكتب</label>
+                    <label for="book-switcher" class="block text-sm font-semibold text-gray-300 mb-1">
+                        <span data-i18n-key="bookManager.label">📚 إدارة الكتب</span>
+                    </label>
                     <select id="book-switcher" class="w-full search-input bg-gray-800 border-gray-700"></select>
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                     <button id="new-book-btn" class="btn btn-secondary text-sm flex items-center justify-center gap-1">
-                        <i class="fas fa-plus"></i> كتاب جديد
+                        <i class="fas fa-plus"></i> <span data-i18n-key="bookManager.newBook">كتاب جديد</span>
                     </button>
                     <button id="clone-book-btn" class="btn btn-secondary text-sm flex items-center justify-center gap-1">
-                        <i class="fas fa-copy"></i> استنساخ
+                        <i class="fas fa-copy"></i> <span data-i18n-key="bookManager.cloneBook">استنساخ</span>
                     </button>
                     <button id="rename-book-btn" class="btn btn-warning text-sm flex items-center justify-center gap-1">
-                        <i class="fas fa-pen"></i> إعادة التسمية
+                        <i class="fas fa-pen"></i> <span data-i18n-key="bookManager.renameBook">إعادة التسمية</span>
                     </button>
                     <button id="delete-book-btn" class="btn btn-danger text-sm flex items-center justify-center gap-1">
-                        <i class="fas fa-trash"></i> حذف
+                        <i class="fas fa-trash"></i> <span data-i18n-key="bookManager.deleteBook">حذف</span>
                     </button>
                 </div>
                 <button id="export-bundle-btn" class="w-full btn btn-success flex items-center justify-center gap-2">
-                    <i class="fas fa-file-export"></i> تصدير كل المواد (s-data.js)
+                    <i class="fas fa-file-export"></i> <span data-i18n-key="bookManager.exportBundle">تصدير كل المواد (s-data.js)</span>
                 </button>
             </div>
 
-            <h2 class="text-2xl font-bold mb-4 text-center text-yellow-400">فهرس الكتاب</h2>
-            
+            <h2 class="text-2xl font-bold mb-4 text-center text-yellow-400"><span data-i18n-key="bookManager.tocTitle">فهرس الكتاب</span></h2>
+
             <div class="mb-4 space-y-3">
-                <input type="text" id="search-chapters" placeholder="البحث في الفصول..." class="w-full search-input">
+                <input type="text" id="search-chapters" placeholder="البحث في الفصول..." class="w-full search-input" data-i18n-placeholder="bookManager.searchPlaceholder">
                 <button id="settings-toggle" class="w-full btn btn-primary">
-                    <i class="fas fa-cog"></i> الإعدادات
+                    <i class="fas fa-cog"></i> <span data-i18n-key="settings.toggle">الإعدادات</span>
                 </button>
             </div>
 
@@ -1316,34 +1318,34 @@
                     <option value="zh">中文</option>
                 </select>
                 <select id="import-method" class="w-full search-input">
-                    <option value="auto">تقسيم تلقائي</option>
-                    <option value="suggested">تقسيم موضوعي مقترح</option>
+                    <option value="auto" data-i18n-key="settings.autoSplit">تقسيم تلقائي</option>
+                    <option value="suggested" data-i18n-key="settings.suggestedSplit">تقسيم موضوعي مقترح</option>
                 </select>
                 <input type="file" id="txt-upload" accept=".txt" class="hidden">
                 <button onclick="document.getElementById('txt-upload').click()" class="w-full btn btn-primary">
-                    <i class="fas fa-file-import"></i>استيراد نص
+                    <i class="fas fa-file-import"></i><span data-i18n-key="settings.importText">استيراد نص</span>
                 </button>
 <input type="file" id="json-upload" accept=".json" class="hidden">
-<button onclick="document.getElementById('json-upload').click()" class="w-full btn btn-success">تحميل JSON</button>
-<button id="export-txt-btn" onclick="exportPlainText()" class="w-full btn btn-warning">تصدير نص مختصر</button>
-<button id="migrate-data-btn" onclick="migrateOldDataStructure()" class="w-full btn btn-secondary">تحديث البنية للغات</button>
+<button onclick="document.getElementById('json-upload').click()" class="w-full btn btn-success"><span data-i18n-key="settings.uploadJson">تحميل JSON</span></button>
+<button id="export-txt-btn" onclick="exportPlainText()" class="w-full btn btn-warning"><span data-i18n-key="settings.exportSummary">تصدير نص مختصر</span></button>
+<button id="migrate-data-btn" onclick="migrateOldDataStructure()" class="w-full btn btn-secondary"><span data-i18n-key="settings.migrateData">تحديث البنية للغات</span></button>
                 <button id="save-json" class="w-full btn btn-warning">
-                    <i class="fas fa-save"></i>حفظ المشروع
+                    <i class="fas fa-save"></i><span data-i18n-key="settings.saveProject">حفظ المشروع</span>
                 </button>
-				<button id="export-static-site-btn" class="w-full btn btn-success">
-    <i class="fas fa-globe"></i> تصدير موقع ستاتيكي
+                                <button id="export-static-site-btn" class="w-full btn btn-success">
+    <i class="fas fa-globe"></i> <span data-i18n-key="settings.exportStatic">تصدير موقع ستاتيكي</span>
 </button>
 <button id="export-all-sections-zip-btn" class="w-full btn btn-success">
-  <i class="fas fa-file-archive"></i> تصدير الاقسام JSON
+  <i class="fas fa-file-archive"></i> <span data-i18n-key="settings.exportSections">تصدير الاقسام JSON</span>
 </button>
 
 
 
     <button id="export-map-btn" class="w-full btn btn-success">
-                        <i class="fas fa-map"></i> خريطة الفصول
+                        <i class="fas fa-map"></i> <span data-i18n-key="settings.exportMap">خريطة الفصول</span>
                     </button>
 
-<button id="export-onepage-btn" class="w-full btn btn-info">📄 تصدير نسخة OnePage</button>
+<button id="export-onepage-btn" class="w-full btn btn-info">📄 <span data-i18n-key="settings.exportOnePage">تصدير نسخة OnePage</span></button>
 
 <style>
 .side-btns .btn{
@@ -1352,26 +1354,26 @@ min-width :48%;
 </style>
 
                 <div class="flex gap-2 side-btns" >
-                    <button id="search-btn" onclick="openAdvancedSearch()" class="btn btn-info" title="بحث متقدم">
-                        <i class="fas fa-search"></i> بحث متقدم
+                    <button id="search-btn" onclick="openAdvancedSearch()" class="btn btn-info" title="بحث متقدم" data-i18n-title="bookManager.advancedSearch">
+                        <i class="fas fa-search"></i> <span data-i18n-key="bookManager.advancedSearch">بحث متقدم</span>
                     </button>
-                    <button id="destroy-book-btn" onclick="destroyCurrentBook()" class="btn btn-danger" title="حذف الكتاب الحالي">
-                        <i class="fas fa-trash"></i> حذف الكتاب
+                    <button id="destroy-book-btn" onclick="destroyCurrentBook()" class="btn btn-danger" title="حذف الكتاب الحالي" data-i18n-title="bookManager.deleteCurrentBookTitle">
+                        <i class="fas fa-trash"></i> <span data-i18n-key="bookManager.deleteCurrentBook">حذف الكتاب</span>
                     </button>
                 </div>
                 <div class="flex gap-2 side-btns">
 
                     <button id="edit-book-info-btn" onclick="editBookInfo()" class="btn btn-secondary">
-                        <i class="fas fa-info-circle"></i>  معلومات
+                        <i class="fas fa-info-circle"></i>  <span data-i18n-key="bookManager.bookInfo">معلومات</span>
                     </button>
                     <button id="show-stats-btn" class="btn btn-primary">
-                        <i class="fas fa-chart-bar"></i> إحصائيات
+                        <i class="fas fa-chart-bar"></i> <span data-i18n-key="bookManager.stats">إحصائيات</span>
                     </button>
                 </div>
-				 <div class="flex gap-2 side-btns">
+                                 <div class="flex gap-2 side-btns">
 
-				<button id="approve-all-btn" class="w-full btn btn-success">
-    <i class="fas fa-check-double"></i> اعتماد الجميع
+                                <button id="approve-all-btn" class="w-full btn btn-success">
+    <i class="fas fa-check-double"></i> <span data-i18n-key="bookManager.approveAll">اعتماد الجميع</span>
 </button>
 </div>
                 
@@ -1932,9 +1934,179 @@ function applyDocumentLanguage() {
     document.documentElement.lang = currentLanguage;
 }
 
+const UI_TRANSLATIONS = {
+    ar: {
+        settings: {
+            toggle: 'الإعدادات',
+            importText: 'استيراد نص',
+            uploadJson: 'تحميل JSON',
+            exportSummary: 'تصدير نص مختصر',
+            migrateData: 'تحديث البنية للغات',
+            saveProject: 'حفظ المشروع',
+            exportStatic: 'تصدير موقع ستاتيكي',
+            exportSections: 'تصدير الاقسام JSON',
+            exportMap: 'خريطة الفصول',
+            exportOnePage: 'تصدير نسخة OnePage',
+            autoSplit: 'تقسيم تلقائي',
+            suggestedSplit: 'تقسيم موضوعي مقترح'
+        },
+        bookManager: {
+            label: '📚 إدارة الكتب',
+            newBook: 'كتاب جديد',
+            cloneBook: 'استنساخ',
+            renameBook: 'إعادة التسمية',
+            deleteBook: 'حذف',
+            exportBundle: 'تصدير كل المواد (s-data.js)',
+            tocTitle: 'فهرس الكتاب',
+            searchPlaceholder: 'البحث في الفصول...',
+            advancedSearch: 'بحث متقدم',
+            deleteCurrentBook: 'حذف الكتاب',
+            deleteCurrentBookTitle: 'حذف الكتاب الحالي',
+            bookInfo: 'معلومات',
+            stats: 'إحصائيات',
+            approveAll: 'اعتماد الجميع'
+        },
+        contextMenu: {
+            separator: '───────────',
+            book: {
+                addSection: 'إضافة قسم جديد',
+                reorderSections: 'تحرير ترتيب الأقسام',
+                printBook: 'طباعة الكتاب كله',
+                exportSectionsZip: 'تصدير الأقسام JSON'
+            },
+            section: {
+                addChapter: 'إضافة فصل جديد',
+                deleteSection: 'حذف القسم',
+                sectionResources: 'خصائص الوحدة',
+                exportJson: 'تصدير القسم كـ JSON',
+                exportTxt: 'تصدير القسم كـ TXT',
+                printSection: 'طباعة القسم'
+            },
+            chapter: {
+                moveChapter: 'نقل الفصل إلى قسم آخر',
+                deleteChapter: 'حذف الفصل',
+                chapterResources: 'خصائص الدرس'
+            }
+        }
+    },
+    en: {
+        settings: {
+            toggle: 'Settings',
+            importText: 'Import Text',
+            uploadJson: 'Upload JSON',
+            exportSummary: 'Export Summary Text',
+            migrateData: 'Update Language Structure',
+            saveProject: 'Save Project',
+            exportStatic: 'Export Static Site',
+            exportSections: 'Export Sections JSON',
+            exportMap: 'Chapters Map',
+            exportOnePage: 'Export OnePage Version',
+            autoSplit: 'Auto Split',
+            suggestedSplit: 'Suggested Thematic Split'
+        },
+        bookManager: {
+            label: '📚 Book Management',
+            newBook: 'New Book',
+            cloneBook: 'Clone',
+            renameBook: 'Rename',
+            deleteBook: 'Delete',
+            exportBundle: 'Export All Materials (s-data.js)',
+            tocTitle: 'Book Table of Contents',
+            searchPlaceholder: 'Search chapters...',
+            advancedSearch: 'Advanced Search',
+            deleteCurrentBook: 'Delete Book',
+            deleteCurrentBookTitle: 'Delete Current Book',
+            bookInfo: 'Info',
+            stats: 'Statistics',
+            approveAll: 'Approve All'
+        },
+        contextMenu: {
+            separator: '───────────',
+            book: {
+                addSection: 'Add New Section',
+                reorderSections: 'Reorder Sections',
+                printBook: 'Print Entire Book',
+                exportSectionsZip: 'Export Sections JSON'
+            },
+            section: {
+                addChapter: 'Add New Chapter',
+                deleteSection: 'Delete Section',
+                sectionResources: 'Unit Properties',
+                exportJson: 'Export Section as JSON',
+                exportTxt: 'Export Section as TXT',
+                printSection: 'Print Section'
+            },
+            chapter: {
+                moveChapter: 'Move Chapter to Another Section',
+                deleteChapter: 'Delete Chapter',
+                chapterResources: 'Lesson Properties'
+            }
+        }
+    }
+};
+
+function getTranslation(key, lang) {
+    if (!key) return '';
+    const normalized = (lang || '').toLowerCase();
+    const fallbacks = [];
+    if (UI_TRANSLATIONS[normalized]) fallbacks.push(normalized);
+    if (!fallbacks.includes('en') && UI_TRANSLATIONS.en) fallbacks.push('en');
+
+    const parts = key.split('.');
+
+    for (const code of fallbacks) {
+        let value = UI_TRANSLATIONS[code];
+        for (const part of parts) {
+            if (value && Object.prototype.hasOwnProperty.call(value, part)) {
+                value = value[part];
+            } else {
+                value = undefined;
+                break;
+            }
+        }
+        if (typeof value === 'string') {
+            return value;
+        }
+    }
+
+    return '';
+}
+
+function applyTranslations(lang = currentLanguage) {
+    const normalized = (lang || '').toLowerCase();
+
+    document.querySelectorAll('[data-i18n-key]').forEach(el => {
+        const key = el.getAttribute('data-i18n-key');
+        if (!key) return;
+        const translated = getTranslation(key, normalized);
+        if (translated) {
+            el.textContent = translated;
+        }
+    });
+
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        if (!key) return;
+        const translated = getTranslation(key, normalized);
+        if (translated) {
+            el.setAttribute('placeholder', translated);
+        }
+    });
+
+    document.querySelectorAll('[data-i18n-title]').forEach(el => {
+        const key = el.getAttribute('data-i18n-title');
+        if (!key) return;
+        const translated = getTranslation(key, normalized);
+        if (translated) {
+            el.setAttribute('title', translated);
+        }
+    });
+}
+
 applyDocumentLanguage();
 applyDocumentDirection();
 updateDirectionUI();
+applyTranslations();
 function generateUniqueID() {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';
@@ -2304,6 +2476,7 @@ function loadUserPreferences() {
             currentDirection = preferences.direction;
         }
         applyDocumentLanguage();
+        applyTranslations(currentLanguage);
         if (directionMode === 'manual') {
             setDirection(currentDirection, { manual: true, persist: false });
         } else {
@@ -2316,6 +2489,9 @@ function loadUserPreferences() {
 function setLanguage(lang) {
     currentLanguage = (lang || 'ar').toLowerCase();
     applyDocumentLanguage();
+    applyTranslations(currentLanguage);
+    directionMode = 'auto';
+    localStorage.setItem('preferredDirMode', directionMode);
     localStorage.setItem('preferredLang', currentLanguage);
     if (directionMode !== 'manual') {
         syncDirectionWithLanguage(true);
@@ -3848,48 +4024,55 @@ function printCurrentChapter() {
             }
         }
 
-      function handleContextMenu(event) {
+        function handleContextMenu(event) {
             event.preventDefault();
             contextMenu.innerHTML = '';
-            const { type, sectionIndex, chapterIndex } = event.target.dataset;
-            let items = [];
+            const dataset = (event.target && event.target.dataset) || {};
+            const { type, sectionIndex, chapterIndex } = dataset;
+            const items = [];
 
             if (type === 'book') {
-                items.push({ label: 'إضافة قسم جديد', action: addSection });
-                items.push({ label: 'تحرير ترتيب الأقسام', action: showSectionSortDialog });
-                items.push({ label: 'طباعة الكتاب كله', action: printEntireBook });
-                items.push({ label: 'تصدير لأقسام json', action: exportAllSectionsAsZip });
+                items.push({ key: 'contextMenu.book.addSection', fallback: 'إضافة قسم جديد', action: addSection });
+                items.push({ key: 'contextMenu.book.reorderSections', fallback: 'تحرير ترتيب الأقسام', action: showSectionSortDialog });
+                items.push({ key: 'contextMenu.book.printBook', fallback: 'طباعة الكتاب كله', action: printEntireBook });
+                items.push({ key: 'contextMenu.book.exportSectionsZip', fallback: 'تصدير الأقسام JSON', action: exportAllSectionsAsZip });
 
             } else if (type === 'section') {
-                items.push({ label: 'إضافة فصل جديد', action: () => addChapter(parseInt(sectionIndex)) });
-                                items.push({ label: 'حذف القسم', action: () => deleteSection(parseInt(sectionIndex)) });
-                items.push({ label: 'خصائص الوحدة', action: () => openSectionResources(parseInt(sectionIndex)) });
-                items.push({ label: '───────────', action: null, separator: true });
-                items.push({ label: 'تصدير القسم كـ JSON', action: () => exportSectionAsJSON(parseInt(sectionIndex)) });
-                items.push({ label: 'تصدير القسم كـ TXT', action: () => exportSectionAsTXT(parseInt(sectionIndex)) });
-                items.push({ label: 'طباعة القسم', action: () => printSection(parseInt(sectionIndex)) });
+                const secIndex = parseInt(sectionIndex, 10);
+                items.push({ key: 'contextMenu.section.addChapter', fallback: 'إضافة فصل جديد', action: () => addChapter(secIndex) });
+                items.push({ key: 'contextMenu.section.deleteSection', fallback: 'حذف القسم', action: () => deleteSection(secIndex) });
+                items.push({ key: 'contextMenu.section.sectionResources', fallback: 'خصائص الوحدة', action: () => openSectionResources(secIndex) });
+                items.push({ key: 'contextMenu.separator', fallback: '───────────', separator: true });
+                items.push({ key: 'contextMenu.section.exportJson', fallback: 'تصدير القسم كـ JSON', action: () => exportSectionAsJSON(secIndex) });
+                items.push({ key: 'contextMenu.section.exportTxt', fallback: 'تصدير القسم كـ TXT', action: () => exportSectionAsTXT(secIndex) });
+                items.push({ key: 'contextMenu.section.printSection', fallback: 'طباعة القسم', action: () => printSection(secIndex) });
 
             } else if (type === 'chapter') {
-                items.push({ label: 'نقل الفصل إلى قسم آخر', action: () => showMoveChapterDialog(parseInt(sectionIndex), parseInt(chapterIndex)) });
-                items.push({ label: 'حذف الفصل', action: () => deleteChapter(parseInt(sectionIndex), parseInt(chapterIndex)) });
-                items.push({ label: 'خصائص الدرس', action: () => openChapterResources(parseInt(sectionIndex), parseInt(chapterIndex)) });
+                const secIndex = parseInt(sectionIndex, 10);
+                const chapIndex = parseInt(chapterIndex, 10);
+                items.push({ key: 'contextMenu.chapter.moveChapter', fallback: 'نقل الفصل إلى قسم آخر', action: () => showMoveChapterDialog(secIndex, chapIndex) });
+                items.push({ key: 'contextMenu.chapter.deleteChapter', fallback: 'حذف الفصل', action: () => deleteChapter(secIndex, chapIndex) });
+                items.push({ key: 'contextMenu.chapter.chapterResources', fallback: 'خصائص الدرس', action: () => openChapterResources(secIndex, chapIndex) });
             }
-            
+
             items.forEach(item => {
                 const menuItem = document.createElement('div');
                 if (item.separator) {
                     menuItem.className = 'px-4 py-1 text-gray-400 text-center border-t border-gray-600 mt-1 pt-2';
-                    menuItem.textContent = item.label;
                 } else {
                     menuItem.className = 'px-4 py-2 hover:bg-gray-600 cursor-pointer rounded';
-                    menuItem.textContent = item.label;
-                    if (item.action) {
-                        menuItem.onclick = () => {
-                            item.action();
-                            contextMenu.classList.add('hidden');
-                        };
-                    }
                 }
+
+                const translated = getTranslation(item.key, currentLanguage || 'ar');
+                menuItem.textContent = translated || item.fallback || '';
+
+                if (!item.separator && item.action) {
+                    menuItem.onclick = () => {
+                        item.action();
+                        contextMenu.classList.add('hidden');
+                    };
+                }
+
                 contextMenu.appendChild(menuItem);
             });
 
@@ -3911,7 +4094,7 @@ function printCurrentChapter() {
                 // 4. احصل على أبعاد الشاشة (Viewport)
                 const viewportHeight = window.innerHeight;
                 const viewportWidth = window.innerWidth;
-                
+
                 // 5. احصل على موقع التمرير (Scroll)
                 const scrollY = window.scrollY;
                 const scrollX = window.scrollX;
@@ -3936,7 +4119,7 @@ function printCurrentChapter() {
                 }
                 // (اختياري) التأكد أنها لا تخرج يسار الشاشة
                 if (finalLeft < scrollX) {
-                    finalLeft = scrollX; 
+                    finalLeft = scrollX;
                 }
 
                 // 8. تطبيق الإحداثيات النهائية وإظهار القائمة
@@ -3944,7 +4127,7 @@ function printCurrentChapter() {
                 contextMenu.style.left = `${finalLeft}px`;
                 contextMenu.style.right = 'auto'; // إلغاء أي تحديد سابق
                 contextMenu.style.visibility = 'visible'; // إظهار القائمة
-                
+
                 // --- ⬆️ نهاية المنطق الجديد ⬆️ ---
             }
         }
