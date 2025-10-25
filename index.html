@@ -6,6 +6,8 @@
     <title id="page-title">NIES LMS Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark-dimmed.min.css" integrity="sha512-s47Yi4XxLg9VOYpsnCnshunwXcyPOYCDf1lo7Ebwv78mU8WMT4DgoeK3Q4qZagcAca4V86sCy1yuh/zOwAQFHA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-rp+ljW6ds/MEUjAm4Xy1I8BvOSJ5YZg+C2iFoAvf/TfYChvKKSJ3o8FcqDg2+/2pJB+SBYzo0O66sVDxv0Ij+w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+Arabic:wght@400;600;700&display=swap');
         :root {
@@ -292,6 +294,171 @@
             @apply dark:focus:ring-offset-gray-800;
         }
 
+        /* Markdown viewer styling */
+        .markdown-body {
+            font-family: var(--font-en);
+            font-size: 1rem;
+            line-height: 1.7;
+            color: inherit;
+        }
+        .markdown-body h1,
+        .markdown-body h2,
+        .markdown-body h3,
+        .markdown-body h4,
+        .markdown-body h5,
+        .markdown-body h6 {
+            font-weight: 700;
+            color: var(--subject-color);
+            margin-top: 1.5em;
+            margin-bottom: 0.75em;
+        }
+        .markdown-body p {
+            margin-bottom: 1em;
+        }
+        .markdown-body a {
+            color: var(--primary-blue);
+            text-decoration: underline;
+            text-decoration-thickness: 2px;
+            text-underline-offset: 4px;
+        }
+        html.dark .markdown-body a {
+            color: var(--secondary-blue);
+        }
+        .markdown-body ul,
+        .markdown-body ol {
+            margin: 1em 0;
+            padding-inline-start: 1.5em;
+        }
+        .markdown-body li + li {
+            margin-top: 0.35em;
+        }
+        .markdown-body code {
+            background: rgba(148, 163, 184, 0.2);
+            padding: 0.2em 0.4em;
+            border-radius: 0.35rem;
+            font-size: 0.95em;
+        }
+        .markdown-body pre {
+            background: rgba(15, 23, 42, 0.85);
+            color: #f8fafc;
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            overflow: auto;
+            box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.2);
+        }
+        .markdown-body pre code {
+            background: transparent;
+            padding: 0;
+        }
+        .markdown-body hr {
+            border: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(37, 99, 235, 0.4), transparent);
+            margin: 2rem 0;
+        }
+        .markdown-body img,
+        .markdown-body iframe {
+            max-width: 100%;
+            border-radius: 1rem;
+            margin: 1.5rem 0;
+            box-shadow: 0 14px 28px rgba(15, 23, 42, 0.15);
+        }
+        .markdown-body blockquote {
+            border-inline-start: 4px solid var(--subject-color);
+            padding-inline-start: 1rem;
+            margin: 1.5rem 0;
+            color: inherit;
+            font-style: italic;
+            background: rgba(37, 99, 235, 0.08);
+            border-radius: 0 1rem 1rem 0;
+        }
+        .markdown-body table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+            border-radius: 1rem;
+            overflow: hidden;
+        }
+        .markdown-body th,
+        .markdown-body td {
+            border: 1px solid rgba(148, 163, 184, 0.3);
+            padding: 0.75rem 1rem;
+            text-align: start;
+        }
+        .markdown-body tr:nth-child(even) {
+            background: rgba(226, 232, 240, 0.45);
+        }
+        html.dark .markdown-body tr:nth-child(even) {
+            background: rgba(30, 64, 175, 0.2);
+        }
+        .ar-mode .markdown-body {
+            font-family: var(--font-ar);
+            direction: rtl;
+            text-align: right;
+        }
+        .ar-mode .markdown-body blockquote {
+            border-inline-start: 0;
+            border-inline-end: 4px solid var(--subject-color);
+            padding-inline-start: 0;
+            padding-inline-end: 1rem;
+            border-radius: 1rem 0 0 1rem;
+        }
+
+        /* Markdown Studio panel */
+        #markdown-cms-overlay {
+            @apply fixed inset-0 bg-black/60 z-50 hidden;
+        }
+        #markdown-cms-overlay:not(.hidden) {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+        #markdown-cms-panel {
+            @apply relative w-full md:w-auto md:mx-auto bg-white dark:bg-secondary-dark rounded-3xl shadow-2xl border border-white/30 dark:border-white/10;
+            width: min(1100px, 95vw);
+            max-height: 90vh;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            overflow: hidden;
+        }
+        #markdown-cms-panel header {
+            @apply px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex flex-col md:flex-row md:items-center md:justify-between gap-3;
+        }
+        #markdown-cms-panel .studio-body {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            overflow: auto;
+        }
+        @media (min-width: 1024px) {
+            #markdown-cms-panel .studio-body {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+        #markdown-editor {
+            @apply w-full h-full min-h-[260px] border border-gray-200 dark:border-gray-700 rounded-2xl bg-white dark:bg-primary-dark text-gray-800 dark:text-gray-100 p-4 focus:outline-none focus:ring-2 focus:ring-primary-blue;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            resize: none;
+        }
+        #markdown-preview {
+            @apply h-full min-h-[260px] overflow-auto rounded-2xl border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-900/70 p-6;
+        }
+        .studio-toolbar {
+            @apply flex flex-wrap gap-3;
+        }
+        .studio-toolbar button {
+            @apply px-4 py-2 rounded-full text-sm font-semibold transition shadow-sm bg-primary-blue text-white hover:bg-blue-600 dark:bg-secondary-blue dark:hover:bg-blue-400;
+        }
+        .studio-toolbar button.secondary {
+            @apply bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600;
+        }
+        .studio-toolbar button.danger {
+            @apply bg-red-500 text-white hover:bg-red-600;
+        }
+
     </style>
     <script>
         tailwind.config = {
@@ -408,6 +575,12 @@
                 <p id="lesson-content-brief" class="text-lg text-gray-600 dark:text-gray-300"></p>
             </header>
 
+            <div class="flex flex-wrap justify-center gap-4 mb-6">
+                <button id="markdown-cms-trigger" class="hidden px-5 py-2.5 rounded-full bg-primary-blue text-white font-semibold shadow-lg hover:bg-blue-600 transition" data-i18n="lesson.openMarkdownStudio" onclick="openMarkdownCMS()">
+                    Markdown Studio
+                </button>
+            </div>
+
             <div id="lesson-resources" class="card-surface p-4 rounded-2xl mb-8 flex flex-wrap gap-4 justify-center border border-transparent">
                 </div>
 
@@ -442,6 +615,37 @@
         <p data-i18n="footer.copy">NIES Learning Management System &copy; 2025</p>
     </footer>
 
+    <div id="markdown-cms-overlay" class="hidden" onclick="closeMarkdownCMS(event)">
+        <div id="markdown-cms-panel" role="dialog" aria-modal="true" aria-labelledby="markdown-cms-title" onclick="event.stopPropagation()">
+            <header>
+                <div>
+                    <h2 id="markdown-cms-title" class="text-2xl font-bold text-primary-blue dark:text-secondary-blue" data-i18n="lesson.cmsTitle">Markdown Studio</h2>
+                    <p id="markdown-cms-context" class="text-sm text-gray-600 dark:text-gray-300"></p>
+                </div>
+                <div class="studio-toolbar">
+                    <button type="button" class="secondary" onclick="syncLessonMarkdown()" data-i18n="lesson.cmsSync">Sync lesson</button>
+                    <button type="button" onclick="copyMarkdownFromEditor()" data-i18n="lesson.cmsCopy">Copy Markdown</button>
+                    <button type="button" class="secondary" onclick="downloadMarkdownFromEditor()" data-i18n="lesson.cmsDownload">Download .md</button>
+                    <button type="button" class="danger" onclick="closeMarkdownCMS()" data-i18n="lesson.cmsClose">Close</button>
+                </div>
+            </header>
+            <div class="studio-body">
+                <div class="flex flex-col gap-3">
+                    <label for="markdown-editor" class="text-sm font-semibold text-gray-700 dark:text-gray-200" data-i18n="lesson.cmsEditorLabel">Markdown input</label>
+                    <textarea id="markdown-editor" placeholder="# Start writing..." data-i18n-placeholder="lesson.cmsEditorPlaceholder" oninput="updateMarkdownPreview()"></textarea>
+                    <p class="text-xs text-gray-500 dark:text-gray-400" data-i18n="lesson.cmsHelper">Use Markdown syntax to structure your lesson content. Changes are not saved automatically.</p>
+                </div>
+                <div class="flex flex-col gap-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-semibold text-gray-700 dark:text-gray-200" data-i18n="lesson.cmsPreviewLabel">Live preview</span>
+                        <span id="markdown-preview-meta" class="text-xs text-gray-500 dark:text-gray-400"></span>
+                    </div>
+                    <div id="markdown-preview" class="markdown-body"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="modal-overlay" class="hidden fixed inset-0 bg-black/70 dark:bg-black/80 z-40 transition-opacity duration-300" onclick="closeModal()"></div>
     <div id="modal-container" class="hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-11/12 h-5/6 md:w-3/4 bg-white dark:bg-gray-800 rounded-lg shadow-2xl z-50 p-4 flex flex-col transition-transform duration-300 scale-95">
         <button id="modal-close-btn" onclick="closeModal()" class="absolute -top-3 -right-3 rtl:-left-3 rtl:-right-auto bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-lg font-bold shadow-lg hover:bg-red-700 z-50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800">
@@ -455,6 +659,22 @@
         // ====================================================================
         // بيانات المواد التعليمية (كائن JSON مركزي)
         // ====================================================================
+
+        if (typeof marked !== 'undefined') {
+            marked.setOptions({
+                gfm: true,
+                breaks: true,
+                highlight(code, lang) {
+                    if (window.hljs) {
+                        if (lang && hljs.getLanguage(lang)) {
+                            return hljs.highlight(code, { language: lang }).value;
+                        }
+                        return hljs.highlightAuto(code).value;
+                    }
+                    return code;
+                }
+            });
+        }
 
         const SUPPORTED_LANGUAGES = ['en', 'ar'];
         const FALLBACK_LANGUAGE = 'en';
@@ -477,6 +697,21 @@
                 'lessons.noResults': 'No lessons matched your search criteria.',
                 'lessons.emptyState': 'This block does not contain any lessons yet.',
                 'lesson.exercises': 'Exercises',
+                'lesson.openMarkdownStudio': 'Open Markdown Studio',
+                'lesson.cmsTitle': 'Markdown Studio',
+                'lesson.cmsSync': 'Sync lesson',
+                'lesson.cmsCopy': 'Copy Markdown',
+                'lesson.cmsDownload': 'Download .md',
+                'lesson.cmsClose': 'Close',
+                'lesson.cmsEditorLabel': 'Markdown input',
+                'lesson.cmsEditorPlaceholder': '# Start writing...',
+                'lesson.cmsHelper': 'Use Markdown syntax to structure your lesson content. Changes are not saved automatically.',
+                'lesson.cmsPreviewLabel': 'Live preview',
+                'lesson.cmsMetaLanguage': 'Language',
+                'lesson.cmsMetaLines': 'Lines',
+                'lesson.cmsMetaWords': 'Words',
+                'lesson.cmsSynced': 'In sync with lesson content',
+                'lesson.cmsUnsynced': 'Unsynced changes',
                 'lesson.contentUnavailable': 'Lesson content is not available yet.',
                 'blockSheets.description': 'Select a sheet to view:',
                 'footer.copy': 'NIES Learning Management System © 2025',
@@ -539,6 +774,21 @@
                 'lessons.noResults': 'لا توجد دروس مطابقة لمعايير البحث.',
                 'lessons.emptyState': 'هذه الوحدة لا تحتوي على أي دروس حالياً.',
                 'lesson.exercises': 'التمارين',
+                'lesson.openMarkdownStudio': 'فتح محرر Markdown',
+                'lesson.cmsTitle': 'استوديو Markdown',
+                'lesson.cmsSync': 'مزامنة مع الدرس',
+                'lesson.cmsCopy': 'نسخ Markdown',
+                'lesson.cmsDownload': 'تنزيل ملف .md',
+                'lesson.cmsClose': 'إغلاق',
+                'lesson.cmsEditorLabel': 'محرر Markdown',
+                'lesson.cmsEditorPlaceholder': '# ابدأ بالكتابة...',
+                'lesson.cmsHelper': 'استخدم صيغة Markdown لتنظيم محتوى الدرس. لا يتم حفظ التغييرات تلقائياً.',
+                'lesson.cmsPreviewLabel': 'معاينة مباشرة',
+                'lesson.cmsMetaLanguage': 'اللغة',
+                'lesson.cmsMetaLines': 'الأسطر',
+                'lesson.cmsMetaWords': 'الكلمات',
+                'lesson.cmsSynced': 'المحتوى متوافق مع بيانات الدرس',
+                'lesson.cmsUnsynced': 'تغييرات غير محفوظة',
                 'lesson.contentUnavailable': 'محتوى الدرس غير متوفر حالياً.',
                 'blockSheets.description': 'اختر ملفاً لعرضه:',
                 'footer.copy': 'نظام NIES لإدارة التعلم © 2025',
@@ -613,6 +863,12 @@
         const backButton = document.getElementById('back-button');
         const appTitleContainer = document.getElementById('app-title-container');
         const logoutLink = document.getElementById('logout-link');
+        const markdownOverlay = document.getElementById('markdown-cms-overlay');
+        const markdownEditor = document.getElementById('markdown-editor');
+        const markdownPreview = document.getElementById('markdown-preview');
+        const markdownPreviewMeta = document.getElementById('markdown-preview-meta');
+        const markdownCMSTrigger = document.getElementById('markdown-cms-trigger');
+        const markdownCMSContext = document.getElementById('markdown-cms-context');
 
         // [مهم] استخدام الكوكيز بدلاً من localStorage
         let currentTheme = getCookie('appTheme') || 'light';
@@ -620,6 +876,11 @@
         let stateHistory = []; // لتخزين تاريخ التنقل بين المراحل
         let currentState = { view: 'dashboard', subjectId: null, blockId: null, lessonId: null };
         let currentQuizData = null;
+        let currentLessonMarkdown = '';
+        let currentLessonTitle = '';
+        let currentLessonLanguage = FALLBACK_LANGUAGE;
+        let currentLessonContext = null;
+        let markdownDirty = false;
 
         // ====================================================================
         // وظائف إدارة الكوكيز
@@ -761,6 +1022,115 @@
 
             // 3. إعادة رسم المحتوى الديناميكي الحالي لضمان تطبيق اللغة الصحيحة
             changeView(currentState.view, currentState.subjectId, currentState.blockId, currentState.lessonId, false);
+
+            if (!markdownOverlay?.classList.contains('hidden')) {
+                updateMarkdownPreview();
+            }
+        }
+
+        function renderMarkdown(markdownText = '') {
+            if (!markdownText) return '';
+            if (typeof marked !== 'undefined') {
+                return marked.parse(markdownText);
+            }
+            return markdownText.replace(/\n/g, '<br>');
+        }
+
+        function highlightMarkdown(container) {
+            if (!container || !window.hljs) return;
+            container.querySelectorAll('pre code').forEach(codeBlock => {
+                hljs.highlightElement(codeBlock);
+            });
+        }
+
+        function updateMarkdownMeta(markdownText) {
+            if (!markdownPreviewMeta) return;
+            const text = markdownText || '';
+            const lines = text ? text.split(/\r?\n/).length : 0;
+            const words = text ? (text.trim().split(/\s+/).filter(Boolean).length) : 0;
+            const metaParts = [
+                `${t('lesson.cmsMetaLanguage')}: ${currentLessonLanguage.toUpperCase()}`,
+                `${t('lesson.cmsMetaLines')}: ${lines}`,
+                `${t('lesson.cmsMetaWords')}: ${words}`,
+                markdownDirty ? t('lesson.cmsUnsynced') : t('lesson.cmsSynced')
+            ];
+            markdownPreviewMeta.textContent = metaParts.join(' • ');
+        }
+
+        function updateMarkdownPreview() {
+            if (!markdownEditor || !markdownPreview) return;
+            const markdownText = markdownEditor.value || '';
+            const html = renderMarkdown(markdownText);
+            markdownPreview.innerHTML = `<article class="markdown-body">${html}</article>`;
+            highlightMarkdown(markdownPreview);
+            markdownDirty = markdownText !== (currentLessonMarkdown || '');
+            updateMarkdownMeta(markdownText);
+        }
+
+        function syncLessonMarkdown() {
+            if (!markdownEditor) return;
+            markdownEditor.value = currentLessonMarkdown || '';
+            markdownDirty = false;
+            updateMarkdownPreview();
+        }
+
+        function openMarkdownCMS() {
+            if (!markdownOverlay) return;
+            markdownOverlay.classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
+            syncLessonMarkdown();
+        }
+
+        function closeMarkdownCMS(event) {
+            if (event && event.type === 'click' && event.target !== markdownOverlay) {
+                return;
+            }
+            if (!markdownOverlay) return;
+            markdownOverlay.classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+        }
+
+        function copyMarkdownFromEditor() {
+            if (!markdownEditor) return;
+            const value = markdownEditor.value || '';
+            if (navigator.clipboard?.writeText) {
+                navigator.clipboard.writeText(value).then(() => {
+                    markdownDirty = value !== (currentLessonMarkdown || '');
+                    updateMarkdownMeta(value);
+                }).catch(err => console.warn('Clipboard copy failed', err));
+                return;
+            }
+            const tempArea = document.createElement('textarea');
+            tempArea.value = value;
+            tempArea.setAttribute('readonly', '');
+            tempArea.style.position = 'absolute';
+            tempArea.style.left = '-9999px';
+            document.body.appendChild(tempArea);
+            tempArea.select();
+            try {
+                document.execCommand('copy');
+            } catch (err) {
+                console.warn('Legacy clipboard copy failed', err);
+            }
+            document.body.removeChild(tempArea);
+            markdownDirty = value !== (currentLessonMarkdown || '');
+            updateMarkdownMeta(value);
+        }
+
+        function downloadMarkdownFromEditor() {
+            if (!markdownEditor) return;
+            const blob = new Blob([markdownEditor.value || ''], { type: 'text/markdown;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            const lessonName = currentLessonTitle ? currentLessonTitle.replace(/[^\w\u0600-\u06FF-]+/g, '-').replace(/-{2,}/g, '-').replace(/^-|-$/g, '') : 'lesson';
+            const contextSuffix = currentLessonContext ? `${currentLessonContext.subjectId || 'subject'}-${currentLessonContext.blockId || 'block'}-${currentLessonContext.lessonId || 'lesson'}` : 'lesson';
+            const baseName = lessonName || contextSuffix;
+            link.href = url;
+            link.download = `${baseName || 'lesson'}.${currentLessonLanguage || 'en'}.md`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
         }
 
         /**
@@ -781,6 +1151,12 @@
             document.getElementById('blocks-view').classList.add('hidden');
             document.getElementById('lessons-view').classList.add('hidden');
             document.getElementById('lesson-content-view').classList.add('hidden');
+            if (markdownCMSTrigger) {
+                markdownCMSTrigger.classList.add('hidden');
+            }
+            if (view !== 'lesson-content' && markdownOverlay && !markdownOverlay.classList.contains('hidden')) {
+                closeMarkdownCMS();
+            }
             // ===================================
             // [!!!] START OF MODIFICATION [!!!]
             // ===================================
@@ -1046,6 +1422,17 @@
             document.getElementById('page-title').textContent = lessonTitle;
             document.getElementById('lesson-content-title').textContent = lessonTitle;
             document.getElementById('lesson-content-brief').textContent = getLocalizedText(lesson.brief, currentLang);
+            currentLessonTitle = lessonTitle;
+            currentLessonLanguage = currentLang;
+            currentLessonContext = { subjectId, blockId, lessonId };
+            if (markdownCMSContext) {
+                const subjectTitle = getLocalizedText(subjectData.title, currentLang);
+                const blockTitle = getLocalizedText(block.title, currentLang);
+                markdownCMSContext.textContent = `${subjectTitle} › ${blockTitle} › ${lessonTitle}`;
+            }
+            if (markdownCMSTrigger) {
+                markdownCMSTrigger.classList.remove('hidden');
+            }
 
             // 2. عرض أزرار الموارد
             renderLessonResources(subjectId, blockId, lessonId, lesson.resources);
@@ -1054,13 +1441,22 @@
             const theoryContainer = document.getElementById('lesson-content-theory');
             if (lesson.content && lesson.content.theory) {
                 const theoryMarkdown = getLocalizedText(lesson.content.theory, currentLang);
+                currentLessonMarkdown = theoryMarkdown || '';
                 if (theoryMarkdown) {
-                    theoryContainer.innerHTML = typeof marked !== 'undefined' ? marked.parse(theoryMarkdown) : theoryMarkdown;
+                    const theoryHtml = renderMarkdown(theoryMarkdown);
+                    theoryContainer.innerHTML = `<article class="markdown-body">${theoryHtml}</article>`;
+                    highlightMarkdown(theoryContainer);
                 } else {
                     theoryContainer.innerHTML = `<p class="text-gray-500 dark:text-gray-400">${t('lesson.contentUnavailable')}</p>`;
                 }
             } else {
+                currentLessonMarkdown = '';
                 theoryContainer.innerHTML = `<p class="text-gray-500 dark:text-gray-400">${t('lesson.contentUnavailable')}</p>`;
+            }
+            markdownDirty = false;
+            updateMarkdownMeta(currentLessonMarkdown);
+            if (markdownOverlay && !markdownOverlay.classList.contains('hidden')) {
+                syncLessonMarkdown();
             }
 
             // 4. عرض التمارين (إذا وجدت)
