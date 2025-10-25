@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,6 +26,21 @@
             --warning-color: #f59e0b;
             --danger-color: #ef4444;
             --editor-font-size: 14px;
+            --inline-shift: -2px;
+            --inline-strong-shift: -4px;
+            color-scheme: dark;
+        }
+
+        [data-theme="standard"] {
+            --primary-bg: #0f172a;
+            --secondary-bg: #1e293b;
+            --accent-bg: #334155;
+            --hover-bg: #475569;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --border-color: #475569;
+            color-scheme: dark;
         }
 
         [data-theme="light"] {
@@ -37,6 +52,7 @@
             --text-secondary: #475569;
             --text-muted: #64748b;
             --border-color: #cbd5e1;
+            color-scheme: light;
         }
 
         [data-theme="dark"] {
@@ -48,6 +64,12 @@
             --text-secondary: #d1d5db;
             --text-muted: #9ca3af;
             --border-color: #374151;
+            color-scheme: dark;
+        }
+
+        html[dir="ltr"] {
+            --inline-shift: 2px;
+            --inline-strong-shift: 4px;
         }
 
         * {
@@ -77,6 +99,12 @@
         body {
             background: linear-gradient(135deg, var(--primary-bg) 0%, var(--secondary-bg) 100%);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        body, html {
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 #viewer{
 
@@ -95,7 +123,7 @@
 
         .tree-item-chapter {
             background: linear-gradient(135deg, #1e3a8a, #000000);
-            border-left: 4px solid #3b82f6;
+            border-inline-start: 4px solid #3b82f6;
             color: #e0e7ff;
             font-weight: 500;
             transition: all 0.3s ease;
@@ -103,13 +131,13 @@
 
         .tree-item-chapter:hover {
             background: linear-gradient(135deg, #1e40af, #2563eb);
-            transform: translateX(-4px);
+            transform: translateX(var(--inline-strong-shift));
             box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
         }
 
         .tree-item-section {
             background: linear-gradient(135deg, #374151, #4b5563);
-            border-left: 4px solid #6b7280;
+            border-inline-start: 4px solid #6b7280;
             color: #f3f4f6;
             font-weight: 600;
             position: relative;
@@ -118,7 +146,7 @@
         .tree-item-section::before {
             content: '▼';
             position: absolute;
-            left: 8px;
+            inset-inline-start: 8px;
             top: 50%;
             transform: translateY(-50%);
             transition: transform 0.3s ease;
@@ -131,7 +159,7 @@
 
         .tree-item-section:hover {
             background: linear-gradient(135deg, #4b5563, #6b7280);
-            transform: translateX(-2px);
+            transform: translateX(var(--inline-shift));
         }
 
         .chapters-container {
@@ -169,7 +197,7 @@
 
         .tree-item[draggable="true"]:hover {
             background: var(--hover-bg);
-            transform: translateX(-2px);
+            transform: translateX(var(--inline-shift));
             box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
         }
 
@@ -283,7 +311,7 @@
 
         .tree-item:hover {
             background: var(--hover-bg);
-            transform: translateX(-2px);
+            transform: translateX(var(--inline-shift));
             box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
         }
 
@@ -302,7 +330,7 @@
 
         .sidebar {
             background: var(--secondary-bg);
-            border-right: 1px solid var(--border-color);
+            border-inline-end: 1px solid var(--border-color);
         }
 
         .main-content {
@@ -340,8 +368,8 @@
             content: '';
             position: absolute;
             top: 0;
-            left: 0;
-            right: 0;
+            inset-inline-start: 0;
+            inset-inline-end: 0;
             bottom: 0;
             background: linear-gradient(135deg, var(--accent-color), #1d4ed8);
             opacity: 0;
@@ -704,11 +732,11 @@
         }
 
         .viewer-content-prose blockquote {
-            border-right: 4px solid var(--accent-color);
+            border-inline-start: 4px solid var(--accent-color);
             padding: 16px 20px;
             margin: 20px 0;
             background: var(--accent-bg);
-            border-radius: 0 8px 8px 0;
+            border-radius: 8px;
             color: var(--text-secondary);
             font-style: italic;
         }
@@ -739,7 +767,7 @@
 
         .viewer-content-prose ul,
         .viewer-content-prose ol {
-            padding-right: 24px;
+            padding-inline-start: 24px;
             margin: 16px 0;
         }
 
@@ -771,7 +799,7 @@
         .viewer-content-prose th,
         .viewer-content-prose td {
             padding: 12px 16px;
-            text-align: right;
+            text-align: start;
             border-bottom: 1px solid var(--border-color);
         }
 
@@ -978,7 +1006,54 @@
         .theme-controls {
             display: flex;
             gap: 4px;
-            margin-left: auto;
+            margin-inline-start: auto;
+        }
+
+        .locale-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .direction-controls {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            background: var(--accent-bg);
+            padding: 6px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .direction-btn {
+            flex: 1;
+            padding: 8px 10px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background: var(--secondary-bg);
+            color: var(--text-primary);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .direction-btn:hover {
+            background: var(--accent-color);
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .direction-btn.active {
+            background: var(--accent-color);
+            border-color: var(--accent-color);
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.35);
         }
 
         .theme-controls-sidebar {
@@ -1169,19 +1244,31 @@
 
 	</style>
 </head>
-<body class="bg-gray-900 text-white">
+<body>
     <div class="editor-container">
         <div class="sidebar p-4 flex flex-col overflow-y-auto">
-            <div class="theme-controls-sidebar">
-                <button class="theme-btn active" data-theme="light" onclick="setTheme('light')">
-                    <i class="fas fa-sun"></i>
-                </button>
-                <button class="theme-btn" data-theme="standard" onclick="setTheme('standard')">
-                    <i class="fas fa-adjust"></i>
-                </button>
-                <button class="theme-btn" data-theme="dark" onclick="setTheme('dark')">
-                    <i class="fas fa-moon"></i>
-                </button>
+            <div class="locale-controls">
+                <div class="theme-controls-sidebar" role="group" aria-label="Theme selector">
+                    <button class="theme-btn active" data-theme="light" onclick="setTheme('light')" title="Light mode">
+                        <i class="fas fa-sun"></i>
+                    </button>
+                    <button class="theme-btn" data-theme="standard" onclick="setTheme('standard')" title="Standard mode">
+                        <i class="fas fa-adjust"></i>
+                    </button>
+                    <button class="theme-btn" data-theme="dark" onclick="setTheme('dark')" title="Dark mode">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </div>
+                <div class="direction-controls" role="group" aria-label="Direction selector">
+                    <button class="direction-btn" data-dir="rtl" onclick="setDirection('rtl', { manual: true })" title="Right to left">
+                        <i class="fas fa-align-right"></i>
+                        <span>RTL</span>
+                    </button>
+                    <button class="direction-btn" data-dir="ltr" onclick="setDirection('ltr', { manual: true })" title="Left to right">
+                        <i class="fas fa-align-left"></i>
+                        <span>LTR</span>
+                    </button>
+                </div>
             </div>
 
             <div class="mb-4 space-y-3">
@@ -1790,7 +1877,64 @@ min-width :48%;
         const showStatsBtn = document.getElementById('show-stats-btn');
         const exportMapBtn = document.getElementById('export-map-btn');
 
-let currentLanguage = localStorage.getItem('preferredLang') || 'ar';
+let currentLanguage = (localStorage.getItem('preferredLang') || 'ar').toLowerCase();
+const RTL_LANGS = ['ar', 'he', 'fa', 'ur'];
+let directionMode = localStorage.getItem('preferredDirMode') || 'auto';
+let storedDirection = localStorage.getItem('preferredDir');
+let currentDirection = (storedDirection || '').toLowerCase();
+if (!['rtl', 'ltr'].includes(currentDirection)) {
+    currentDirection = RTL_LANGS.includes(currentLanguage) ? 'rtl' : 'ltr';
+}
+
+function isLanguageRTL(lang) {
+    return RTL_LANGS.includes((lang || '').toLowerCase());
+}
+
+function applyDocumentDirection() {
+    const dir = currentDirection === 'rtl' ? 'rtl' : 'ltr';
+    document.documentElement.setAttribute('dir', dir);
+    document.documentElement.setAttribute('data-dir', dir);
+    if (document.body) {
+        document.body.setAttribute('data-dir', dir);
+    }
+}
+
+function updateDirectionUI() {
+    document.querySelectorAll('.direction-btn').forEach(btn => {
+        const isActive = btn.dataset.dir === currentDirection;
+        btn.classList.toggle('active', isActive);
+    });
+}
+
+function setDirection(dir, { manual = false, persist = true } = {}) {
+    const normalized = dir === 'rtl' ? 'rtl' : 'ltr';
+    currentDirection = normalized;
+    if (persist) {
+        localStorage.setItem('preferredDir', currentDirection);
+        directionMode = manual ? 'manual' : 'auto';
+        localStorage.setItem('preferredDirMode', directionMode);
+    }
+    applyDocumentDirection();
+    updateDirectionUI();
+}
+
+function syncDirectionWithLanguage(force = false) {
+    if (directionMode === 'manual' && !force) {
+        applyDocumentDirection();
+        updateDirectionUI();
+        return;
+    }
+    const targetDir = isLanguageRTL(currentLanguage) ? 'rtl' : 'ltr';
+    setDirection(targetDir, { manual: false, persist: true });
+}
+
+function applyDocumentLanguage() {
+    document.documentElement.lang = currentLanguage;
+}
+
+applyDocumentLanguage();
+applyDocumentDirection();
+updateDirectionUI();
 function generateUniqueID() {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';
@@ -2124,16 +2268,21 @@ function protectContentBeforeSwitch() {
 
 
 function saveUserPreferences() {
+    const layoutContainer = document.getElementById('main-split-view');
+    const chapterSectionSelect = document.getElementById('chapter-section-select');
+    const chapterSortInput = document.getElementById('chapter-sort-input');
     const preferences = {
         fontSize: editorSettings.fontSize,
         fontFamily: editorSettings.fontFamily,
         bgColor: editorSettings.bgColor,
         textColor: editorSettings.textColor,
         theme: currentTheme,
-        layout: document.getElementById('main-split-view').classList.contains('full-editor') ? 'full' : 'split',
-        chapterSection: document.getElementById('chapter-section-select').value,
-        chapterSort: document.getElementById('chapter-sort-input').value,
-        language: currentLanguage
+        layout: layoutContainer && layoutContainer.classList.contains('full-editor') ? 'full' : 'split',
+        chapterSection: chapterSectionSelect ? chapterSectionSelect.value : '',
+        chapterSort: chapterSortInput ? chapterSortInput.value : '',
+        language: currentLanguage,
+        direction: currentDirection,
+        directionMode
     };
     localStorage.setItem('userPreferences', JSON.stringify(preferences));
     localStorage.setItem('preferredLang', currentLanguage);
@@ -2149,9 +2298,31 @@ function loadUserPreferences() {
         editorSettings.bgColor = preferences.bgColor || '#1e293b';
         editorSettings.textColor = preferences.textColor || '#f8fafc';
         currentTheme = preferences.theme || 'light';
-        currentLanguage = preferences.language || localStorage.getItem('preferredLang') || currentLanguage || 'ar';
+        currentLanguage = (preferences.language || localStorage.getItem('preferredLang') || currentLanguage || 'ar').toLowerCase();
+        directionMode = preferences.directionMode || localStorage.getItem('preferredDirMode') || directionMode || 'auto';
+        if (preferences.direction) {
+            currentDirection = preferences.direction;
+        }
+        applyDocumentLanguage();
+        if (directionMode === 'manual') {
+            setDirection(currentDirection, { manual: true, persist: false });
+        } else {
+            syncDirectionWithLanguage(true);
+        }
         setTheme(currentTheme);
     }
+}
+
+function setLanguage(lang) {
+    currentLanguage = (lang || 'ar').toLowerCase();
+    applyDocumentLanguage();
+    localStorage.setItem('preferredLang', currentLanguage);
+    if (directionMode !== 'manual') {
+        syncDirectionWithLanguage(true);
+    } else {
+        updateDirectionUI();
+    }
+    saveUserPreferences();
 }
 function renderLanguageSelector() {
     const container = document.getElementById('controls-panel') || document.body;
@@ -2180,9 +2351,11 @@ function renderLanguageSelector() {
     }
     select.value = currentLanguage || 'ar';
     select.onchange = () => {
-        currentLanguage = select.value || 'ar';
-        localStorage.setItem('preferredLang', currentLanguage);
-        saveUserPreferences();
+        const nextLang = select.value || 'ar';
+        setLanguage(nextLang);
+        if (bookData && bookTitleInputEl) {
+            bookTitleInputEl.value = getLocalizedBookName(bookData, currentLanguage) || '';
+        }
         if (bookData && activePath.section !== null && activePath.chapter !== null) {
             const ch = bookData.sections[activePath.section].Chapters[activePath.chapter];
             if (editorTitleInput) editorTitleInput.value = getLocalizedTitle(ch, currentLanguage) || '';
@@ -2194,19 +2367,7 @@ function renderLanguageSelector() {
         renderTreeView();
         if (typeof renderViewerContentOnly === 'function') renderViewerContentOnly();
     };
-
-    
-select.value=currentLanguage||'ar';
-currentLanguage=select.value||'ar';
-localStorage.setItem('preferredLang',currentLanguage);
-if(bookData&&bookTitleInputEl){bookTitleInputEl.value=getLocalizedBookName(bookData,currentLanguage)||''}
-if(bookData&&activePath.section!==null&&activePath.chapter!==null){
-const ch=bookData.sections[activePath.section].Chapters[activePath.chapter];
-if(editorTitleInput)editorTitleInput.value=getLocalizedTitle(ch,currentLanguage)||'';
-if (markdownEditor) markdownEditor.value=getLocalizedContent(ch,currentLanguage)||'';
 }
-}
-
         function updateMarkdownPreview() {
             if (!markdownEditor || !markdownPreview) {
                 console.warn('Markdown editor or preview not initialized');
@@ -3285,10 +3446,12 @@ function printCurrentChapter() {
     const chapterTitleTxt = getLocalizedTitle(chapter, currentLanguage || 'ar');
     const chapterNumber = activePath.chapter + 1;
     const printWindow = window.open('', '_blank');
-    
+    const docLang = currentLanguage || 'ar';
+    const docDir = currentDirection === 'rtl' ? 'rtl' : 'ltr';
+
     let printContent = `
         <!DOCTYPE html>
-        <html lang="ar" dir="rtl">
+        <html lang="${docLang}" dir="${docDir}">
         <head>
             <meta charset="UTF-8">
             <title>${chapterTitleTxt}</title>
@@ -3320,10 +3483,10 @@ function printCurrentChapter() {
                         color: #666;
                     }
                 }
-                
+
                 body {
                     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                    direction: rtl;
+                    direction: ${docDir};
                     margin: 0;
                     padding: 0;
                     line-height: 1.8;
@@ -3446,7 +3609,7 @@ function printCurrentChapter() {
                 .table td {
                     border: 1px solid #bdc3c7;
                     padding: 10px 8px;
-                    text-align: right;
+                    text-align: start;
                     background: #fdfdfd;
                 }
                 
@@ -3886,24 +4049,26 @@ function printCurrentChapter() {
 
             const section = bookData.sections[sectionIndex];
             const sectionName = getLocalizedSectionName(section, currentLanguage || 'ar');
-            
-            let printContent = `<html dir="rtl"><head><meta charset="UTF-8"><title>${sectionName}</title>`;
+            const docLang = currentLanguage || 'ar';
+            const docDir = currentDirection === 'rtl' ? 'rtl' : 'ltr';
+
+            let printContent = `<!DOCTYPE html><html lang="${docLang}" dir="${docDir}"><head><meta charset="UTF-8"><title>${sectionName}</title>`;
             printContent += `<style>
-                body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.8; margin: 20px; color: #333; }
+                body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.8; margin: 20px; color: #333; direction: ${docDir}; }
                 h1 { color: #2563eb; border-bottom: 3px solid #2563eb; padding-bottom: 10px; margin-bottom: 30px; }
                 h2 { color: #1e40af; border-bottom: 1px solid #cbd5e1; padding-bottom: 5px; margin-top: 30px; margin-bottom: 15px; }
                 h3, h4, h5, h6 { color: #374151; margin-top: 20px; margin-bottom: 10px; }
                 p { margin-bottom: 12px; text-align: justify; }
-                blockquote { border-right: 4px solid #3b82f6; padding: 15px 20px; margin: 20px 0; background: #f8fafc; border-radius: 5px; }
+                blockquote { border-inline-start: 4px solid #3b82f6; padding: 15px 20px; margin: 20px 0; background: #f8fafc; border-radius: 5px; }
                 code { background: #f1f5f9; padding: 3px 6px; border-radius: 4px; font-family: 'Consolas', monospace; }
                 pre { background: #f8fafc; padding: 15px; border-radius: 8px; overflow-x: auto; border: 1px solid #e2e8f0; white-space: pre-wrap; }
                 .chapter { margin-bottom: 50px; page-break-inside: avoid; }
                 .chapter-title { font-size: 1.5em; font-weight: bold; margin-bottom: 20px; color: #1e40af; }
-                ul, ol { margin: 15px 0; padding-right: 20px; }
+                ul, ol { margin: 15px 0; padding-inline-start: 20px; }
                 li { margin-bottom: 5px; }
                 strong { font-weight: bold; }
                 em { font-style: italic; }
-                @media print { 
+                @media print {
                     body { margin: 0; font-size: 12pt; } 
                     .chapter { page-break-after: auto; } 
                     h1 { page-break-after: avoid; }
@@ -3995,20 +4160,22 @@ function printCurrentChapter() {
             }
 
             const bookTitleTxt = getLocalizedBookName(bookData, currentLanguage || 'ar') || 'محرر الكتب المتقدم';
-            
+            const docLang = currentLanguage || 'ar';
+            const docDir = currentDirection === 'rtl' ? 'rtl' : 'ltr';
+
             let printContent = `
                 <!DOCTYPE html>
-                <html lang="ar" dir="rtl">
+                <html lang="${docLang}" dir="${docDir}">
                 <head>
                     <meta charset="UTF-8">
                     <title>طباعة الكتاب: ${bookTitleTxt}</title>
                     <style>
-                        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.8; margin: 20px; color: #333; }
-                        h1.book-title { 
-                            font-size: 2.5em; 
-                            color: #2563eb; 
-                            border-bottom: 3px solid #2563eb; 
-                            padding-bottom: 10px; 
+                        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.8; margin: 20px; color: #333; direction: ${docDir}; }
+                        h1.book-title {
+                            font-size: 2.5em;
+                            color: #2563eb;
+                            border-bottom: 3px solid #2563eb;
+                            padding-bottom: 10px;
                             margin-bottom: 30px; 
                             text-align: center; 
                             page-break-after: always; /* صفحة جديدة بعد العنوان */
@@ -4016,7 +4183,7 @@ function printCurrentChapter() {
                         .book-bio {
                             font-style: italic;
                             background: #f8fafc;
-                            border-right: 5px solid #e2e8f0;
+                            border-inline-start: 5px solid #e2e8f0;
                             padding: 20px;
                             margin-bottom: 30px;
                             page-break-after: always; /* صفحة جديدة بعد المقدمة */
@@ -4041,10 +4208,10 @@ function printCurrentChapter() {
                             page-break-inside: avoid; 
                         }
                         p { margin-bottom: 12px; text-align: justify; }
-                        blockquote { border-right: 4px solid #3b82f6; padding: 15px 20px; margin: 20px 0; background: #f8fafc; border-radius: 5px; }
+                        blockquote { border-inline-start: 4px solid #3b82f6; padding: 15px 20px; margin: 20px 0; background: #f8fafc; border-radius: 5px; }
                         code { background: #f1f5f9; padding: 3px 6px; border-radius: 4px; font-family: 'Consolas', monospace; }
                         pre { background: #f8fafc; padding: 15px; border-radius: 8px; overflow-x: auto; border: 1px solid #e2e8f0; white-space: pre-wrap; }
-                        ul, ol { margin: 15px 0; padding-right: 20px; }
+                        ul, ol { margin: 15px 0; padding-inline-start: 20px; }
                         li { margin-bottom: 5px; }
                         
                         @media print { 
@@ -6082,13 +6249,13 @@ function destroyCurrentBook() {
         function setTheme(theme) {
             currentTheme = theme;
             document.documentElement.setAttribute('data-theme', theme);
-            
+
             document.querySelectorAll('.theme-btn').forEach(btn => {
-                btn.classList.remove('active');
+                btn.classList.toggle('active', btn.dataset.theme === theme);
             });
-            document.querySelector(`[data-theme="${theme}"]`).classList.add('active');
-            
+
             localStorage.setItem('editorTheme', theme);
+            saveUserPreferences();
         }
 
         function increaseFontSize() {
@@ -6940,11 +7107,14 @@ function runtime(){
   out.push("function toggleToc(v){var a=document.getElementById('toc'),s=document.getElementById('toc-scrim');var on=v==null?!a.classList.contains('open'):v;a.classList.toggle('open',on);s&&s.classList.toggle('show',on);document.body.style.overflow=on&&window.innerWidth<981?'hidden':''}");
   out.push("function parseHash(){var h=location.hash.replace(/^#/,'');if(!h)return null;var p=h.split('-');if(p.length<3)return null;return{lang:p[0],s:p[1],c:p[2]}}");
   out.push("function setHash(lang,s,c){try{history.replaceState(null,'','#'+lang+'-'+s+'-'+c)}catch{location.hash='#'+lang+'-'+s+'-'+c}}");
-  out.push("var state={lang:'ar',theme:(localStorage.getItem('theme')||'light'),book:null,open:{},active:{s:null,c:null}}");
+  out.push("var initialLang=document.documentElement.lang||'ar'");
+  out.push("var initialDir=document.documentElement.getAttribute('dir')||'rtl'");
+  out.push("var rtlLangs=new Set(['ar','he','fa','ur'])");
+  out.push("var state={lang:initialLang,dir:initialDir,theme:(localStorage.getItem('theme')||'light'),book:null,open:{},active:{s:null,c:null}}");
   out.push("document.documentElement.dataset.theme=state.theme");
   out.push("var raw='{}';try{raw=document.getElementById('bk-data').textContent}catch(e){};var src={};try{src=JSON.parse(raw)}catch(e){src={name:'',sections:[]}}");
   out.push("var initial=parseHash();if(initial&&initial.lang)state.lang=initial.lang");
-  out.push("function boot(){document.documentElement.dir=(state.lang==='ar'?'rtl':'ltr');state.book=project(src,state.lang);var t=document.getElementById('book-title');if(t)t.textContent=state.book.name||'';buildTOC(state.book,state.open);renderArticle(state.book,state.active)}");
+  out.push("function boot(){var targetDir=rtlLangs.has(state.lang)?'rtl':'ltr';state.dir=(state.lang===initialLang?initialDir:targetDir);document.documentElement.dir=state.dir;state.book=project(src,state.lang);var t=document.getElementById('book-title');if(t)t.textContent=state.book.name||'';buildTOC(state.book,state.open);renderArticle(state.book,state.active)}");
   out.push("boot()");
   out.push("var lg=$('lang-switch');if(lg)lg.addEventListener('change',function(e){state.lang=e.target.value;state.open={};state.active={s:null,c:null};boot();toggleToc(false)})");
   out.push("var th=$('theme-toggle');if(th)th.addEventListener('click',function(){state.theme=(state.theme==='dark'?'light':'dark');document.documentElement.dataset.theme=state.theme;localStorage.setItem('theme',state.theme)})");
@@ -6963,9 +7133,11 @@ function buildHTML(book,opt={}){
   const css=cssTheme(opt.cssText);
   const json=jsonSafe(book);
   const rt=scriptSafe(runtime());
+  const activeLang=(currentLanguage||'ar').toLowerCase();
+  const activeDir=(currentDirection==='rtl'?'rtl':(isLanguageRTL(activeLang)?'rtl':'ltr'));
   const head=[
     "<!doctype html>",
-    '<html lang="ar" dir="rtl" data-theme="light">',
+    `<html lang="${activeLang}" dir="${activeDir}" data-theme="light">`,
     '<meta charset="utf-8">',
     '<meta name="viewport" content="width=device-width, initial-scale=1">',
     "<title>"+title+" — كتاب إلكتروني</title>",
