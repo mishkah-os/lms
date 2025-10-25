@@ -24,7 +24,55 @@
         }
         body {
             font-family: var(--font-en);
-            @apply bg-gray-100 dark:bg-primary-dark text-gray-900 dark:text-gray-100 transition-colors duration-300;
+            min-height: 100vh;
+            margin: 0;
+            color: #111827;
+            background: radial-gradient(circle at 0% 0%, rgba(96, 165, 250, 0.25), transparent 55%),
+                        radial-gradient(circle at 100% 100%, rgba(37, 99, 235, 0.18), transparent 55%),
+                        linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%);
+            background-attachment: fixed;
+            transition: background 0.5s ease, color 0.5s ease;
+        }
+        body::before,
+        body::after {
+            content: "";
+            position: fixed;
+            width: 480px;
+            height: 480px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            filter: blur(140px);
+            opacity: 0.35;
+            transition: opacity 0.5s ease;
+        }
+        body::before {
+            top: -160px;
+            left: -120px;
+            background: rgba(96, 165, 250, 0.45);
+        }
+        body::after {
+            bottom: -200px;
+            right: -160px;
+            background: rgba(59, 130, 246, 0.3);
+        }
+        html.dark body {
+            color: #e5e7eb;
+            background: radial-gradient(circle at 0% 0%, rgba(59, 130, 246, 0.2), transparent 55%),
+                        radial-gradient(circle at 100% 100%, rgba(14, 116, 144, 0.25), transparent 55%),
+                        linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        }
+        html.dark body::before {
+            background: rgba(37, 99, 235, 0.45);
+            opacity: 0.45;
+        }
+        html.dark body::after {
+            background: rgba(6, 182, 212, 0.22);
+            opacity: 0.4;
+        }
+        nav, main, footer {
+            position: relative;
+            z-index: 1;
         }
         .ar-mode {
             direction: rtl;
@@ -62,6 +110,55 @@
             @apply text-gray-800 dark:text-gray-200 font-medium;
         }
 
+        .dashboard-hero,
+        .section-hero {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(239, 246, 255, 0.9) 100%);
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            box-shadow: 0 25px 55px rgba(15, 23, 42, 0.08);
+            backdrop-filter: blur(18px);
+        }
+        html.dark .dashboard-hero,
+        html.dark .section-hero {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(30, 64, 175, 0.35) 100%);
+            border-color: rgba(59, 130, 246, 0.25);
+            box-shadow: 0 25px 70px rgba(6, 11, 26, 0.55);
+        }
+        .card-surface {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(239, 246, 255, 0.88) 100%);
+            border: 1px solid rgba(148, 163, 184, 0.15);
+            box-shadow: 0 16px 38px rgba(15, 23, 42, 0.08);
+            backdrop-filter: blur(14px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+        html.dark .card-surface {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.92) 0%, rgba(30, 64, 175, 0.45) 100%);
+            border-color: rgba(59, 130, 246, 0.28);
+            box-shadow: 0 24px 45px rgba(6, 11, 26, 0.55);
+        }
+        .subject-card > div.card-surface:hover,
+        .card-surface:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 28px 60px rgba(37, 99, 235, 0.25);
+            border-color: rgba(37, 99, 235, 0.4);
+        }
+        .floating-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.35rem 0.85rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #1d4ed8;
+            background: rgba(191, 219, 254, 0.45);
+            border: 1px solid rgba(59, 130, 246, 0.25);
+        }
+        html.dark .floating-chip {
+            color: #bfdbfe;
+            background: rgba(37, 99, 235, 0.25);
+            border-color: rgba(147, 197, 253, 0.35);
+        }
+
         /* تنسيقات الـ Modal (مستخدمة للفيديو/الاختبار الخاص بالدرس و لـ PDF) */
         #modal-container iframe {
             @apply w-full h-full border-0;
@@ -71,6 +168,15 @@
         }
         #modal-container {
              @apply bg-white dark:bg-gray-800; /* Dark mode for modal */
+             background: rgba(255, 255, 255, 0.97);
+             border: 1px solid rgba(148, 163, 184, 0.2);
+             box-shadow: 0 32px 80px rgba(15, 23, 42, 0.35);
+             backdrop-filter: blur(20px);
+        }
+        html.dark #modal-container {
+             background: rgba(17, 24, 39, 0.94);
+             border-color: rgba(37, 99, 235, 0.35);
+             box-shadow: 0 40px 85px rgba(2, 6, 23, 0.7);
         }
         #modal-overlay {
             @apply bg-black/70 dark:bg-black/80;
@@ -115,6 +221,56 @@
          .quiz-review-item .correct-answer {
              @apply mt-2 text-sm text-gray-600 dark:text-gray-300;
          }
+
+        .quiz-tab-btn {
+            @apply px-4 py-2 rounded-full font-semibold text-sm transition duration-200;
+            background: rgba(226, 232, 240, 0.6);
+            color: #1e3a8a;
+        }
+        .quiz-tab-btn.active {
+            background: #1e40af;
+            color: #f8fafc;
+            box-shadow: 0 10px 30px rgba(30, 64, 175, 0.35);
+        }
+        html.dark .quiz-tab-btn {
+            background: rgba(30, 64, 175, 0.25);
+            color: #dbeafe;
+        }
+        html.dark .quiz-tab-btn.active {
+            background: #60a5fa;
+            color: #0b1120;
+        }
+        .quiz-stat-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.35rem 0.85rem;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            background: rgba(37, 99, 235, 0.12);
+            color: #1e3a8a;
+        }
+        html.dark .quiz-stat-pill {
+            background: rgba(96, 165, 250, 0.2);
+            color: #e0f2fe;
+        }
+        .quiz-preview-item {
+            border: 1px solid rgba(148, 163, 184, 0.25);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            background: rgba(248, 250, 252, 0.85);
+            box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+        }
+        html.dark .quiz-preview-item {
+            background: rgba(30, 41, 59, 0.8);
+            border-color: rgba(59, 130, 246, 0.25);
+            box-shadow: 0 20px 50px rgba(2, 6, 23, 0.55);
+        }
+        .quiz-preview-item ul {
+            margin-top: 0.75rem;
+            padding-left: 1rem;
+        }
 
         /* تنسيقات إضافية للوضع الليلي */
         .subject-card > div:hover {
@@ -161,8 +317,8 @@
 </head>
 <body class="en-mode min-h-screen">
 
-    <nav class="bg-white dark:bg-secondary-dark shadow-md p-4 sticky top-0 z-10 border-b border-gray-200 dark:border-gray-700">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
+    <nav class="sticky top-0 z-20 bg-white/80 dark:bg-secondary-dark/80 backdrop-blur-xl border-b border-white/40 dark:border-white/10 shadow-xl py-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center px-4 sm:px-6 lg:px-8">
             <button id="back-button" class="hidden text-gray-600 dark:text-gray-300 hover:text-primary-blue dark:hover:text-secondary-blue transition duration-200 flex items-center space-x-2 rtl:space-x-reverse" onclick="goBack()">
                 <svg class="w-6 h-6 transform rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                 <span id="back-text" data-en="Back" data-ar="عودة">Back</span>
@@ -188,19 +344,20 @@
         </div>
     </nav>
 
-    <main class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+    <main class="relative z-10 max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
 
         <div id="dashboard-view">
-            <header class="text-center py-10 bg-white dark:bg-secondary-dark rounded-xl shadow-lg mb-8 border border-gray-200 dark:border-gray-700">
-                <h1 class="text-4xl font-extrabold text-primary-blue dark:text-secondary-blue mb-2" data-en="Welcome, Student!" data-ar="مرحباً بك، أيها الطالب/الطالبة!">Welcome, Student!</h1>
-                <p class="text-lg text-gray-600 dark:text-gray-300" data-en="Choose a subject to continue your Grade 6 learning journey:" data-ar="اختر مادة لمتابعة رحلتك التعليمية للصف السادس:">Choose a subject to continue your Grade 6 learning journey:</p>
+            <header class="dashboard-hero text-center py-12 px-6 rounded-3xl shadow-2xl mb-10 border border-transparent relative overflow-hidden">
+                <span class="floating-chip mb-4" data-en="Personalized for Grade 6" data-ar="مصمم خصيصًا للصف السادس">Personalized for Grade 6</span>
+                <h1 class="text-4xl sm:text-5xl font-extrabold text-primary-blue dark:text-secondary-blue mb-4" data-en="Welcome, Student!" data-ar="مرحباً بك، أيها الطالب/الطالبة!">Welcome, Student!</h1>
+                <p class="text-lg sm:text-xl text-gray-600 dark:text-gray-200 max-w-2xl mx-auto" data-en="Choose a subject to continue your Grade 6 learning journey:" data-ar="اختر مادة لمتابعة رحلتك التعليمية للصف السادس:">Choose a subject to continue your Grade 6 learning journey:</p>
             </header>
             <div id="subject-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 </div>
         </div>
 
         <div id="blocks-view" class="hidden">
-            <header id="subject-header-blocks" class="text-center py-10 bg-white dark:bg-secondary-dark rounded-xl shadow-lg mb-8 border-t-4 border-primary-blue dark:border-secondary-blue">
+            <header id="subject-header-blocks" class="section-hero text-center py-10 px-6 rounded-3xl shadow-2xl mb-10 border-t-4 border-primary-blue dark:border-secondary-blue">
                 <div id="subject-icon-blocks" class="text-7xl mb-4"></div>
                 <h1 id="subject-title-blocks" class="text-4xl font-extrabold text-primary-blue dark:text-secondary-blue mb-2"></h1>
                 <p id="subject-description-blocks" class="text-lg text-gray-600 dark:text-gray-300"></p>
@@ -222,7 +379,7 @@
         </div>
 
         <div id="lessons-view" class="hidden">
-            <header id="block-header-lessons" class="text-center py-10 bg-white dark:bg-secondary-dark rounded-xl shadow-lg mb-8 border-t-4 border-primary-blue dark:border-secondary-blue">
+            <header id="block-header-lessons" class="section-hero text-center py-10 px-6 rounded-3xl shadow-2xl mb-10 border-t-4 border-primary-blue dark:border-secondary-blue">
                 <div id="block-subject-icon-lessons" class="text-5xl mb-2"></div>
                 <h2 id="block-title-lessons" class="text-3xl font-extrabold text-primary-blue dark:text-secondary-blue mb-1"></h2>
                 <p id="block-brief-lessons" class="text-lg text-gray-600 dark:text-gray-300"></p>
@@ -251,10 +408,10 @@
                 <p id="lesson-content-brief" class="text-lg text-gray-600 dark:text-gray-300"></p>
             </header>
 
-            <div id="lesson-resources" class="bg-white dark:bg-secondary-dark p-4 rounded-xl shadow-lg mb-8 flex flex-wrap gap-4 justify-center border border-gray-200 dark:border-gray-700">
+            <div id="lesson-resources" class="card-surface p-4 rounded-2xl mb-8 flex flex-wrap gap-4 justify-center border border-transparent">
                 </div>
 
-            <div id="lesson-content-theory" class="lesson-content bg-white dark:bg-secondary-dark p-6 md:p-8 rounded-xl shadow-lg mb-8 border border-gray-200 dark:border-gray-700">
+            <div id="lesson-content-theory" class="lesson-content card-surface p-6 md:p-8 rounded-2xl mb-8 border border-transparent">
                 </div>
 
             <div class="mb-8">
@@ -265,7 +422,7 @@
         </div>
 
         <div id="block-sheets-view" class="hidden">
-            <header id="block-sheets-header" class="text-center py-10 bg-white dark:bg-secondary-dark rounded-xl shadow-lg mb-8 border-t-4 border-primary-blue dark:border-secondary-blue">
+            <header id="block-sheets-header" class="section-hero text-center py-10 px-6 rounded-3xl shadow-2xl mb-10 border-t-4 border-primary-blue dark:border-secondary-blue">
                 <div id="block-sheets-icon" class="text-5xl mb-2"></div>
                 <h2 id="block-sheets-title" class="text-3xl font-extrabold text-primary-blue dark:text-secondary-blue mb-1"></h2>
                 <p id="block-sheets-description" class="text-lg text-gray-600 dark:text-gray-300 px-4" data-en="Select a sheet to view:" data-ar="اختر ملفاً لعرضه:">Select a sheet to view:</p>
@@ -281,7 +438,7 @@
 
     </main>
 
-    <footer class="mt-10 p-4 text-center text-sm text-gray-500 dark:text-gray-400">
+    <footer class="relative z-10 mt-12 mx-auto max-w-4xl p-6 text-center text-sm text-gray-500 dark:text-gray-400 bg-white/80 dark:bg-secondary-dark/70 backdrop-blur-xl rounded-3xl shadow-lg border border-white/40 dark:border-white/10">
         <p data-en="NIES Learning Management System &copy; 2025" data-ar="نظام NIES لإدارة التعلم &copy; 2025">NIES Learning Management System &copy; 2025</p>
     </footer>
 
@@ -578,7 +735,7 @@
                     blockCard.className = 'subject-card group cursor-pointer transition duration-300 ease-in-out';
 
                     blockCard.innerHTML = `
-                        <div class="p-6 h-full bg-white dark:bg-secondary-dark rounded-xl shadow-md hover:shadow-lg dark:hover:shadow-blue-900/50 transition-all duration-300 transform hover:-translate-y-1 border-b-4 border-[var(--subject-color)] flex flex-col">
+                        <div class="card-surface p-6 h-full rounded-2xl transition-all duration-300 transform hover:-translate-y-1 border-b-4 border-[var(--subject-color)] flex flex-col">
                             <span class="text-3xl mb-2 font-semibold text-[var(--subject-color)]">#${block.id}</span>
                             <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-2">${getLocalizedText(block.title, currentLang)}</h3>
                             <p class="text-sm text-gray-600 dark:text-gray-300 flex-grow">${getLocalizedText(block.brief, currentLang)}</p>
@@ -660,7 +817,7 @@
                     resultsCount++;
                     const lessonCard = document.createElement('div');
                     lessonCard.onclick = () => changeView('lesson-content', subjectId, blockId, lesson.id);
-                    lessonCard.className = 'p-4 bg-white dark:bg-secondary-dark rounded-lg shadow-md hover:shadow-lg dark:hover:shadow-blue-900/50 transition duration-200 border-l-4 rtl:border-l-0 rtl:border-r-4 border-[var(--subject-color)] cursor-pointer';
+                    lessonCard.className = 'card-surface p-5 rounded-2xl transition duration-300 border-l-4 rtl:border-l-0 rtl:border-r-4 border-[var(--subject-color)] cursor-pointer hover:-translate-y-1';
                     lessonCard.innerHTML = `
                         <h4 class="text-lg font-bold text-gray-800 dark:text-gray-100">${getLocalizedText(lesson.title, currentLang)}</h4>
                         <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">${getLocalizedText(lesson.brief, currentLang)}</p>
@@ -862,7 +1019,7 @@
          */
          function createResourceButton(container, type, data, text, styleClasses) {
              const btn = document.createElement('button');
-             btn.className = `text-white px-4 py-2 rounded-lg font-semibold transition duration-200 ${styleClasses}`;
+             btn.className = `text-white px-5 py-3 rounded-xl font-semibold shadow-lg transition duration-200 ${styleClasses}`;
              btn.innerHTML = text;
              if (type === 'quiz') {
                 // Pass lesson-specific quiz data
@@ -906,11 +1063,10 @@
                 }
                 else if (type === 'quiz') {
                     const [subjectId, blockId, lessonId] = args;
-                    // currentQuizData should have been set by createResourceButton just before calling this
                     if (!currentQuizData) {
                          throw new Error("Quiz data not loaded or set before opening modal.");
                     }
-                    buildQuizHTML(currentQuizData, subjectId, blockId, lessonId, 'modal-content');
+                    openQuizModal(currentQuizData, subjectId, blockId, lessonId);
                 }
                 else {
                      throw new Error(`Unsupported modal type: ${type}`);
@@ -934,6 +1090,123 @@
                      modalContainer.classList.add('scale-100');
                  }, 10);
             }
+        }
+
+        function openQuizModal(quizData, subjectId, blockId, lessonId) {
+            const totalQuestions = quizData.length;
+            const heading = getLocalizedText({ en: 'Quiz Center', ar: 'مركز الاختبار' }, currentLang);
+            const description = getLocalizedText({ en: 'Preview the questions, start the quiz, or revisit your progress.', ar: 'استعرض الأسئلة، ابدأ الاختبار، أو راجع تقدمك.' }, currentLang);
+            const questionsLabel = getLocalizedText({ en: 'Questions', ar: 'الأسئلة' }, currentLang);
+            const lastScoreLabel = getLocalizedText({ en: 'Last Score', ar: 'آخر نتيجة' }, currentLang);
+            const overviewLabel = getLocalizedText({ en: 'Overview', ar: 'نظرة عامة' }, currentLang);
+            const previewLabel = getLocalizedText({ en: 'Preview', ar: 'استعراض' }, currentLang);
+            const takeLabel = getLocalizedText({ en: 'Take Quiz', ar: 'حل الاختبار' }, currentLang);
+
+            const storageKey = `quizScore-${subjectId}-${blockId}-${lessonId}`;
+            const savedScore = localStorage.getItem(storageKey);
+
+            const statsHtml = [`<span class="quiz-stat-pill">${questionsLabel}: ${totalQuestions}</span>`];
+            if (savedScore) {
+                statsHtml.push(`<span class="quiz-stat-pill">${lastScoreLabel}: ${savedScore}</span>`);
+            }
+
+            modalContent.innerHTML = `
+                <div class="flex flex-col h-full">
+                    <div class="px-6 pt-6 pb-4 border-b border-gray-200 dark:border-gray-700">
+                        <h2 class="text-3xl font-bold text-gray-800 dark:text-gray-100">${heading}</h2>
+                        <p class="text-sm text-gray-600 dark:text-gray-300 mt-2">${description}</p>
+                        <div class="flex flex-wrap gap-2 mt-4">
+                            ${statsHtml.join('')}
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap gap-2 px-6 py-4" id="quiz-mode-tabs">
+                        <button class="quiz-tab-btn" data-quiz-mode="overview">${overviewLabel}</button>
+                        <button class="quiz-tab-btn" data-quiz-mode="preview">${previewLabel}</button>
+                        <button class="quiz-tab-btn" data-quiz-mode="take">${takeLabel}</button>
+                    </div>
+                    <div id="quiz-dynamic-section" class="flex-1 overflow-auto px-6 pb-6"></div>
+                </div>
+            `;
+
+            modalContent.querySelectorAll('.quiz-tab-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const mode = btn.dataset.quizMode;
+                    renderQuizSection(mode, subjectId, blockId, lessonId);
+                });
+            });
+
+            renderQuizSection('overview', subjectId, blockId, lessonId);
+        }
+
+        function renderQuizSection(mode, subjectId, blockId, lessonId) {
+            if (!currentQuizData) return;
+            const section = document.getElementById('quiz-dynamic-section');
+            if (!section) return;
+
+            const tabButtons = modalContent.querySelectorAll('.quiz-tab-btn');
+            tabButtons.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.quizMode === mode);
+            });
+
+            if (mode === 'overview') {
+                const introTitle = getLocalizedText({ en: 'Get ready to ace this quiz!', ar: 'استعد للتفوق في هذا الاختبار!' }, currentLang);
+                const introDescription = getLocalizedText({ en: 'Take a quick look at the essentials before you begin.', ar: 'ألقِ نظرة سريعة على أهم التفاصيل قبل البدء.' }, currentLang);
+                const tips = [
+                    getLocalizedText({ en: 'Preview the questions to prepare your strategy.', ar: 'استعرض الأسئلة مسبقًا لتحضير استراتيجيتك.' }, currentLang),
+                    getLocalizedText({ en: 'Answer each question carefully and review before submitting.', ar: 'أجب عن كل سؤال بعناية وراجع إجاباتك قبل الإرسال.' }, currentLang),
+                    getLocalizedText({ en: 'Return anytime to improve your score.', ar: 'عد في أي وقت لتحسين نتيجتك.' }, currentLang)
+                ];
+                const startLabel = getLocalizedText({ en: 'Start the Quiz', ar: 'ابدأ الاختبار الآن' }, currentLang);
+
+                section.innerHTML = `
+                    <div class="card-surface p-6 md:p-8 rounded-2xl border border-transparent space-y-5">
+                        <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100">${introTitle}</h3>
+                        <p class="text-gray-600 dark:text-gray-300">${introDescription}</p>
+                        <ul class="list-disc rtl:list-disc rtl:mr-6 ltr:list-disc ltr:ml-6 space-y-2 text-gray-600 dark:text-gray-300">
+                            ${tips.map(tip => `<li>${tip}</li>`).join('')}
+                        </ul>
+                        <button data-action="start-quiz" class="mt-4 inline-flex items-center justify-center bg-green-600 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:bg-green-700 transition duration-200 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900">
+                            ${startLabel}
+                        </button>
+                    </div>
+                `;
+
+                const startButton = section.querySelector('[data-action="start-quiz"]');
+                if (startButton) {
+                    startButton.addEventListener('click', () => renderQuizSection('take', subjectId, blockId, lessonId));
+                }
+                return;
+            }
+
+            if (mode === 'preview') {
+                const questionLabel = getLocalizedText({ en: 'Question', ar: 'السؤال' }, currentLang);
+                const correctLabel = getLocalizedText({ en: 'Correct answer', ar: 'الإجابة الصحيحة' }, currentLang);
+
+                let previewHtml = '<div class="space-y-5">';
+                currentQuizData.forEach((q, index) => {
+                    previewHtml += `
+                        <div class="quiz-preview-item">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-sm font-semibold uppercase tracking-wide text-[var(--subject-color)]">${questionLabel} ${index + 1}</span>
+                                <span class="text-xs text-gray-500 dark:text-gray-400">${getLocalizedText({ en: 'Preview mode', ar: 'وضع المعاينة' }, currentLang)}</span>
+                            </div>
+                            <p class="text-base text-gray-700 dark:text-gray-200 mb-3">${getLocalizedText(q.q, currentLang)}</p>
+                            <ul class="list-disc rtl:list-disc rtl:mr-5 ltr:list-disc ltr:ml-5 space-y-1 text-sm text-gray-600 dark:text-gray-300">
+                                ${q.options.map(option => {
+                                    const isCorrect = option === q.answer;
+                                    return `<li class="${isCorrect ? 'font-semibold text-green-700 dark:text-green-300' : ''}">${option}${isCorrect ? ` — ${correctLabel}` : ''}</li>`;
+                                }).join('')}
+                            </ul>
+                        </div>
+                    `;
+                });
+                previewHtml += '</div>';
+                section.innerHTML = previewHtml;
+                return;
+            }
+
+            // Default to take mode
+            buildQuizHTML(currentQuizData, subjectId, blockId, lessonId, 'quiz-dynamic-section');
         }
 
         /**
@@ -1086,7 +1359,7 @@
                 card.onclick = () => openModal('pdf', pdf.url);
 
                 card.innerHTML = `
-                        <div class="p-6 h-full bg-white dark:bg-secondary-dark rounded-xl shadow-md hover:shadow-lg dark:hover:shadow-blue-900/50 transition-all duration-300 transform hover:-translate-y-1 border-b-4" style="border-color: ${subjectColor};">
+                        <div class="card-surface p-6 h-full rounded-2xl transition-all duration-300 transform hover:-translate-y-1 border-b-4" style="border-color: ${subjectColor};">
                             <div class="flex flex-col items-center justify-center h-full text-center">
                                 <span class="text-5xl mb-4 transition duration-300 group-hover:scale-110">📄</span>
                                 <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100">${cardTitle}</h3>
@@ -1257,17 +1530,40 @@
                 resultHtml += `</div>`;
             });
 
-            // زر الإغلاق للمودال
-            resultHtml += `
-                <button onclick="closeModal()" class="mt-8 bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition duration-200 focus:ring-blue-500">
-                    ${getLocalizedText({en: 'Close', ar: 'إغلاق'}, currentLang)}
-                </button>
-            `;
+            const retakeLabel = getLocalizedText({en: 'Retake Quiz', ar: 'إعادة الاختبار'}, currentLang);
+            const reviewLabel = getLocalizedText({en: 'Review Questions', ar: 'مراجعة الأسئلة'}, currentLang);
+            const closeLabel = getLocalizedText({en: 'Close', ar: 'إغلاق'}, currentLang);
 
-            resultHtml += `</div></div>`;
+            resultHtml += `
+                    <div class="mt-8 flex flex-wrap gap-3 justify-center">
+                        <button data-action="retake" class="bg-green-600 text-white px-6 py-2 rounded-xl font-semibold hover:bg-green-700 transition duration-200 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900">${retakeLabel}</button>
+                        <button data-action="preview" class="bg-primary-blue text-white px-6 py-2 rounded-xl font-semibold hover:bg-blue-700 transition duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900">${reviewLabel}</button>
+                        <button data-action="close" class="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 px-6 py-2 rounded-xl font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition duration-200 focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 dark:focus:ring-offset-gray-900">${closeLabel}</button>
+                    </div>
+                </div>
+            </div>`;
 
             container.innerHTML = resultHtml;
             container.scrollTop = 0;
+
+            const retakeBtn = container.querySelector('[data-action="retake"]');
+            if (retakeBtn) {
+                retakeBtn.addEventListener('click', () => {
+                    openQuizModal(currentQuizData, subjectId, blockId, lessonId);
+                    renderQuizSection('take', subjectId, blockId, lessonId);
+                });
+            }
+            const reviewBtn = container.querySelector('[data-action="preview"]');
+            if (reviewBtn) {
+                reviewBtn.addEventListener('click', () => {
+                    openQuizModal(currentQuizData, subjectId, blockId, lessonId);
+                    renderQuizSection('preview', subjectId, blockId, lessonId);
+                });
+            }
+            const closeBtn = container.querySelector('[data-action="close"]');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', () => closeModal());
+            }
         }
 
 
