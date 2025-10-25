@@ -2100,6 +2100,51 @@ function applyTranslations(lang = currentLanguage) {
         if (translated) {
             el.setAttribute('title', translated);
         }
+const SETTINGS_TRANSLATIONS = {
+    ar: {
+        toggle: 'الإعدادات',
+        importText: 'استيراد نص',
+        uploadJson: 'تحميل JSON',
+        exportSummary: 'تصدير نص مختصر',
+        migrateData: 'تحديث البنية للغات',
+        saveProject: 'حفظ المشروع',
+        exportStatic: 'تصدير موقع ستاتيكي',
+        exportSections: 'تصدير الاقسام JSON',
+        exportMap: 'خريطة الفصول',
+        exportOnePage: 'تصدير نسخة OnePage',
+        autoSplit: 'تقسيم تلقائي',
+        suggestedSplit: 'تقسيم موضوعي مقترح'
+    },
+    en: {
+        toggle: 'Settings',
+        importText: 'Import Text',
+        uploadJson: 'Upload JSON',
+        exportSummary: 'Export Summary Text',
+        migrateData: 'Update Language Structure',
+        saveProject: 'Save Project',
+        exportStatic: 'Export Static Site',
+        exportSections: 'Export Sections JSON',
+        exportMap: 'Chapters Map',
+        exportOnePage: 'Export OnePage Version',
+        autoSplit: 'Auto Split',
+        suggestedSplit: 'Suggested Thematic Split'
+    }
+};
+
+function getSettingsTranslation(key, lang) {
+    const normalized = (lang || '').toLowerCase();
+    const safeLang = SETTINGS_TRANSLATIONS[normalized] ? normalized : 'en';
+    return SETTINGS_TRANSLATIONS[safeLang][key] || SETTINGS_TRANSLATIONS.en[key] || '';
+}
+
+function applySettingsTranslations(lang = currentLanguage) {
+    const elements = document.querySelectorAll('[data-i18n-key]');
+    elements.forEach(el => {
+        const key = el.getAttribute('data-i18n-key');
+        if (!key) return;
+        const segments = key.split('.');
+        const lookupKey = segments.length > 1 ? segments[1] : segments[0];
+        el.textContent = getSettingsTranslation(lookupKey, lang);
     });
 }
 
@@ -2107,6 +2152,7 @@ applyDocumentLanguage();
 applyDocumentDirection();
 updateDirectionUI();
 applyTranslations();
+applySettingsTranslations();
 function generateUniqueID() {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';
@@ -2477,6 +2523,7 @@ function loadUserPreferences() {
         }
         applyDocumentLanguage();
         applyTranslations(currentLanguage);
+        applySettingsTranslations(currentLanguage);
         if (directionMode === 'manual') {
             setDirection(currentDirection, { manual: true, persist: false });
         } else {
@@ -2490,6 +2537,7 @@ function setLanguage(lang) {
     currentLanguage = (lang || 'ar').toLowerCase();
     applyDocumentLanguage();
     applyTranslations(currentLanguage);
+    applySettingsTranslations(currentLanguage);
     directionMode = 'auto';
     localStorage.setItem('preferredDirMode', directionMode);
     localStorage.setItem('preferredLang', currentLanguage);
