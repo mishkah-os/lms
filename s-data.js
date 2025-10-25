@@ -79,51 +79,55 @@ const SUBJECT_DATA = {
             content: {
               theory: {
                 en: `
-                                            <h3>What are Negative Numbers?</h3>
-                                            <p>Integers are whole numbers and their opposites. They can be positive, negative, or zero.</p>
-                                                                                        <ul>
-                                                <li>Positive integers are greater than 0 (e.g., +1, +2, +3...).</li>
-                                                <li>Negative integers are less than 0 (e.g., -1, -2, -3...).</li>
-                                                <li>Zero (0) is neither positive nor negative.</li>
-                                            </ul>
-                                            <p>Real-life examples include temperatures below zero, altitudes below sea level, or debts.</p>
-                                            <div class="example-box">
-                                                <strong>Example:</strong> Sea level is 0 meters. An iceberg might extend 10 meters above sea level (+10m) and 80 meters below sea level (-80m).
-                                            </div>
-                                            <h3>Adding and Subtracting Integers</h3>
-                                            <p>Follow these rules:</p>
-                                            <ul>
-                                                <li>Positive + Positive = Add (e.g., 4 + 6 = 10)</li>
-                                                <li>Positive + Negative (Positive larger) = Subtract (e.g., 16 + (-7) = 9)</li>
-                                                <li>Positive + Negative (Negative larger) = Subtract (e.g., 5 + (-11) = -6)</li>
-                                                <li>Negative + Negative = Add (e.g., (-3) + (-4) = -7)</li>
-                                                <li>Subtracting a negative is the same as adding a positive (e.g., 5 - (-6) = 5 + 6 = 11)</li>
-                                            </ul>
-                                            <p>A number line can help visualize these operations.</p>
-                                        `,
+### What are Negative Numbers?
+
+Integers are whole numbers and their opposites. They can be positive, negative, or zero.
+
+- Positive integers are greater than 0 (e.g., +1, +2, +3...).
+- Negative integers are less than 0 (e.g., -1, -2, -3...).
+- Zero (0) is neither positive nor negative.
+
+Real-life examples include temperatures below zero, altitudes below sea level, or debts.
+
+> **Example:** Sea level is 0 meters. An iceberg might extend 10 meters above sea level (+10 m) and 80 meters below sea level (-80 m).
+
+### Adding and Subtracting Integers
+
+Follow these rules:
+
+- Positive + Positive = Add (e.g., 4 + 6 = 10)
+- Positive + Negative (Positive larger) = Subtract (e.g., 16 + (-7) = 9)
+- Positive + Negative (Negative larger) = Subtract (e.g., 5 + (-11) = -6)
+- Negative + Negative = Add (e.g., (-3) + (-4) = -7)
+- Subtracting a negative is the same as adding a positive (e.g., 5 - (-6) = 11)
+
+A number line can help visualize these operations.
+`,
                 ar: `
-                                            <h3>ما هي الأعداد السالبة؟</h3>
-                                            <p>الأعداد الصحيحة هي الأعداد الكاملة (بدون كسور) وأضدادها. يمكن أن تكون موجبة أو سالبة أو صفر.</p>
-                                                                                        <ul>
-                                                <li>الأعداد الصحيحة الموجبة أكبر من الصفر (مثل +1، +2، +3...).</li>
-                                                <li>الأعداد الصحيحة السالبة أصغر من الصفر (مثل -1، -2، -3...).</li>
-                                                <li>الصفر (0) ليس موجباً ولا سالباً.</li>
-                                            </ul>
-                                            <p>أمثلة من الحياة الواقعية تشمل درجات الحرارة تحت الصفر، الارتفاعات تحت مستوى سطح البحر، أو الديون.</p>
-                                            <div class="example-box">
-                                                <strong>مثال:</strong> مستوى سطح البحر هو 0 متر. قد يمتد جبل جليدي 10 أمتار فوق سطح البحر (+10م) و 80 متراً تحت سطح البحر (-80م).
-                                            </div>
-                                            <h3>جمع وطرح الأعداد الصحيحة</h3>
-                                            <p>اتبع هذه القواعد:</p>
-                                            <ul>
-                                                <li>موجب + موجب = جمع (مثال: 4 + 6 = 10)</li>
-                                                <li>موجب + سالب (الموجب أكبر) = طرح (مثال: 16 + (-7) = 9)</li>
-                                                <li>موجب + سالب (السالب أكبر) = طرح (مثال: 5 + (-11) = -6)</li>
-                                                <li>سالب + سالب = جمع (مثال: (-3) + (-4) = -7)</li>
-                                                <li>طرح عدد سالب هو نفسه جمع نظيره الموجب (مثال: 5 - (-6) = 5 + 6 = 11)</li>
-                                            </ul>
-                                            <p>يمكن لخط الأعداد المساعدة في تصور هذه العمليات.</p>
-                                        `
+### ما هي الأعداد السالبة؟
+
+الأعداد الصحيحة هي الأعداد الكاملة (بدون كسور) وأضدادها. يمكن أن تكون موجبة أو سالبة أو صفرًا.
+
+- الأعداد الصحيحة الموجبة أكبر من الصفر (مثل +1، +2، +3...).
+- الأعداد الصحيحة السالبة أصغر من الصفر (مثل -1، -2، -3...).
+- الصفر (0) ليس موجبًا ولا سالبًا.
+
+أمثلة من الحياة الواقعية تشمل درجات الحرارة تحت الصفر، الارتفاعات تحت مستوى سطح البحر، أو الديون.
+
+> **مثال:** مستوى سطح البحر هو 0 متر. قد يمتد جبل جليدي 10 أمتار فوق سطح البحر (+10 م) و80 مترًا تحت سطح البحر (-80 م).
+
+### جمع وطرح الأعداد الصحيحة
+
+اتبع هذه القواعد:
+
+- موجب + موجب = جمع (مثال: 4 + 6 = 10)
+- موجب + سالب (الموجب أكبر) = طرح (مثال: 16 + (-7) = 9)
+- موجب + سالب (السالب أكبر) = طرح (مثال: 5 + (-11) = -6)
+- سالب + سالب = جمع (مثال: (-3) + (-4) = -7)
+- طرح عدد سالب هو نفسه جمع نظيره الموجب (مثال: 5 - (-6) = 11)
+
+يمكن لخط الأعداد المساعدة في تصور هذه العمليات.
+`
               },
               exercises: [
                 { id: 1, type: 'true_false', question: { en: 'Is 9 > 7?', ar: 'هل 9 > 7؟' } },
@@ -168,8 +172,30 @@ const SUBJECT_DATA = {
             },
             content: {
               theory: {
-                en: `<h3>BODMAS</h3><p>BODMAS tells you the correct order to carry out mathematical operations:</p><ul><li><b>B</b>rackets</li><li><b>O</b>rders (powers/roots)</li><li><b>D</b>ivision and <b>M</b>ultiplication (left to right)</li><li><b>A</b>ddition and <b>S</b>ubtraction (left to right)</li></ul><div class="example-box">Example: 5 + 2 x 3 = 5 + 6 = 11 (Multiplication first)</div>`,
-                ar: `<h3>BODMAS (ترتيب العمليات)</h3><p>يخبرك BODMAS بالترتيب الصحيح لإجراء العمليات الحسابية:</p><ul><li><b>B</b>rackets (الأقواس)</li><li><b>O</b>rders (الأسس/الجذور)</li><li><b>D</b>ivision and <b>M</b>ultiplication (القسمة والضرب - من اليسار لليمين)</li><li><b>A</b>ddition and <b>S</b>ubtraction (الجمع والطرح - من اليسار لليمين)</li></ul><div class="example-box">مثال: 5 + 2 × 3 = 5 + 6 = 11 (الضرب أولاً)</div>`
+                en: `
+### BODMAS
+
+BODMAS tells you the correct order to carry out mathematical operations:
+
+1. **B**rackets
+2. **O**rders (powers/roots)
+3. **D**ivision and **M**ultiplication (left to right)
+4. **A**ddition and **S**ubtraction (left to right)
+
+> **Example:** 5 + 2 × 3 = 5 + 6 = 11 — multiplication comes first.
+`,
+                ar: `
+### BODMAS (ترتيب العمليات)
+
+يخبرك BODMAS بالترتيب الصحيح لإجراء العمليات الحسابية:
+
+1. **B**rackets (الأقواس)
+2. **O**rders (الأسس/الجذور)
+3. **D**ivision and **M**ultiplication (القسمة والضرب - من اليسار لليمين)
+4. **A**ddition and **S**ubtraction (الجمع والطرح - من اليسار لليمين)
+
+> **مثال:** 5 + 2 × 3 = 5 + 6 = 11 — يتم تنفيذ الضرب أولًا.
+`
               },
               exercises: [
                 { id: 1, type: 'calculate', question: { en: 'Solve: $(20+12)\\div4$', ar: 'حل: $(20+12)\\div4$' } },
