@@ -1259,14 +1259,14 @@
                         <i class="fas fa-moon"></i>
                     </button>
                 </div>
-                <div class="direction-controls" role="group" aria-label="Direction selector">
-                    <button class="direction-btn" data-dir="rtl" onclick="setDirection('rtl', { manual: true })" title="Right to left">
-                        <i class="fas fa-align-right"></i>
-                        <span>RTL</span>
+                <div class="direction-controls" role="group" aria-label="Language selector">
+                    <button class="direction-btn" data-dir="rtl" data-lang="ar" onclick="setLanguage('ar')" title="العربية">
+                        <i class="fas fa-language"></i>
+                        <span>AR</span>
                     </button>
-                    <button class="direction-btn" data-dir="ltr" onclick="setDirection('ltr', { manual: true })" title="Left to right">
-                        <i class="fas fa-align-left"></i>
-                        <span>LTR</span>
+                    <button class="direction-btn" data-dir="ltr" data-lang="en" onclick="setLanguage('en')" title="English">
+                        <i class="fas fa-language"></i>
+                        <span>EN</span>
                     </button>
                 </div>
             </div>
@@ -1300,7 +1300,7 @@
             <div class="mb-4 space-y-3">
                 <input type="text" id="search-chapters" placeholder="البحث في الفصول..." class="w-full search-input">
                 <button id="settings-toggle" class="w-full btn btn-primary">
-                    <i class="fas fa-cog"></i> الإعدادات
+                    <i class="fas fa-cog"></i> <span data-i18n-key="settings.toggle">الإعدادات</span>
                 </button>
             </div>
 
@@ -1316,34 +1316,34 @@
                     <option value="zh">中文</option>
                 </select>
                 <select id="import-method" class="w-full search-input">
-                    <option value="auto">تقسيم تلقائي</option>
-                    <option value="suggested">تقسيم موضوعي مقترح</option>
+                    <option value="auto" data-i18n-key="settings.autoSplit">تقسيم تلقائي</option>
+                    <option value="suggested" data-i18n-key="settings.suggestedSplit">تقسيم موضوعي مقترح</option>
                 </select>
                 <input type="file" id="txt-upload" accept=".txt" class="hidden">
                 <button onclick="document.getElementById('txt-upload').click()" class="w-full btn btn-primary">
-                    <i class="fas fa-file-import"></i>استيراد نص
+                    <i class="fas fa-file-import"></i><span data-i18n-key="settings.importText">استيراد نص</span>
                 </button>
 <input type="file" id="json-upload" accept=".json" class="hidden">
-<button onclick="document.getElementById('json-upload').click()" class="w-full btn btn-success">تحميل JSON</button>
-<button id="export-txt-btn" onclick="exportPlainText()" class="w-full btn btn-warning">تصدير نص مختصر</button>
-<button id="migrate-data-btn" onclick="migrateOldDataStructure()" class="w-full btn btn-secondary">تحديث البنية للغات</button>
+<button onclick="document.getElementById('json-upload').click()" class="w-full btn btn-success"><span data-i18n-key="settings.uploadJson">تحميل JSON</span></button>
+<button id="export-txt-btn" onclick="exportPlainText()" class="w-full btn btn-warning"><span data-i18n-key="settings.exportSummary">تصدير نص مختصر</span></button>
+<button id="migrate-data-btn" onclick="migrateOldDataStructure()" class="w-full btn btn-secondary"><span data-i18n-key="settings.migrateData">تحديث البنية للغات</span></button>
                 <button id="save-json" class="w-full btn btn-warning">
-                    <i class="fas fa-save"></i>حفظ المشروع
+                    <i class="fas fa-save"></i><span data-i18n-key="settings.saveProject">حفظ المشروع</span>
                 </button>
-				<button id="export-static-site-btn" class="w-full btn btn-success">
-    <i class="fas fa-globe"></i> تصدير موقع ستاتيكي
+                                <button id="export-static-site-btn" class="w-full btn btn-success">
+    <i class="fas fa-globe"></i> <span data-i18n-key="settings.exportStatic">تصدير موقع ستاتيكي</span>
 </button>
 <button id="export-all-sections-zip-btn" class="w-full btn btn-success">
-  <i class="fas fa-file-archive"></i> تصدير الاقسام JSON
+  <i class="fas fa-file-archive"></i> <span data-i18n-key="settings.exportSections">تصدير الاقسام JSON</span>
 </button>
 
 
 
     <button id="export-map-btn" class="w-full btn btn-success">
-                        <i class="fas fa-map"></i> خريطة الفصول
+                        <i class="fas fa-map"></i> <span data-i18n-key="settings.exportMap">خريطة الفصول</span>
                     </button>
 
-<button id="export-onepage-btn" class="w-full btn btn-info">📄 تصدير نسخة OnePage</button>
+<button id="export-onepage-btn" class="w-full btn btn-info">📄 <span data-i18n-key="settings.exportOnePage">تصدير نسخة OnePage</span></button>
 
 <style>
 .side-btns .btn{
@@ -1932,9 +1932,58 @@ function applyDocumentLanguage() {
     document.documentElement.lang = currentLanguage;
 }
 
+const SETTINGS_TRANSLATIONS = {
+    ar: {
+        toggle: 'الإعدادات',
+        importText: 'استيراد نص',
+        uploadJson: 'تحميل JSON',
+        exportSummary: 'تصدير نص مختصر',
+        migrateData: 'تحديث البنية للغات',
+        saveProject: 'حفظ المشروع',
+        exportStatic: 'تصدير موقع ستاتيكي',
+        exportSections: 'تصدير الاقسام JSON',
+        exportMap: 'خريطة الفصول',
+        exportOnePage: 'تصدير نسخة OnePage',
+        autoSplit: 'تقسيم تلقائي',
+        suggestedSplit: 'تقسيم موضوعي مقترح'
+    },
+    en: {
+        toggle: 'Settings',
+        importText: 'Import Text',
+        uploadJson: 'Upload JSON',
+        exportSummary: 'Export Summary Text',
+        migrateData: 'Update Language Structure',
+        saveProject: 'Save Project',
+        exportStatic: 'Export Static Site',
+        exportSections: 'Export Sections JSON',
+        exportMap: 'Chapters Map',
+        exportOnePage: 'Export OnePage Version',
+        autoSplit: 'Auto Split',
+        suggestedSplit: 'Suggested Thematic Split'
+    }
+};
+
+function getSettingsTranslation(key, lang) {
+    const normalized = (lang || '').toLowerCase();
+    const safeLang = SETTINGS_TRANSLATIONS[normalized] ? normalized : 'en';
+    return SETTINGS_TRANSLATIONS[safeLang][key] || SETTINGS_TRANSLATIONS.en[key] || '';
+}
+
+function applySettingsTranslations(lang = currentLanguage) {
+    const elements = document.querySelectorAll('[data-i18n-key]');
+    elements.forEach(el => {
+        const key = el.getAttribute('data-i18n-key');
+        if (!key) return;
+        const segments = key.split('.');
+        const lookupKey = segments.length > 1 ? segments[1] : segments[0];
+        el.textContent = getSettingsTranslation(lookupKey, lang);
+    });
+}
+
 applyDocumentLanguage();
 applyDocumentDirection();
 updateDirectionUI();
+applySettingsTranslations();
 function generateUniqueID() {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';
@@ -2304,6 +2353,7 @@ function loadUserPreferences() {
             currentDirection = preferences.direction;
         }
         applyDocumentLanguage();
+        applySettingsTranslations(currentLanguage);
         if (directionMode === 'manual') {
             setDirection(currentDirection, { manual: true, persist: false });
         } else {
@@ -2316,6 +2366,9 @@ function loadUserPreferences() {
 function setLanguage(lang) {
     currentLanguage = (lang || 'ar').toLowerCase();
     applyDocumentLanguage();
+    applySettingsTranslations(currentLanguage);
+    directionMode = 'auto';
+    localStorage.setItem('preferredDirMode', directionMode);
     localStorage.setItem('preferredLang', currentLanguage);
     if (directionMode !== 'manual') {
         syncDirectionWithLanguage(true);
