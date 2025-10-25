@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="page-title">NIES LMS Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+Arabic:wght@400;600;700&display=swap');
         :root {
@@ -707,7 +708,12 @@
             // 3. عرض المحتوى النظري (HTML)
             const theoryContainer = document.getElementById('lesson-content-theory');
             if (lesson.content && lesson.content.theory) {
-                theoryContainer.innerHTML = getLocalizedText(lesson.content.theory, currentLang);
+                const theoryMarkdown = getLocalizedText(lesson.content.theory, currentLang);
+                if (theoryMarkdown) {
+                    theoryContainer.innerHTML = typeof marked !== 'undefined' ? marked.parse(theoryMarkdown) : theoryMarkdown;
+                } else {
+                    theoryContainer.innerHTML = `<p class="text-gray-500 dark:text-gray-400">${getLocalizedText({en: "Lesson content is not available yet.", ar: "محتوى الدرس غير متوفر حالياً."}, currentLang)}</p>`;
+                }
             } else {
                 theoryContainer.innerHTML = `<p class="text-gray-500 dark:text-gray-400">${getLocalizedText({en: "Lesson content is not available yet.", ar: "محتوى الدرس غير متوفر حالياً."}, currentLang)}</p>`;
             }
@@ -737,41 +743,93 @@
         /**
          * بناء أزرار الموارد للدرس الحالي
          */
+        function resolveQuizData(resources) {
+            if (!resources) return [];
+            if (Array.isArray(resources.quiz) && resources.quiz.length) {
+                return resources.quiz;
+            }
+            if (typeof resources.quizScript === 'string' && resources.quizScript.trim()) {
+                try {
+                    const fn = new Function(`return (${resources.quizScript})`);
+                    const data = fn();
+                    if (Array.isArray(data)) return data;
+                } catch (error) {
+                    console.warn('Unable to parse quiz script:', error);
+                }
+            }
+            return [];
+        }
+
         function renderLessonResources(subjectId, blockId, lessonId, resources) {
             const container = document.getElementById('lesson-resources');
             container.innerHTML = '';
 
-            // [مُعدل] هذه الدالة تعمل الآن بشكل صحيح لأن الموارد أُعيدت إلى الدرس
-            if (!resources || (Object.keys(resources).length === 0 && resources.constructor === Object)) {
-                container.classList.add('hidden'); // إخفاء الحاوية إذا لم تكن هناك موارد
+            if (!resources || Object.keys(resources).length === 0) {
+                container.classList.add('hidden');
                 return;
             }
-            container.classList.remove('hidden'); // إظهار الحاوية إذا كانت هناك موارد
+            container.classList.remove('hidden');
 
+            const pdfItems = Array.isArray(resources.pdfs)
+                ? resources.pdfs
+                : resources.pdfs && typeof resources.pdfs === 'object'
+                    ? Object.entries(resources.pdfs).map(([key, value]) => ({
+                        url: value,
+                        name: { en: key.toUpperCase(), ar: key.toUpperCase() }
+                    }))
+                    : [];
 
-            const resourceOrder = ['pdfs', 'video', 'quiz'];
-
-            resourceOrder.forEach(type => {
-                if (resources[type]) {
-                    if (type === 'pdfs' && resources.pdfs.length > 0) {
-                        resources.pdfs.forEach((pdf) => {
-                             createResourceButton(container, 'pdf', pdf.url, `📄 PDF: ${getLocalizedText(pdf.name, currentLang)}`, 'bg-red-600 hover:bg-red-700');
-                        });
-                    } else if (type === 'video') {
-                         createResourceButton(container, 'video', resources.video, `▶️ ${getLocalizedText({en: 'Watch Video', ar: 'مشاهدة الفيديو'}, currentLang)}`, 'bg-blue-600 hover:bg-blue-700');
-                    } else if (type === 'quiz' && resources.quiz.length > 0) {
-                        const storageKey = `quizScore-${subjectId}-${blockId}-${lessonId}`;
-                        const savedScore = localStorage.getItem(storageKey);
-                        let quizButtonText = `📝 ${getLocalizedText({en: 'Start Quiz', ar: 'ابدأ الاختبار'}, currentLang)}`;
-                        if (savedScore) {
-                            quizButtonText += ` (${getLocalizedText({en:'Score', ar:'النتيجة'}, currentLang)}: ${savedScore})`;
-                        }
-
-                         currentQuizData = resources.quiz; // Store quiz data specifically for *this* lesson
-                         createResourceButton(container, 'quiz', { subjectId, blockId, lessonId }, quizButtonText, 'bg-green-600 hover:bg-green-700');
-                    }
-                }
+            pdfItems.forEach(pdf => {
+                if (!pdf || !pdf.url) return;
+                const labelSource = pdf.name || pdf.title || { en: 'PDF File', ar: 'ملف PDF' };
+                createResourceButton(
+                    container,
+                    'pdf',
+                    pdf.url,
+                    `📄 PDF: ${getLocalizedText(labelSource, currentLang)}`,
+                    'bg-red-600 hover:bg-red-700'
+                );
             });
+
+            const videoItems = Array.isArray(resources.videos)
+                ? resources.videos
+                : resources.video
+                    ? [{ url: resources.video, title: { en: 'Video', ar: 'فيديو' } }]
+                    : [];
+
+            videoItems.forEach(video => {
+                if (!video || !video.url) return;
+                const labelSource = video.title || { en: 'Watch Video', ar: 'مشاهدة الفيديو' };
+                createResourceButton(
+                    container,
+                    'video',
+                    video.url,
+                    `▶️ ${getLocalizedText(labelSource, currentLang)}`,
+                    'bg-blue-600 hover:bg-blue-700'
+                );
+            });
+
+            const quizData = resolveQuizData(resources);
+            if (quizData.length > 0) {
+                const storageKey = `quizScore-${subjectId}-${blockId}-${lessonId}`;
+                const savedScore = localStorage.getItem(storageKey);
+                let quizButtonText = `📝 ${getLocalizedText({ en: 'Start Quiz', ar: 'ابدأ الاختبار' }, currentLang)}`;
+                if (savedScore) {
+                    quizButtonText += ` (${getLocalizedText({ en: 'Score', ar: 'النتيجة' }, currentLang)}: ${savedScore})`;
+                }
+                currentQuizData = quizData;
+                createResourceButton(
+                    container,
+                    'quiz',
+                    { subjectId, blockId, lessonId },
+                    quizButtonText,
+                    'bg-green-600 hover:bg-green-700'
+                );
+            }
+
+            if (container.childElementCount === 0) {
+                container.classList.add('hidden');
+            }
         }
 
         /**
@@ -913,71 +971,96 @@
         function renderBlockSheetsView(subjectId, blockId) {
             const subjectData = SUBJECT_DATA[subjectId];
             if (!subjectData) return changeView('lessons', subjectId, blockId);
+
             const block = subjectData.blocks.find(b => b.id === blockId);
             if (!block) return changeView('lessons', subjectId, blockId);
-            const resources = block.block_resources;
 
-            // 1. إعداد الترويسة
+            const resources = block.block_resources || {};
+
             const subjectColor = subjectData.color || 'var(--primary-blue)';
             document.getElementById('block-sheets-header').style.borderTopColor = subjectColor;
             document.getElementById('block-sheets-icon').textContent = subjectData.icon;
+
             const blockTitleText = getLocalizedText(block.title, currentLang);
-            const pageTitle = `${getLocalizedText({en: 'Block Sheets', ar: 'ملفات الوحدة'}, currentLang)}: ${blockTitleText}`;
+            const pageTitle = `${getLocalizedText({ en: 'Block Sheets', ar: 'ملفات الوحدة' }, currentLang)}: ${blockTitleText}`;
             document.getElementById('block-sheets-title').textContent = pageTitle;
             document.getElementById('page-title').textContent = pageTitle;
 
-            // 2. إيجاد الشبكة وأزرار الموارد الإضافية
             const grid = document.getElementById('block-sheets-grid');
             const extraResourcesContainer = document.getElementById('block-sheets-extra-resources');
-            grid.innerHTML = ''; // إفراغ المحتوى القديم
-            extraResourcesContainer.innerHTML = ''; // إفراغ المحتوى القديم
+            grid.innerHTML = '';
+            extraResourcesContainer.innerHTML = '';
 
-            // 3. إضافة أزرار الفيديو والاختبار (إذا وجدت)
-             if (resources.video) {
-                 createResourceButton(extraResourcesContainer, 'video', resources.video, `▶️ ${getLocalizedText({en: 'Watch Video', ar: 'مشاهدة الفيديو'}, currentLang)}`, 'bg-blue-600 hover:bg-blue-700');
-             }
-             if (resources.quiz) {
-                 // Define a unique identifier for the block quiz score
-                 const blockQuizId = `block_${blockId}`;
-                 const storageKey = `quizScore-${subjectId}-${blockId}-${blockQuizId}`;
-                 const savedScore = localStorage.getItem(storageKey);
-                 let quizButtonText = `📝 ${getLocalizedText({en: 'Start Block Quiz', ar: 'ابدأ اختبار الوحدة'}, currentLang)}`;
-                 if (savedScore) {
-                     quizButtonText += ` (${getLocalizedText({en:'Score', ar:'النتيجة'}, currentLang)}: ${savedScore})`;
-                 }
-                 // Pass block quiz data and the unique ID
-                 createResourceButton(extraResourcesContainer, 'quiz', { subjectId, blockId, lessonId: blockQuizId, lessonQuizData: resources.quiz }, quizButtonText, 'bg-green-600 hover:bg-green-700');
-             }
+            const videoItems = Array.isArray(resources.videos)
+                ? resources.videos
+                : resources.video
+                    ? [{ url: resources.video, title: { en: 'Watch Video', ar: 'مشاهدة الفيديو' } }]
+                    : [];
 
-            // 4. التحقق من وجود ملفات PDF
-            if (!resources || !resources.pdfs || Object.keys(resources.pdfs).length === 0) {
-                grid.innerHTML = `<p class="p-4 text-gray-500 col-span-full text-center">${getLocalizedText({en:'No PDF sheets found for this block.', ar:'لا توجد ملفات PDF لهذه الوحدة.'}, currentLang)}</p>`;
-                return; // No PDFs to show
+            videoItems.forEach(video => {
+                if (!video || !video.url) return;
+                createResourceButton(
+                    extraResourcesContainer,
+                    'video',
+                    video.url,
+                    `▶️ ${getLocalizedText(video.title || { en: 'Watch Video', ar: 'مشاهدة الفيديو' }, currentLang)}`,
+                    'bg-blue-600 hover:bg-blue-700'
+                );
+            });
+
+            const blockQuizData = resolveQuizData(resources);
+            if (blockQuizData.length > 0) {
+                const blockQuizId = `block_${blockId}`;
+                const storageKey = `quizScore-${subjectId}-${blockId}-${blockQuizId}`;
+                const savedScore = localStorage.getItem(storageKey);
+
+                let quizButtonText = `📝 ${getLocalizedText({ en: 'Start Block Quiz', ar: 'ابدأ اختبار الوحدة' }, currentLang)}`;
+                if (savedScore) {
+                    quizButtonText += ` (${getLocalizedText({ en: 'Score', ar: 'النتيجة' }, currentLang)}: ${savedScore})`;
+                }
+
+                createResourceButton(
+                    extraResourcesContainer,
+                    'quiz',
+                    { subjectId, blockId, lessonId: blockQuizId, lessonQuizData: blockQuizData },
+                    quizButtonText,
+                    'bg-green-600 hover:bg-green-700'
+                );
             }
 
-            // 5. تعريف أسماء العرض
-            const displayNames = {
-                main: { en: 'Main Sheet', ar: 'الملف الأساسي' },
-                cw: { en: 'Classwork', ar: 'ملف الصف' },
-                hw: { en: 'Homework', ar: 'ملف الواجب' },
-                ss: { en: 'Study Sheet', ar: 'ملف الشرح' },
-                re: { en: 'Revision', ar: 'ملف المراجعة' }
-            };
+            let pdfItems = [];
+            if (Array.isArray(resources.pdfs)) {
+                pdfItems = resources.pdfs.map(item =>
+                    typeof item === 'string'
+                        ? { url: item }
+                        : { url: item?.url, name: item?.name || item?.title }
+                );
+            } else if (resources.pdfs && typeof resources.pdfs === 'object') {
+                pdfItems = Object.entries(resources.pdfs).map(([key, value]) => ({
+                    url: typeof value === 'string' ? value : value?.url,
+                    name: value?.name || { en: key.toUpperCase(), ar: key.toUpperCase() }
+                }));
+            } else if (Array.isArray(resources.pdf)) {
+                pdfItems = resources.pdf.map(url => ({ url }));
+            } else if (typeof resources.pdf === 'string') {
+                pdfItems = [{ url: resources.pdf }];
+            }
 
-            // 6. إنشاء "الأزرار الكبيرة" (البطاقات) للـ PDF
-            const pdfOrder = ['main', 'cw', 'hw', 'ss', 're'];
+            pdfItems = pdfItems.filter(pdf => pdf && pdf.url);
 
-            pdfOrder.forEach(key => {
-                 if (resources.pdfs[key]) {
-                    const pdfUrl = resources.pdfs[key];
-                    const cardTitle = displayNames[key] ? getLocalizedText(displayNames[key], currentLang) : key.toUpperCase();
+            if (!pdfItems.length) {
+                grid.innerHTML = `<p class="p-4 text-gray-500 col-span-full text-center">${getLocalizedText({ en: 'No PDF sheets found for this block.', ar: 'لا توجد ملفات PDF لهذه الوحدة.' }, currentLang)}</p>`;
+                return;
+            }
 
-                    const card = document.createElement('div');
-                    card.className = 'subject-card group cursor-pointer transition duration-300 ease-in-out';
-                    // النقر على البطاقة يفتح الـ Modal مع ملف الـ PDF
-                    card.onclick = () => openModal('pdf', pdfUrl);
+            pdfItems.forEach((pdf, index) => {
+                const cardTitle = getLocalizedText(pdf.name || pdf.title || { en: `PDF ${index + 1}`, ar: `ملف ${index + 1}` }, currentLang);
 
-                    card.innerHTML = `
+                const card = document.createElement('div');
+                card.className = 'subject-card group cursor-pointer transition duration-300 ease-in-out';
+                card.onclick = () => openModal('pdf', pdf.url);
+
+                card.innerHTML = `
                         <div class="p-6 h-full bg-white dark:bg-secondary-dark rounded-xl shadow-md hover:shadow-lg dark:hover:shadow-blue-900/50 transition-all duration-300 transform hover:-translate-y-1 border-b-4" style="border-color: ${subjectColor};">
                             <div class="flex flex-col items-center justify-center h-full text-center">
                                 <span class="text-5xl mb-4 transition duration-300 group-hover:scale-110">📄</span>
@@ -985,8 +1068,7 @@
                             </div>
                         </div>
                     `;
-                    grid.appendChild(card);
-                 }
+                grid.appendChild(card);
             });
         }
         // ===================================
