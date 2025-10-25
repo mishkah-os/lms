@@ -1,1 +1,1185 @@
- 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">NIES LMS Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+Arabic:wght@400;600;700&display=swap');
+        :root {
+            --font-en: 'Inter', sans-serif;
+            --font-ar: 'Noto Sans Arabic', sans-serif;
+            --primary-blue: #2563eb; /* Updated Primary Blue */
+            --secondary-blue: #60a5fa;
+            --primary-dark: #1f2937; /* Dark mode primary background */
+            --secondary-dark: #374151; /* Dark mode secondary background */
+            --subject-color: var(--primary-blue); /* لون افتراضي أزرق داكن */
+        }
+        html.dark {
+            --primary-blue: #60a5fa; /* Lighter blue for dark mode */
+            --secondary-blue: #3b82f6;
+            color-scheme: dark;
+        }
+        body {
+            font-family: var(--font-en);
+            @apply bg-gray-100 dark:bg-primary-dark text-gray-900 dark:text-gray-100 transition-colors duration-300;
+        }
+        .ar-mode {
+            direction: rtl;
+            text-align: right;
+            font-family: var(--font-ar);
+        }
+        .en-mode {
+            direction: ltr;
+            text-align: left;
+            font-family: var(--font-en);
+        }
+        /* تنسيقات مخصصة لمحتوى الدرس */
+        .lesson-content h3 {
+            @apply text-2xl font-bold mt-6 mb-3 text-[var(--subject-color)];
+        }
+        .lesson-content p, .lesson-content li {
+            @apply text-base text-gray-700 dark:text-gray-300 mb-3 leading-relaxed;
+        }
+        .lesson-content ul {
+             @apply list-disc;
+             @apply rtl:list-disc rtl:mr-6 ltr:list-disc ltr:ml-6;
+        }
+        .lesson-content .example-box {
+            @apply bg-blue-50 dark:bg-blue-900/50 border-blue-400 dark:border-blue-600 text-blue-700 dark:text-blue-200 p-4 rounded-lg my-4;
+             @apply rtl:border-r-4 ltr:border-l-4;
+        }
+        .lesson-content .vocab-box {
+            @apply bg-yellow-50 dark:bg-yellow-900/50 border-yellow-400 dark:border-yellow-600 text-yellow-800 dark:text-yellow-200 p-4 rounded-lg my-4;
+             @apply rtl:border-r-4 ltr:border-l-4;
+        }
+        .exercise-card {
+            @apply bg-white dark:bg-secondary-dark p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 mb-3;
+        }
+        .exercise-card p {
+            @apply text-gray-800 dark:text-gray-200 font-medium;
+        }
+
+        /* تنسيقات الـ Modal (مستخدمة للفيديو/الاختبار الخاص بالدرس و لـ PDF) */
+        #modal-container iframe {
+            @apply w-full h-full border-0;
+        }
+        #modal-container video {
+             @apply w-full h-full;
+        }
+        #modal-container {
+             @apply bg-white dark:bg-gray-800; /* Dark mode for modal */
+        }
+        #modal-overlay {
+            @apply bg-black/70 dark:bg-black/80;
+        }
+
+        /* تنسيقات الاختبار */
+        .quiz-question {
+            @apply mb-5 pb-5 border-b border-gray-200 dark:border-gray-700;
+        }
+        .quiz-question-header {
+             @apply flex justify-between items-center mb-2;
+        }
+        .quiz-question-header p {
+             @apply text-lg font-semibold text-gray-800 dark:text-gray-100;
+        }
+        .quiz-question-header span {
+             @apply text-sm font-medium text-gray-500 dark:text-gray-400;
+        }
+        .quiz-options label {
+            @apply block p-3 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg cursor-pointer mb-2 text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-gray-600;
+        }
+        .quiz-options input {
+            @apply mr-2 accent-primary-blue dark:accent-secondary-blue;
+             @apply rtl:ml-2 rtl:mr-0;
+        }
+         /* تنسيقات مراجعة نتائج الاختبار */
+        .quiz-review-item {
+            @apply p-4 rounded-lg border mb-4;
+        }
+        .quiz-review-item p {
+            @apply text-lg font-semibold text-gray-800 dark:text-gray-100 mb-3;
+        }
+        .quiz-review-item .user-answer {
+             @apply block p-2 rounded-md;
+        }
+         .quiz-review-item .user-answer.correct {
+             @apply bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200 border border-green-300 dark:border-green-700;
+         }
+         .quiz-review-item .user-answer.incorrect {
+             @apply bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-200 border border-red-300 dark:border-red-700;
+         }
+         .quiz-review-item .correct-answer {
+             @apply mt-2 text-sm text-gray-600 dark:text-gray-300;
+         }
+
+        /* تنسيقات إضافية للوضع الليلي */
+        .subject-card > div:hover {
+            @apply dark:bg-gray-700;
+        }
+        header {
+            @apply bg-white dark:bg-secondary-dark border-gray-200 dark:border-gray-700;
+        }
+        nav {
+             @apply bg-white dark:bg-secondary-dark border-b border-gray-200 dark:border-gray-700;
+        }
+        input[type="text"] {
+             @apply dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white;
+        }
+        button, a {
+            @apply focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-blue dark:focus:ring-offset-primary-dark;
+        }
+        #modal-close-btn {
+            @apply dark:focus:ring-offset-gray-800;
+        }
+
+    </style>
+    <script>
+        tailwind.config = {
+             darkMode: 'class', // تفعيل الوضع الليلي بناءً على فئة في عنصر html
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-blue': '#2563eb',
+                        'secondary-blue': '#60a5fa',
+                        'light-bg': '#f3f4f6', // Not used directly, prefer Tailwind defaults
+                        'card-bg': '#ffffff', // Not used directly, prefer Tailwind defaults
+                        'primary-dark': '#1f2937',
+                        'secondary-dark': '#374151',
+                    },
+                     fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        arabic: ['Noto Sans Arabic', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="en-mode min-h-screen">
+
+    <nav class="bg-white dark:bg-secondary-dark shadow-md p-4 sticky top-0 z-10 border-b border-gray-200 dark:border-gray-700">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <button id="back-button" class="hidden text-gray-600 dark:text-gray-300 hover:text-primary-blue dark:hover:text-secondary-blue transition duration-200 flex items-center space-x-2 rtl:space-x-reverse" onclick="goBack()">
+                <svg class="w-6 h-6 transform rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                <span id="back-text" data-en="Back" data-ar="عودة">Back</span>
+            </button>
+
+            <div id="app-title-container" class="flex items-center space-x-2 rtl:space-x-reverse">
+                <svg class="w-8 h-8 text-primary-blue dark:text-secondary-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.468 9.244 5 7.5 5 5.225 5 3 6.571 3 8.857v10.286c0 1.956 2.057 3.57 4.5 3.57h9c2.443 0 4.5-1.614 4.5-3.57V8.857C21 6.571 18.775 5 16.5 5c-1.744 0-3.332.468-4.5 1.253z"></path></svg>
+                <span class="text-xl font-bold text-gray-800 dark:text-gray-100" data-en="NIES LMS" data-ar="نظام NIES التعليمي">NIES LMS</span>
+            </div>
+
+            <div class="flex items-center space-x-3 rtl:space-x-reverse ml-auto">
+                 <button id="theme-toggle" class="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition duration-200">
+                    <svg id="theme-icon-light" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <svg id="theme-icon-dark" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                </button>
+                <button id="lang-toggle" class="px-3 py-1 bg-secondary-blue text-white text-sm font-semibold rounded-full hover:bg-primary-blue dark:hover:bg-blue-500 transition duration-200 shadow">
+                    <span data-en="AR" data-ar="EN">AR</span>
+                </button>
+                <a href="index2.html" id="logout-link" class="p-2 text-gray-600 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 transition duration-200" data-en="Log Out" data-ar="تسجيل الخروج" title="Log Out">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+
+        <div id="dashboard-view">
+            <header class="text-center py-10 bg-white dark:bg-secondary-dark rounded-xl shadow-lg mb-8 border border-gray-200 dark:border-gray-700">
+                <h1 class="text-4xl font-extrabold text-primary-blue dark:text-secondary-blue mb-2" data-en="Welcome, Student!" data-ar="مرحباً بك، أيها الطالب/الطالبة!">Welcome, Student!</h1>
+                <p class="text-lg text-gray-600 dark:text-gray-300" data-en="Choose a subject to continue your Grade 6 learning journey:" data-ar="اختر مادة لمتابعة رحلتك التعليمية للصف السادس:">Choose a subject to continue your Grade 6 learning journey:</p>
+            </header>
+            <div id="subject-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                </div>
+        </div>
+
+        <div id="blocks-view" class="hidden">
+            <header id="subject-header-blocks" class="text-center py-10 bg-white dark:bg-secondary-dark rounded-xl shadow-lg mb-8 border-t-4 border-primary-blue dark:border-secondary-blue">
+                <div id="subject-icon-blocks" class="text-7xl mb-4"></div>
+                <h1 id="subject-title-blocks" class="text-4xl font-extrabold text-primary-blue dark:text-secondary-blue mb-2"></h1>
+                <p id="subject-description-blocks" class="text-lg text-gray-600 dark:text-gray-300"></p>
+                <div class="mt-6 max-w-lg mx-auto px-4">
+                    <div class="relative">
+                        <input type="text" id="blocks-search" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary-blue focus:border-primary-blue dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Search Blocks..." oninput="filterBlocks()">
+                        <div class="absolute inset-y-0 flex items-center pointer-events-none rtl:right-3 ltr:left-3">
+                             <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div id="blocks-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                </div>
+            <div id="no-blocks-results" class="hidden text-center p-8 bg-white dark:bg-secondary-dark rounded-xl shadow-lg mt-8 text-gray-500 dark:text-gray-400">
+                <p data-en="No blocks matched your search criteria." data-ar="لا توجد بلوكات مطابقة لمعايير البحث.">No blocks matched your search criteria.</p>
+            </div>
+        </div>
+
+        <div id="lessons-view" class="hidden">
+            <header id="block-header-lessons" class="text-center py-10 bg-white dark:bg-secondary-dark rounded-xl shadow-lg mb-8 border-t-4 border-primary-blue dark:border-secondary-blue">
+                <div id="block-subject-icon-lessons" class="text-5xl mb-2"></div>
+                <h2 id="block-title-lessons" class="text-3xl font-extrabold text-primary-blue dark:text-secondary-blue mb-1"></h2>
+                <p id="block-brief-lessons" class="text-lg text-gray-600 dark:text-gray-300"></p>
+
+                <div id="block-resources-button-container" class="mt-4"></div>
+                <div class="mt-6 max-w-lg mx-auto px-4">
+                    <div class="relative">
+                        <input type="text" id="lessons-search" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary-blue focus:border-primary-blue dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Search Lessons..." oninput="filterLessons()">
+                        <div class="absolute inset-y-0 flex items-center pointer-events-none rtl:right-3 ltr:left-3">
+                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div id="lessons-list" class="space-y-4">
+                </div>
+            <div id="no-lessons-results" class="hidden text-center p-8 bg-white dark:bg-secondary-dark rounded-xl shadow-lg mt-8 text-gray-500 dark:text-gray-400">
+                <p data-en="No lessons matched your search criteria." data-ar="لا توجد دروس مطابقة لمعايير البحث.">No lessons matched your search criteria.</p>
+            </div>
+        </div>
+
+        <div id="lesson-content-view" class="hidden">
+            <header id="lesson-content-header" class="text-center py-10 bg-white dark:bg-secondary-dark rounded-xl shadow-lg mb-8 border-t-4 border-primary-blue dark:border-secondary-blue">
+                <h1 id="lesson-content-title" class="text-4xl font-extrabold text-primary-blue dark:text-secondary-blue mb-2"></h1>
+                <p id="lesson-content-brief" class="text-lg text-gray-600 dark:text-gray-300"></p>
+            </header>
+
+            <div id="lesson-resources" class="bg-white dark:bg-secondary-dark p-4 rounded-xl shadow-lg mb-8 flex flex-wrap gap-4 justify-center border border-gray-200 dark:border-gray-700">
+                </div>
+
+            <div id="lesson-content-theory" class="lesson-content bg-white dark:bg-secondary-dark p-6 md:p-8 rounded-xl shadow-lg mb-8 border border-gray-200 dark:border-gray-700">
+                </div>
+
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-4" data-en="Exercises" data-ar="التمارين">Exercises</h2>
+                <div id="lesson-content-exercises" class="space-y-4">
+                    </div>
+            </div>
+        </div>
+
+        <div id="block-sheets-view" class="hidden">
+            <header id="block-sheets-header" class="text-center py-10 bg-white dark:bg-secondary-dark rounded-xl shadow-lg mb-8 border-t-4 border-primary-blue dark:border-secondary-blue">
+                <div id="block-sheets-icon" class="text-5xl mb-2"></div>
+                <h2 id="block-sheets-title" class="text-3xl font-extrabold text-primary-blue dark:text-secondary-blue mb-1"></h2>
+                <p id="block-sheets-description" class="text-lg text-gray-600 dark:text-gray-300 px-4" data-en="Select a sheet to view:" data-ar="اختر ملفاً لعرضه:">Select a sheet to view:</p>
+
+                <div id="block-sheets-extra-resources" class="mt-4 flex flex-wrap gap-4 justify-center">
+                    </div>
+                </header>
+
+            <div id="block-sheets-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                </div>
+
+        </div>
+
+    </main>
+
+    <footer class="mt-10 p-4 text-center text-sm text-gray-500 dark:text-gray-400">
+        <p data-en="NIES Learning Management System &copy; 2025" data-ar="نظام NIES لإدارة التعلم &copy; 2025">NIES Learning Management System &copy; 2025</p>
+    </footer>
+
+    <div id="modal-overlay" class="hidden fixed inset-0 bg-black/70 dark:bg-black/80 z-40 transition-opacity duration-300" onclick="closeModal()"></div>
+    <div id="modal-container" class="hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-11/12 h-5/6 md:w-3/4 bg-white dark:bg-gray-800 rounded-lg shadow-2xl z-50 p-4 flex flex-col transition-transform duration-300 scale-95">
+        <button id="modal-close-btn" onclick="closeModal()" class="absolute -top-3 -right-3 rtl:-left-3 rtl:-right-auto bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-lg font-bold shadow-lg hover:bg-red-700 z-50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800">
+            &times;
+        </button>
+        <div id="modal-content" class="w-full h-full overflow-auto rounded">
+            </div>
+    </div>
+<script src="s-data.js"></script>
+    <script>
+        // ====================================================================
+        // بيانات المواد التعليمية (كائن JSON مركزي)
+        // ====================================================================
+
+        // ====================================================================
+        // متغيرات الحالة العالمية والتاريخ
+        // ====================================================================
+        const langToggle = document.getElementById('lang-toggle');
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+        const htmlElement = document.documentElement;
+        const backButton = document.getElementById('back-button');
+        const appTitleContainer = document.getElementById('app-title-container');
+
+        // [مهم] استخدام الكوكيز بدلاً من localStorage
+        let currentLang = getCookie('appLang') || 'en';
+        let currentTheme = getCookie('appTheme') || 'light';
+
+        let stateHistory = []; // لتخزين تاريخ التنقل بين المراحل
+        let currentState = { view: 'dashboard', subjectId: null, blockId: null, lessonId: null };
+        let currentQuizData = null;
+
+        // ====================================================================
+        // وظائف إدارة الكوكيز
+        // ====================================================================
+         function setCookie(name, value, days) {
+            let expires = "";
+            if (days) {
+                const date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (value || "") + expires + "; path=/; SameSite=Lax";
+        }
+
+        function getCookie(name) {
+            const nameEQ = name + "=";
+            const ca = document.cookie.split(';');
+            for(let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+        }
+
+        // ====================================================================
+        // وظائف إدارة الثيم (الوضع الليلي/النهاري)
+        // ====================================================================
+        const themeIconLight = document.getElementById('theme-icon-light');
+        const themeIconDark = document.getElementById('theme-icon-dark');
+
+        function setTheme(theme) {
+            currentTheme = theme;
+            setCookie('appTheme', theme, 365);
+
+            if (theme === 'dark') {
+                htmlElement.classList.add('dark');
+                themeIconLight.classList.remove('hidden');
+                themeIconDark.classList.add('hidden');
+            } else {
+                htmlElement.classList.remove('dark');
+                themeIconLight.classList.add('hidden');
+                themeIconDark.classList.remove('hidden');
+            }
+        }
+
+        function toggleTheme() {
+            setTheme(currentTheme === 'light' ? 'dark' : 'light');
+        }
+
+
+        // ====================================================================
+        // وظائف التحميل والعرض (مع تعديلات للثيم واللغة)
+        // ====================================================================
+
+        /**
+         * وظيفة ذكية لاسترجاع المحتوى النصي بلغة معينة، مع آلية Fallback
+         */
+        function getLocalizedText(contentObj, preferredLang) {
+            if (!contentObj) return '[...]';
+            if (typeof contentObj === 'string') return contentObj;
+
+            const fallbackLang = preferredLang === 'en' ? 'ar' : 'en';
+
+            return contentObj[preferredLang] || contentObj[fallbackLang] || contentObj.en || contentObj.ar || '[...]';
+        }
+
+        /**
+         * تبديل المحتوى النصي بناءً على اللغة المختارة وحفظها في الكوكيز
+         */
+        function switchLanguage(lang) {
+            currentLang = lang;
+            setCookie('appLang', lang, 365);
+
+            // 1. تبديل وضع الجسم (Directionality & Font)
+            if (lang === 'ar') {
+                body.classList.remove('en-mode');
+                body.classList.add('ar-mode');
+                 htmlElement.lang = 'ar';
+                 htmlElement.dir = 'rtl';
+            } else {
+                body.classList.remove('ar-mode');
+                body.classList.add('en-mode');
+                 htmlElement.lang = 'en';
+                 htmlElement.dir = 'ltr';
+            }
+
+            // 2. تحديث جميع العناصر الثابتة التي تحتوي على سمات اللغة
+            document.querySelectorAll('[data-en], [data-ar]').forEach(element => {
+                const text = getLocalizedText({en: element.dataset.en, ar: element.dataset.ar}, currentLang);
+                if (text && text !== '[...]') {
+                    element.textContent = text;
+                }
+            });
+
+            // 3. تحديث نص زر التبديل
+            langToggle.querySelector('span').textContent = lang === 'en' ? 'AR' : 'EN';
+
+            // 4. إعادة رسم المحتوى الديناميكي الحالي لضمان تطبيق اللغة الصحيحة
+            changeView(currentState.view, currentState.subjectId, currentState.blockId, currentState.lessonId, false);
+        }
+
+        /**
+         * يتحكم في عرض المراحل المختلفة وتحديث الحالة
+         */
+        function changeView(view, subjectId = null, blockId = null, lessonId = null, updateHistory = true) {
+
+            if (updateHistory && JSON.stringify(currentState) !== JSON.stringify({ view, subjectId, blockId, lessonId })) {
+                 if (currentState.view !== 'dashboard') {
+                    stateHistory.push({...currentState});
+                 }
+            }
+
+            currentState = { view, subjectId, blockId, lessonId };
+
+            // إخفاء جميع العروض
+            document.getElementById('dashboard-view').classList.add('hidden');
+            document.getElementById('blocks-view').classList.add('hidden');
+            document.getElementById('lessons-view').classList.add('hidden');
+            document.getElementById('lesson-content-view').classList.add('hidden');
+            // ===================================
+            // [!!!] START OF MODIFICATION [!!!]
+            // ===================================
+            document.getElementById('block-sheets-view').classList.add('hidden'); // [جديد] إخفاء الصفحة الجديدة
+            // ===================================
+            // [!!!] END OF MODIFICATION [!!!]
+            // ===================================
+
+            // إعدادات شريط التنقل (زر العودة وعنوان التطبيق)
+            const isDashboard = (view === 'dashboard');
+            backButton.classList.toggle('hidden', isDashboard);
+            appTitleContainer.classList.toggle('hidden', !isDashboard);
+
+            // تحديث العرض المطلوب ورسم المحتوى
+            try {
+                if (view === 'dashboard') {
+                    document.getElementById('dashboard-view').classList.remove('hidden');
+                    renderDashboard();
+                } else if (view === 'blocks' && subjectId) {
+                    document.getElementById('blocks-view').classList.remove('hidden');
+                    renderBlocksView(subjectId);
+                } else if (view === 'lessons' && subjectId && blockId) {
+                    document.getElementById('lessons-view').classList.remove('hidden');
+                    renderLessonsView(subjectId, blockId);
+                } else if (view === 'lesson-content' && subjectId && blockId && lessonId) {
+                    document.getElementById('lesson-content-view').classList.remove('hidden');
+                    renderLessonContentView(subjectId, blockId, lessonId);
+                // ===================================
+                // [!!!] START OF MODIFICATION [!!!]
+                // ===================================
+                } else if (view === 'block-sheets' && subjectId && blockId) { // [جديد] حالة الصفحة الجديدة
+                    document.getElementById('block-sheets-view').classList.remove('hidden');
+                    renderBlockSheetsView(subjectId, blockId);
+                // ===================================
+                // [!!!] END OF MODIFICATION [!!!]
+                // ===================================
+                } else {
+                     console.error("Invalid view state:", currentState);
+                     changeView('dashboard');
+                }
+            } catch (error) {
+                console.error("Error rendering view:", view, error);
+                changeView('dashboard');
+            }
+
+            window.scrollTo(0, 0);
+        }
+
+        /**
+         * العودة إلى الحالة السابقة في تاريخ التنقل
+         */
+        function goBack() {
+            if (stateHistory.length > 0) {
+                const previousState = stateHistory.pop();
+                changeView(previousState.view, previousState.subjectId, previousState.blockId, previousState.lessonId, false);
+            } else {
+                changeView('dashboard', null, null, null, false);
+            }
+        }
+
+        /**
+         * بناء وعرض شبكة المواد الرئيسية
+         */
+        function renderDashboard() {
+            const subjectGrid = document.getElementById('subject-grid');
+            subjectGrid.innerHTML = '';
+
+            Object.keys(SUBJECT_DATA).forEach(id => {
+                const subject = SUBJECT_DATA[id];
+                const titleText = getLocalizedText(subject.title, currentLang);
+
+                const card = document.createElement('div');
+                card.onclick = () => changeView('blocks', id);
+                card.className = 'subject-card group cursor-pointer transition duration-300 ease-in-out';
+
+                card.innerHTML = `
+                    <div class="p-6 h-full bg-white dark:bg-secondary-dark rounded-xl shadow-md hover:shadow-lg dark:hover:shadow-blue-900/50 transition-all duration-300 transform hover:-translate-y-1 border-b-4" style="border-color: ${subject.color || 'var(--primary-blue)'};">
+                        <div class="flex flex-col items-center justify-center h-full text-center">
+                            <span class="text-5xl mb-4 transition duration-300 group-hover:scale-110">${subject.icon}</span>
+                            <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100">${titleText}</h3>
+                        </div>
+                    </div>
+                `;
+                subjectGrid.appendChild(card);
+            });
+
+             document.getElementById('page-title').textContent = getLocalizedText(
+                {en: 'NIES LMS Dashboard', ar: 'لوحة تحكم نظام NIES التعليمي'}, currentLang
+            );
+        }
+
+        /**
+         * بناء وعرض شاشة تفاصيل المادة والبلوكات
+         */
+        function renderBlocksView(subjectId) {
+            const subjectData = SUBJECT_DATA[subjectId];
+            if (!subjectData) return changeView('dashboard');
+
+            const subjectColor = subjectData.color || 'var(--primary-blue)';
+            document.documentElement.style.setProperty('--subject-color', subjectColor);
+            document.getElementById('subject-header-blocks').style.borderTopColor = subjectColor;
+
+            const titleText = getLocalizedText(subjectData.title, currentLang);
+            const descriptionText = getLocalizedText(subjectData.description, currentLang);
+
+            document.getElementById('page-title').textContent = titleText;
+            document.getElementById('subject-icon-blocks').textContent = subjectData.icon;
+            document.getElementById('subject-title-blocks').textContent = titleText;
+            document.getElementById('subject-description-blocks').textContent = descriptionText;
+
+            document.getElementById('blocks-search').placeholder = getLocalizedText({en: 'Search Blocks...', ar: 'البحث في البلوكات...'}, currentLang);
+            document.getElementById('blocks-search').value = '';
+
+            filterBlocks();
+        }
+
+        /**
+         * تصفية وعرض البلوكات بناءً على مدخلات البحث
+         */
+        function filterBlocks() {
+            const subjectId = currentState.subjectId;
+            if (!subjectId || !SUBJECT_DATA[subjectId]) return;
+            const subjectData = SUBJECT_DATA[subjectId];
+
+            const searchTerm = document.getElementById('blocks-search').value.toLowerCase();
+            const blocksGrid = document.getElementById('blocks-grid');
+            blocksGrid.innerHTML = '';
+
+            let resultsCount = 0;
+
+            subjectData.blocks.forEach(block => {
+                const blockTitle = getLocalizedText(block.title, currentLang).toLowerCase();
+                const blockBrief = getLocalizedText(block.brief, currentLang).toLowerCase();
+
+                if (blockTitle.includes(searchTerm) || blockBrief.includes(searchTerm)) {
+                    resultsCount++;
+                    const blockCard = document.createElement('div');
+                    // [مُعدل] البطاقة بأكملها تنقلك إلى قائمة الدروس
+                    blockCard.onclick = () => changeView('lessons', subjectId, block.id);
+                    blockCard.className = 'subject-card group cursor-pointer transition duration-300 ease-in-out';
+
+                    blockCard.innerHTML = `
+                        <div class="p-6 h-full bg-white dark:bg-secondary-dark rounded-xl shadow-md hover:shadow-lg dark:hover:shadow-blue-900/50 transition-all duration-300 transform hover:-translate-y-1 border-b-4 border-[var(--subject-color)] flex flex-col">
+                            <span class="text-3xl mb-2 font-semibold text-[var(--subject-color)]">#${block.id}</span>
+                            <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-2">${getLocalizedText(block.title, currentLang)}</h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-300 flex-grow">${getLocalizedText(block.brief, currentLang)}</p>
+                            <span class="mt-4 text-sm font-semibold text-gray-500 dark:text-gray-400">${(block.lessons || []).length} ${getLocalizedText({en: 'Lessons', ar: 'درس/دروس'}, currentLang)}</span>
+                        </div>
+                    `;
+                    blocksGrid.appendChild(blockCard);
+                }
+            });
+
+            document.getElementById('no-blocks-results').classList.toggle('hidden', resultsCount > 0);
+        }
+
+        /**
+         * بناء وعرض شاشة تفاصيل البلوك والدروس
+         */
+        function renderLessonsView(subjectId, blockId) {
+            const subjectData = SUBJECT_DATA[subjectId];
+            if (!subjectData) return changeView('blocks', subjectId);
+            const block = subjectData.blocks.find(b => b.id === blockId);
+            if (!block) return changeView('blocks', subjectId);
+
+            const subjectColor = subjectData.color || 'var(--primary-blue)';
+            document.documentElement.style.setProperty('--subject-color', subjectColor);
+            document.getElementById('block-header-lessons').style.borderTopColor = subjectColor;
+
+            // تحديث محتوى الترويسة
+            const blockTitleText = getLocalizedText(block.title, currentLang);
+            const subjectTitleText = getLocalizedText(subjectData.title, currentLang);
+            document.getElementById('page-title').textContent = `${blockTitleText} | ${subjectTitleText}`;
+            document.getElementById('block-subject-icon-lessons').textContent = subjectData.icon;
+            document.getElementById('block-title-lessons').textContent = blockTitleText;
+            document.getElementById('block-brief-lessons').textContent = getLocalizedText(block.brief, currentLang);
+
+            // [مُعدل] إضافة زر موارد البلوك إلى الترويسة
+            const buttonContainer = document.getElementById('block-resources-button-container');
+            buttonContainer.innerHTML = ''; // إفراغ الحاوية
+             // Check specifically for pdfs to decide if the button should show
+            if (block.block_resources && block.block_resources.pdfs && Object.keys(block.block_resources.pdfs).length > 0) {
+                const buttonText = getLocalizedText({en: `View Block ${block.id} Sheets`, ar: `عرض ملفات الوحدة ${block.id}`}, currentLang);
+                buttonContainer.innerHTML = `
+                    <button onclick="changeView('block-sheets', '${subjectId}', ${block.id})"
+                            class="px-4 py-2 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition duration-200 focus:ring-purple-500">
+                        📄 ${buttonText}
+                    </button>
+                `;
+            }
+
+
+            document.getElementById('lessons-search').placeholder = getLocalizedText({en: 'Search Lessons...', ar: 'البحث في الدروس...'}, currentLang);
+            document.getElementById('lessons-search').value = '';
+
+            filterLessons();
+        }
+
+        /**
+         * تصفية وعرض الدروس بناءً على مدخلات البحث
+         */
+        function filterLessons() {
+            const subjectId = currentState.subjectId;
+            const blockId = currentState.blockId;
+            if (!subjectId || !blockId || !SUBJECT_DATA[subjectId]) return;
+            const subjectData = SUBJECT_DATA[subjectId];
+            const block = subjectData.blocks.find(b => b.id === blockId);
+            if (!block) return;
+
+            const searchTerm = document.getElementById('lessons-search').value.toLowerCase();
+            const lessonsList = document.getElementById('lessons-list');
+            lessonsList.innerHTML = '';
+
+            let resultsCount = 0;
+            const lessons = block.lessons || [];
+
+            lessons.forEach(lesson => {
+                const lessonTitle = getLocalizedText(lesson.title, currentLang).toLowerCase();
+                const lessonBrief = getLocalizedText(lesson.brief, currentLang).toLowerCase();
+
+                if (lessonTitle.includes(searchTerm) || lessonBrief.includes(searchTerm)) {
+                    resultsCount++;
+                    const lessonCard = document.createElement('div');
+                    lessonCard.onclick = () => changeView('lesson-content', subjectId, blockId, lesson.id);
+                    lessonCard.className = 'p-4 bg-white dark:bg-secondary-dark rounded-lg shadow-md hover:shadow-lg dark:hover:shadow-blue-900/50 transition duration-200 border-l-4 rtl:border-l-0 rtl:border-r-4 border-[var(--subject-color)] cursor-pointer';
+                    lessonCard.innerHTML = `
+                        <h4 class="text-lg font-bold text-gray-800 dark:text-gray-100">${getLocalizedText(lesson.title, currentLang)}</h4>
+                        <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">${getLocalizedText(lesson.brief, currentLang)}</p>
+                    `;
+                    lessonsList.appendChild(lessonCard);
+                }
+            });
+
+            document.getElementById('no-lessons-results').classList.toggle('hidden', resultsCount > 0 || lessons.length === 0);
+
+            if (lessons.length === 0 && resultsCount === 0) {
+                 lessonsList.innerHTML = `
+                    <div class="text-center p-8 bg-white dark:bg-secondary-dark rounded-xl shadow-lg mt-4 text-gray-500 dark:text-gray-400">
+                        <p data-en="This block does not contain any lessons yet." data-ar="هذه الوحدة لا تحتوي على أي دروس حالياً.">${getLocalizedText({en:"This block does not contain any lessons yet.", ar:"هذه الوحدة لا تحتوي على أي دروس حالياً."}, currentLang)}</p>
+                    </div>
+                 `;
+                  document.getElementById('no-lessons-results').classList.add('hidden');
+            }
+        }
+
+        /**
+         * بناء وعرض شاشة محتوى الدرس
+         */
+        function renderLessonContentView(subjectId, blockId, lessonId) {
+            const subjectData = SUBJECT_DATA[subjectId];
+            if (!subjectData) return changeView('lessons', subjectId, blockId);
+            const block = subjectData.blocks.find(b => b.id === blockId);
+            if (!block) return changeView('lessons', subjectId, blockId);
+            const lesson = block.lessons.find(l => l.id === lessonId);
+            if (!lesson) return changeView('lessons', subjectId, blockId);
+
+            const subjectColor = subjectData.color || 'var(--primary-blue)';
+            document.documentElement.style.setProperty('--subject-color', subjectColor);
+            document.getElementById('lesson-content-header').style.borderTopColor = subjectColor;
+
+            // 1. إعدادات الترويسة
+            const lessonTitle = getLocalizedText(lesson.title, currentLang);
+            document.getElementById('page-title').textContent = lessonTitle;
+            document.getElementById('lesson-content-title').textContent = lessonTitle;
+            document.getElementById('lesson-content-brief').textContent = getLocalizedText(lesson.brief, currentLang);
+
+            // 2. عرض أزرار الموارد
+            renderLessonResources(subjectId, blockId, lessonId, lesson.resources);
+
+            // 3. عرض المحتوى النظري (HTML)
+            const theoryContainer = document.getElementById('lesson-content-theory');
+            if (lesson.content && lesson.content.theory) {
+                theoryContainer.innerHTML = getLocalizedText(lesson.content.theory, currentLang);
+            } else {
+                theoryContainer.innerHTML = `<p class="text-gray-500 dark:text-gray-400">${getLocalizedText({en: "Lesson content is not available yet.", ar: "محتوى الدرس غير متوفر حالياً."}, currentLang)}</p>`;
+            }
+
+            // 4. عرض التمارين (إذا وجدت)
+            const exercisesContainer = document.getElementById('lesson-content-exercises');
+            exercisesContainer.innerHTML = '';
+            const exercises = lesson.content ? (lesson.content.exercises || []) : [];
+
+            if (exercises.length > 0) {
+                 exercisesContainer.previousElementSibling.classList.remove('hidden');
+
+                exercises.forEach(ex => {
+                    const exerciseCard = document.createElement('div');
+                    exerciseCard.className = 'exercise-card';
+                    exerciseCard.innerHTML = `
+                        <p><span class="font-bold">${ex.id}.</span> ${getLocalizedText(ex.question, currentLang)}</p>
+                    `;
+                    exercisesContainer.appendChild(exerciseCard);
+                });
+            } else {
+                 exercisesContainer.previousElementSibling.classList.add('hidden');
+                 exercisesContainer.innerHTML = '';
+            }
+        }
+
+        /**
+         * بناء أزرار الموارد للدرس الحالي
+         */
+        function renderLessonResources(subjectId, blockId, lessonId, resources) {
+            const container = document.getElementById('lesson-resources');
+            container.innerHTML = '';
+
+            // [مُعدل] هذه الدالة تعمل الآن بشكل صحيح لأن الموارد أُعيدت إلى الدرس
+            if (!resources || (Object.keys(resources).length === 0 && resources.constructor === Object)) {
+                container.classList.add('hidden'); // إخفاء الحاوية إذا لم تكن هناك موارد
+                return;
+            }
+            container.classList.remove('hidden'); // إظهار الحاوية إذا كانت هناك موارد
+
+
+            const resourceOrder = ['pdfs', 'video', 'quiz'];
+
+            resourceOrder.forEach(type => {
+                if (resources[type]) {
+                    if (type === 'pdfs' && resources.pdfs.length > 0) {
+                        resources.pdfs.forEach((pdf) => {
+                             createResourceButton(container, 'pdf', pdf.url, `📄 PDF: ${getLocalizedText(pdf.name, currentLang)}`, 'bg-red-600 hover:bg-red-700');
+                        });
+                    } else if (type === 'video') {
+                         createResourceButton(container, 'video', resources.video, `▶️ ${getLocalizedText({en: 'Watch Video', ar: 'مشاهدة الفيديو'}, currentLang)}`, 'bg-blue-600 hover:bg-blue-700');
+                    } else if (type === 'quiz' && resources.quiz.length > 0) {
+                        const storageKey = `quizScore-${subjectId}-${blockId}-${lessonId}`;
+                        const savedScore = localStorage.getItem(storageKey);
+                        let quizButtonText = `📝 ${getLocalizedText({en: 'Start Quiz', ar: 'ابدأ الاختبار'}, currentLang)}`;
+                        if (savedScore) {
+                            quizButtonText += ` (${getLocalizedText({en:'Score', ar:'النتيجة'}, currentLang)}: ${savedScore})`;
+                        }
+
+                         currentQuizData = resources.quiz; // Store quiz data specifically for *this* lesson
+                         createResourceButton(container, 'quiz', { subjectId, blockId, lessonId }, quizButtonText, 'bg-green-600 hover:bg-green-700');
+                    }
+                }
+            });
+        }
+
+        /**
+         * دالة مساعدة لإنشاء زر مورد
+         */
+         function createResourceButton(container, type, data, text, styleClasses) {
+             const btn = document.createElement('button');
+             btn.className = `text-white px-4 py-2 rounded-lg font-semibold transition duration-200 ${styleClasses}`;
+             btn.innerHTML = text;
+             if (type === 'quiz') {
+                // Pass lesson-specific quiz data
+                const lessonQuizData = data.lessonQuizData || currentQuizData; // Use specific if passed, else fallback
+                btn.onclick = () => {
+                    currentQuizData = lessonQuizData; // Ensure correct quiz data is set before opening modal
+                    openModal(type, data.subjectId, data.blockId, data.lessonId);
+                }
+             } else {
+                 btn.onclick = () => openModal(type, data); // PDF and Video open in modal
+             }
+             container.appendChild(btn);
+         }
+
+
+        // ====================================================================
+        // وظائف الـ Modal (النافذة المنبثقة)
+        // ====================================================================
+
+        const modalOverlay = document.getElementById('modal-overlay');
+        const modalContainer = document.getElementById('modal-container');
+        const modalContent = document.getElementById('modal-content');
+
+        /**
+         * فتح النافذة المنبثقة مع تأثير
+         */
+        function openModal(type, ...args) {
+            modalContent.innerHTML = '';
+
+            try {
+                 if (type === 'pdf') {
+                    const url = args[0];
+                     if (!url || typeof url !== 'string') throw new Error("Invalid PDF URL");
+                    // PDF يفتح الآن في Modal
+                    modalContent.innerHTML = `<iframe src="${url}" class="w-full h-full border-0 rounded"></iframe>`;
+                }
+                else if (type === 'video') {
+                    const videoUrl = args[0];
+                     if (!videoUrl || typeof videoUrl !== 'string') throw new Error("Invalid video URL");
+                    modalContent.innerHTML = getVideoEmbedHtml(videoUrl);
+                }
+                else if (type === 'quiz') {
+                    const [subjectId, blockId, lessonId] = args;
+                    // currentQuizData should have been set by createResourceButton just before calling this
+                    if (!currentQuizData) {
+                         throw new Error("Quiz data not loaded or set before opening modal.");
+                    }
+                    buildQuizHTML(currentQuizData, subjectId, blockId, lessonId, 'modal-content');
+                }
+                else {
+                     throw new Error(`Unsupported modal type: ${type}`);
+                }
+
+                 // إظهار الـ Modal بتأثير
+                modalOverlay.classList.remove('hidden');
+                 modalContainer.classList.remove('hidden');
+                 setTimeout(() => {
+                     modalOverlay.classList.add('opacity-100');
+                     modalContainer.classList.add('scale-100');
+                 }, 10);
+
+            } catch (error) {
+                 console.error("Error opening modal:", error);
+                 modalContent.innerHTML = `<p class="p-4 text-red-600 dark:text-red-400">${getLocalizedText({en:'Could not load content.', ar:'لم نتمكن من تحميل المحتوى.'}, currentLang)}</p>`;
+                 modalOverlay.classList.remove('hidden');
+                 modalContainer.classList.remove('hidden');
+                 setTimeout(() => {
+                     modalOverlay.classList.add('opacity-100');
+                     modalContainer.classList.add('scale-100');
+                 }, 10);
+            }
+        }
+
+        /**
+         * إغلاق النافذة المنبثقة مع تأثير
+         */
+        function closeModal() {
+            modalOverlay.classList.remove('opacity-100');
+            modalContainer.classList.remove('scale-100');
+             setTimeout(() => {
+                 modalOverlay.classList.add('hidden');
+                 modalContainer.classList.add('hidden');
+                 modalContent.innerHTML = '';
+                 currentQuizData = null; // Clear quiz data on close
+             }, 300);
+        }
+
+        /**
+         * دالة ذكية لتحديد وعرض كود الفيديو المناسب
+         */
+        function getVideoEmbedHtml(videoUrl) {
+            let embedHtml = '';
+            const errorText = getLocalizedText({en:'Could not load video.', ar:'لم نتمكن من تحميل الفيديو.'}, currentLang);
+
+            try {
+                if (!videoUrl) throw new Error("Video URL is empty");
+
+                if (videoUrl.includes('youtube.com/embed/')) {
+                    embedHtml = `<iframe src="${videoUrl}" class="w-full h-full border-0 rounded" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+                } else if (videoUrl.endsWith('.mp4')) {
+                    const errorTag = getLocalizedText({en:'Your browser does not support the video tag.', ar:'متصفحك لا يدعم عرض الفيديو.'}, currentLang);
+                    embedHtml = `<video controls class="w-full h-full bg-black rounded"><source src="${videoUrl}" type="video/mp4">${errorTag}</video>`;
+                } else if (videoUrl.includes('drive.google.com/file/d/')) {
+                    const match = videoUrl.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+                    if (match && match[1]) {
+                        const fileId = match[1];
+                        const embedUrl = `https://drive.google.com/file/d/${fileId}/preview`;
+                        embedHtml = `<iframe src="${embedUrl}" class="w-full h-full border-0 rounded" frameborder="0"></iframe>`;
+                    } else {
+                         embedHtml = `<p class="p-4 text-red-500">${getLocalizedText({en:'Invalid Google Drive link.', ar:'رابط جوجل درايف غير صالح.'}, currentLang)}</p>`;
+                    }
+                } else {
+                    console.warn("Unknown video URL type, attempting generic iframe embed:", videoUrl);
+                    embedHtml = `<iframe src="${videoUrl}" class="w-full h-full border-0 rounded" frameborder="0" allowfullscreen></iframe>`;
+                }
+            } catch (e) {
+                console.error("Error parsing video URL:", videoUrl, e);
+                embedHtml = `<p class="p-4 text-red-500">${errorText}</p>`;
+            }
+
+            return embedHtml;
+        }
+
+
+        // ===================================
+        // [!!!] START OF MODIFICATION [!!!]
+        // ===================================
+        /**
+         * [مُعدل] بناء عارض ملفات البلوك (صفحة كاملة مع "أزرار كبيرة")
+         */
+        function renderBlockSheetsView(subjectId, blockId) {
+            const subjectData = SUBJECT_DATA[subjectId];
+            if (!subjectData) return changeView('lessons', subjectId, blockId);
+            const block = subjectData.blocks.find(b => b.id === blockId);
+            if (!block) return changeView('lessons', subjectId, blockId);
+            const resources = block.block_resources;
+
+            // 1. إعداد الترويسة
+            const subjectColor = subjectData.color || 'var(--primary-blue)';
+            document.getElementById('block-sheets-header').style.borderTopColor = subjectColor;
+            document.getElementById('block-sheets-icon').textContent = subjectData.icon;
+            const blockTitleText = getLocalizedText(block.title, currentLang);
+            const pageTitle = `${getLocalizedText({en: 'Block Sheets', ar: 'ملفات الوحدة'}, currentLang)}: ${blockTitleText}`;
+            document.getElementById('block-sheets-title').textContent = pageTitle;
+            document.getElementById('page-title').textContent = pageTitle;
+
+            // 2. إيجاد الشبكة وأزرار الموارد الإضافية
+            const grid = document.getElementById('block-sheets-grid');
+            const extraResourcesContainer = document.getElementById('block-sheets-extra-resources');
+            grid.innerHTML = ''; // إفراغ المحتوى القديم
+            extraResourcesContainer.innerHTML = ''; // إفراغ المحتوى القديم
+
+            // 3. إضافة أزرار الفيديو والاختبار (إذا وجدت)
+             if (resources.video) {
+                 createResourceButton(extraResourcesContainer, 'video', resources.video, `▶️ ${getLocalizedText({en: 'Watch Video', ar: 'مشاهدة الفيديو'}, currentLang)}`, 'bg-blue-600 hover:bg-blue-700');
+             }
+             if (resources.quiz) {
+                 // Define a unique identifier for the block quiz score
+                 const blockQuizId = `block_${blockId}`;
+                 const storageKey = `quizScore-${subjectId}-${blockId}-${blockQuizId}`;
+                 const savedScore = localStorage.getItem(storageKey);
+                 let quizButtonText = `📝 ${getLocalizedText({en: 'Start Block Quiz', ar: 'ابدأ اختبار الوحدة'}, currentLang)}`;
+                 if (savedScore) {
+                     quizButtonText += ` (${getLocalizedText({en:'Score', ar:'النتيجة'}, currentLang)}: ${savedScore})`;
+                 }
+                 // Pass block quiz data and the unique ID
+                 createResourceButton(extraResourcesContainer, 'quiz', { subjectId, blockId, lessonId: blockQuizId, lessonQuizData: resources.quiz }, quizButtonText, 'bg-green-600 hover:bg-green-700');
+             }
+
+            // 4. التحقق من وجود ملفات PDF
+            if (!resources || !resources.pdfs || Object.keys(resources.pdfs).length === 0) {
+                grid.innerHTML = `<p class="p-4 text-gray-500 col-span-full text-center">${getLocalizedText({en:'No PDF sheets found for this block.', ar:'لا توجد ملفات PDF لهذه الوحدة.'}, currentLang)}</p>`;
+                return; // No PDFs to show
+            }
+
+            // 5. تعريف أسماء العرض
+            const displayNames = {
+                main: { en: 'Main Sheet', ar: 'الملف الأساسي' },
+                cw: { en: 'Classwork', ar: 'ملف الصف' },
+                hw: { en: 'Homework', ar: 'ملف الواجب' },
+                ss: { en: 'Study Sheet', ar: 'ملف الشرح' },
+                re: { en: 'Revision', ar: 'ملف المراجعة' }
+            };
+
+            // 6. إنشاء "الأزرار الكبيرة" (البطاقات) للـ PDF
+            const pdfOrder = ['main', 'cw', 'hw', 'ss', 're'];
+
+            pdfOrder.forEach(key => {
+                 if (resources.pdfs[key]) {
+                    const pdfUrl = resources.pdfs[key];
+                    const cardTitle = displayNames[key] ? getLocalizedText(displayNames[key], currentLang) : key.toUpperCase();
+
+                    const card = document.createElement('div');
+                    card.className = 'subject-card group cursor-pointer transition duration-300 ease-in-out';
+                    // النقر على البطاقة يفتح الـ Modal مع ملف الـ PDF
+                    card.onclick = () => openModal('pdf', pdfUrl);
+
+                    card.innerHTML = `
+                        <div class="p-6 h-full bg-white dark:bg-secondary-dark rounded-xl shadow-md hover:shadow-lg dark:hover:shadow-blue-900/50 transition-all duration-300 transform hover:-translate-y-1 border-b-4" style="border-color: ${subjectColor};">
+                            <div class="flex flex-col items-center justify-center h-full text-center">
+                                <span class="text-5xl mb-4 transition duration-300 group-hover:scale-110">📄</span>
+                                <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100">${cardTitle}</h3>
+                            </div>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                 }
+            });
+        }
+        // ===================================
+        // [!!!] END OF MODIFICATION [!!!]
+        // ===================================
+
+
+        /**
+         * بناء الاختبار (Quiz) داخل الـ Modal
+         */
+        function buildQuizHTML(quizData, subjectId, blockId, lessonId, containerId) {
+             const container = document.getElementById(containerId);
+             if (!container) {
+                 console.error("Quiz container not found:", containerId);
+                 return;
+             }
+
+             if (!quizData || quizData.length === 0) {
+                 container.innerHTML = `<p class="p-4 text-gray-500">${getLocalizedText({en:'No quiz questions available.', ar:'لا توجد أسئلة اختبار متاحة.'}, currentLang)}</p>`;
+                 return;
+             }
+
+            container.classList.add('overflow-auto');
+
+            let html = `<div class="p-4 md:p-6"><h2 class="text-3xl font-bold mb-6 text-gray-800 dark:text-gray-100">${getLocalizedText({en: 'Interactive Quiz', ar: 'اختبار تفاعلي'}, currentLang)}</h2>`;
+            html += `<form id="quiz-form">`;
+
+            quizData.forEach((q, index) => {
+                html += `<div class="quiz-question">`;
+                html += `<div class="quiz-question-header">
+                            <p>${getLocalizedText(q.q, currentLang)}</p>
+                            <span class="flex-shrink-0 ml-4 rtl:mr-4 rtl:ml-0">${getLocalizedText({en:'Question', ar:'السؤال'}, currentLang)} ${index + 1}/${quizData.length}</span>
+                         </div>`;
+                html += `<div class="quiz-options mt-3 space-y-2">`;
+
+                const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
+                shuffledOptions.forEach((option, i) => {
+                    const optionId = `q${index}_option${i}`;
+                    html += `
+                        <label for="${optionId}" class="flex items-center">
+                            <input type="radio" name="question_${index}" id="${optionId}" value="${option}" class="w-4 h-4">
+                            <span class="ml-2 rtl:mr-2 rtl:ml-0">${option}</span>
+                        </label>
+                    `;
+                });
+                html += `</div></div>`;
+            });
+
+            // Ensure lessonId is passed as a string if it's potentially non-numeric (like 'block_1')
+            const lessonIdParam = typeof lessonId === 'number' ? lessonId : `'${lessonId}'`;
+
+            html += `<button type="button" onclick="submitQuiz('${subjectId}', ${blockId}, ${lessonIdParam})" class="mt-8 w-full bg-green-600 text-white p-3 rounded-lg font-semibold hover:bg-green-700 transition duration-200 focus:ring-green-500">
+                ${getLocalizedText({en: 'Submit Answers', ar: 'إرسال الإجابات'}, currentLang)}
+            </button>`;
+
+            html += `</form></div>`;
+
+            container.innerHTML = html;
+        }
+
+
+        /**
+         * تصحيح الاختبار وحفظ النتيجة وعرض مراجعة تفصيلية
+         */
+        function submitQuiz(subjectId, blockId, lessonId) {
+            // Use currentQuizData which should be set correctly before opening the modal
+             if (!currentQuizData) {
+                 console.error("Quiz data is missing on submit (currentQuizData is null).");
+                 closeModal();
+                 return;
+             }
+             const quizDataToUse = currentQuizData; // Use the globally set quiz data
+
+            const form = document.getElementById('quiz-form');
+             if (!form) {
+                 console.error("Quiz form not found.");
+                 return;
+             }
+
+            let score = 0;
+            let results = [];
+
+            quizDataToUse.forEach((q, index) => {
+                const selectedRadio = form.querySelector(`input[name="question_${index}"]:checked`);
+                const selectedValue = selectedRadio ? selectedRadio.value : null;
+                const isCorrect = (selectedValue === q.answer);
+
+                if (isCorrect) {
+                    score++;
+                }
+
+                results.push({
+                    q: getLocalizedText(q.q, currentLang),
+                    selected: selectedValue,
+                    answer: q.answer,
+                    isCorrect: isCorrect
+                });
+            });
+
+            const total = quizDataToUse.length;
+            const scorePercentage = total > 0 ? ((score / total) * 100).toFixed(0) : 0;
+
+            // 1. حفظ النتيجة في LocalStorage using the correct lessonId (number or string like 'block_1')
+            const storageKey = `quizScore-${subjectId}-${blockId}-${lessonId}`;
+            const scoreString = `${score}/${total}`;
+            localStorage.setItem(storageKey, scoreString);
+
+            // 2. تحديث زر الاختبار في واجهة الدرس (فقط إذا كان الاختبار خاصاً بدرس)
+            // التأكد من أن lessonId هو رقم قبل محاولة إعادة الرسم
+            if (!isNaN(parseFloat(lessonId)) && isFinite(lessonId)) {
+                renderLessonResources(subjectId, blockId, lessonId, SUBJECT_DATA[subjectId]?.blocks.find(b=>b.id===blockId)?.lessons.find(l=>l.id===lessonId)?.resources);
+            }
+             // [!!!] START OF MODIFICATION [!!!]
+             // Update the button on the Block Sheets page if it was a block quiz
+             else if (typeof lessonId === 'string' && lessonId.startsWith('block_')) {
+                  renderBlockSheetsView(subjectId, blockId); // Re-render to update the button text
+             }
+             // [!!!] END OF MODIFICATION [!!!]
+
+            // 3. بناء وعرض شاشة النتائج التفصيلية في Modal
+            const container = document.getElementById('modal-content');
+
+            let resultHtml = `
+                <div class="text-center p-6 md:p-8 overflow-auto h-full">
+                    <h2 class="text-3xl font-bold mb-4 text-gray-800 dark:text-gray-100">${getLocalizedText({en: 'Quiz Result', ar: 'نتيجة الاختبار'}, currentLang)}</h2>
+                    <p class="text-xl mb-2 text-gray-600 dark:text-gray-300">${getLocalizedText({en: 'You scored:', ar: 'نتيجتك هي:'}, currentLang)}</p>
+                    <p class="text-6xl font-extrabold text-[var(--subject-color)] my-4">${score} / ${total}</p>
+                    <p class="text-2xl font-semibold text-gray-700 dark:text-gray-200">${scorePercentage}%</p>
+
+                    <hr class="my-6 border-gray-200 dark:border-gray-700">
+
+                    <h3 class="text-2xl font-bold mb-4 text-left rtl:text-right text-gray-800 dark:text-gray-100">${getLocalizedText({en: 'Answers Review', ar: 'مراجعة الإجابات'}, currentLang)}</h3>
+                    <div class="text-left rtl:text-right space-y-4">
+            `;
+
+            results.forEach((res, index) => {
+                resultHtml += `<div class="quiz-review-item ${res.isCorrect ? 'border-green-300 dark:border-green-700' : 'border-red-300 dark:border-red-700'}">`;
+                resultHtml += `<p>${index + 1}. ${res.q}</p>`;
+
+                if (res.selected) {
+                    if (res.isCorrect) {
+                        resultHtml += `<span class="user-answer correct">
+                            ${getLocalizedText({en:'Your answer:', ar:'إجابتك:'}, currentLang)} ${res.selected} (Correct)
+                        </span>`;
+                    } else {
+                        resultHtml += `<span class="user-answer incorrect">
+                            ${getLocalizedText({en:'Your answer:', ar:'إجابتك:'}, currentLang)} ${res.selected} (Incorrect)
+                        </span>`;
+                        resultHtml += `<div class="correct-answer">
+                            ${getLocalizedText({en:'Correct answer:', ar:'الإجابة الصحيحة:'}, currentLang)} ${res.answer}
+                        </div>`;
+                    }
+                } else {
+                     resultHtml += `<span class="user-answer incorrect">
+                        ${getLocalizedText({en:'You did not answer this question.', ar:'لم تجب على هذا السؤال.'}, currentLang)}
+                     </span>`;
+                     resultHtml += `<div class="correct-answer">
+                        ${getLocalizedText({en:'Correct answer:', ar:'الإجابة الصحيحة:'}, currentLang)} ${res.answer}
+                     </div>`;
+                }
+                resultHtml += `</div>`;
+            });
+
+            // زر الإغلاق للمودال
+            resultHtml += `
+                <button onclick="closeModal()" class="mt-8 bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition duration-200 focus:ring-blue-500">
+                    ${getLocalizedText({en: 'Close', ar: 'إغلاق'}, currentLang)}
+                </button>
+            `;
+
+            resultHtml += `</div></div>`;
+
+            container.innerHTML = resultHtml;
+            container.scrollTop = 0;
+        }
+
+
+        // ====================================================================
+        // نقطة دخول (Initialization)
+        // ====================================================================
+
+        document.addEventListener('DOMContentLoaded', () => {
+             setTheme(currentTheme);
+             switchLanguage(currentLang);
+        });
+
+        langToggle.addEventListener('click', () => {
+            const newLang = currentLang === 'en' ? 'ar' : 'en';
+            switchLanguage(newLang);
+        });
+
+        themeToggle.addEventListener('click', toggleTheme);
+
+    </script>
+</body>
+</html>
