@@ -5738,6 +5738,268 @@ function clearAllBooksFromIndexedDB(cb){
             return subject;
         }
 
+        function convertSubjectResourcesToBook(resources) {
+            if (!resources || typeof resources !== 'object') return {};
+
+            const pdfSource = resources.pdfs ?? resources.pdf;
+            const videosSource = resources.videos ?? resources.video;
+            const output = {};
+
+            if (Array.isArray(pdfSource)) {
+                const pdfs = pdfSource
+                    .map((item, index) => {
+                        if (!item) return null;
+                        if (typeof item === 'string') {
+                            return ensureResourceItem({
+                                id: `pdf-${index + 1}`,
+                                name: { en: `PDF ${index + 1}`, ar: `ملف ${index + 1}` },
+                                url: item
+                            });
+                        }
+                        return ensureResourceItem({
+                            id: item.id || `pdf-${index + 1}`,
+                            name: item.name || item.title || {},
+                            url: item.url || item.link || ''
+                        });
+                    })
+                    .filter(item => item && item.url);
+                if (pdfs.length) output.pdfs = pdfs;
+            } else if (pdfSource && typeof pdfSource === 'object') {
+                const pdfs = Object.entries(pdfSource)
+                    .map(([key, value]) => {
+                        if (!value) return null;
+                        if (typeof value === 'string') {
+                            return ensureResourceItem({
+                                id: key,
+                                name: { en: key.toUpperCase(), ar: key.toUpperCase() },
+                                url: value
+                            });
+                        }
+                        return ensureResourceItem({
+                            id: value.id || key,
+                            name: value.name || value.title || { en: key.toUpperCase(), ar: key.toUpperCase() },
+                            url: value.url || value.link || ''
+                        });
+                    })
+                    .filter(item => item && item.url);
+                if (pdfs.length) output.pdfs = pdfs;
+            } else if (typeof pdfSource === 'string' && pdfSource.trim()) {
+                output.pdfs = [ensureResourceItem({
+                    id: 'pdf-1',
+                    name: { en: 'PDF', ar: 'ملف PDF' },
+                    url: pdfSource
+                })];
+            }
+
+            if (Array.isArray(videosSource)) {
+                const videos = videosSource
+                    .map((item, index) => {
+                        if (!item) return null;
+                        if (typeof item === 'string') {
+                            return ensureResourceItem({
+                                id: `video-${index + 1}`,
+                                title: { en: `Video ${index + 1}`, ar: `فيديو ${index + 1}` },
+                                url: item
+                            });
+                        }
+                        return ensureResourceItem({
+                            id: item.id || `video-${index + 1}`,
+                            title: item.title || item.name || {},
+                            url: item.url || item.link || ''
+                        });
+                    })
+                    .filter(item => item && item.url);
+                if (videos.length) output.videos = videos;
+            } else if (videosSource && typeof videosSource === 'object' && !Array.isArray(videosSource)) {
+                const item = videosSource;
+                const normalized = ensureResourceItem({
+                    id: item.id || 'video-1',
+                    title: item.title || item.name || { en: 'Video', ar: 'فيديو' },
+                    url: item.url || item.link || ''
+                });
+                if (normalized.url) output.videos = [normalized];
+            } else if (typeof videosSource === 'string' && videosSource.trim()) {
+                output.videos = [ensureResourceItem({
+                    id: 'video-1',
+                    title: { en: 'Video', ar: 'فيديو' },
+                    url: videosSource
+                })];
+            }
+
+            const quizArray = Array.isArray(resources.quiz)
+                ? resources.quiz
+                : Array.isArray(resources.quizPreview)
+                    ? resources.quizPreview
+                    : [];
+
+            if (quizArray.length) {
+                output.quiz = quizArray;
+                output.quizScript = JSON.stringify(quizArray, null, 2);
+            } else if (typeof resources.quizScript === 'string' && resources.quizScript.trim()) {
+                output.quizScript = resources.quizScript.trim();
+            }
+
+            return output;
+        }
+
+        function convertSubjectToBook(subjectId, subject, index = 0) {
+            const normalizedSubject = subject || {};
+            const title = normalizedSubject.title || {};
+            const fallback = title.en || title.ar || subjectId || 'subject';
+            const normalizedId = normalizedSubject.subjectId || subjectId || slugify(fallback);
+            const book = {
+                name: toLangArray(title),
+                bio: toLangArray(normalizedSubject.description || {}),
+                icon: normalizedSubject.icon || '📘',
+                color: normalizedSubject.color || '#2563eb',
+                alias: normalizedSubject.alias || normalizedId,
+                subjectId: normalizedId || generateUniqueID(),
+                cover: normalizedSubject.cover || '',
+                sections: []
+            };
+
+            const blocks = Array.isArray(normalizedSubject.blocks) ? normalizedSubject.blocks : [];
+            blocks.forEach((block, blockIndex) => {
+                const safeBlock = block || {};
+                const section = {
+                    id: safeBlock.id || blockIndex + 1,
+                    section_name: toLangArray(safeBlock.title || {}),
+                    brief: toLangArray(safeBlock.brief || {}),
+                    sort: blockIndex,
+                    resources: {},
+                    Chapters: []
+                };
+
+                const sectionResources = convertSubjectResourcesToBook(safeBlock.block_resources || safeBlock.resources || {});
+                if (Object.keys(sectionResources).length) {
+                    section.resources = sectionResources;
+                }
+
+                const lessons = Array.isArray(safeBlock.lessons) ? safeBlock.lessons : [];
+                lessons.forEach((lesson, lessonIndex) => {
+                    const safeLesson = lesson || {};
+                    const contentBlock = safeLesson.content || {};
+                    const theoryContent = contentBlock.theory || '';
+                    const exercisesContent = contentBlock.exercises || safeLesson.exercises || [];
+
+                    const chapter = {
+                        id: safeLesson.id || `${section.id}-${lessonIndex + 1}`,
+                        title: toLangArray(safeLesson.title || {}),
+                        brief: toLangArray(safeLesson.brief || {}),
+                        content: [{ type: 'paragraph', data: toLangArray(theoryContent) }],
+                        exercises: Array.isArray(exercisesContent) ? exercisesContent : []
+                    };
+
+                    const lessonResources = convertSubjectResourcesToBook(safeLesson.resources || {});
+                    if (Object.keys(lessonResources).length) {
+                        chapter.resources = lessonResources;
+                    }
+
+                    section.Chapters.push(chapter);
+                });
+
+                book.sections.push(section);
+            });
+
+            ensureBookSchema(book);
+            normalizeAuditDefaults(book);
+            return book;
+        }
+
+        function isSubjectBundlePayload(payload) {
+            if (!payload || typeof payload !== 'object' || Array.isArray(payload)) return false;
+            const values = Object.values(payload);
+            if (!values.length) return false;
+            return values.every(item => item && typeof item === 'object' && Array.isArray(item.blocks));
+        }
+
+        function clearBooksStore() {
+            return new Promise(resolve => {
+                clearAllBooksFromIndexedDB(() => resolve());
+            });
+        }
+
+        function saveImportedBooks(books) {
+            return new Promise((resolve, reject) => {
+                if (!db) {
+                    reject(new Error('قاعدة البيانات غير جاهزة بعد'));
+                    return;
+                }
+                if (!Array.isArray(books) || books.length === 0) {
+                    resolve([]);
+                    return;
+                }
+
+                const tx = db.transaction(['books'], 'readwrite');
+                const store = tx.objectStore('books');
+                const imported = [];
+
+                books.forEach((book, index) => {
+                    ensureBookSchema(book);
+                    const record = {
+                        name: book.name,
+                        sections: book.sections,
+                        bio: book.bio,
+                        alias: book.alias || book.subjectId || '',
+                        icon: book.icon || '📘',
+                        color: book.color || '#2563eb',
+                        subjectId: book.subjectId || slugify(getFromLangArray(book.name, 'en') || getFromLangArray(book.name, 'ar') || `subject-${generateUniqueID()}`),
+                        cover: book.cover || '',
+                        lastModified: new Date().toISOString()
+                    };
+
+                    const request = store.add(record);
+                    request.onsuccess = (event) => {
+                        imported.push({ id: event.target.result, index });
+                    };
+                    request.onerror = (event) => {
+                        console.error('Import book failed', event.target.error);
+                    };
+                });
+
+                tx.oncomplete = () => {
+                    imported.sort((a, b) => a.index - b.index);
+                    resolve(imported);
+                };
+                tx.onerror = () => {
+                    reject(tx.error || new Error('تعذر حفظ الكتب المستوردة'));
+                };
+            });
+        }
+
+        async function importSubjectBundleFromJSON(bundle) {
+            const entries = Object.entries(bundle || {}).filter(([, subject]) => subject && typeof subject === 'object');
+            if (!entries.length) {
+                throw new Error('لا توجد مواد صالحة في الملف.');
+            }
+
+            const books = entries.map(([subjectId, subject], index) => convertSubjectToBook(subjectId, subject, index));
+            await clearBooksStore();
+            const imported = await saveImportedBooks(books);
+            if (imported.length) {
+                const firstId = imported[0].id;
+                loadBookById(firstId);
+            } else {
+                currentBookId = null;
+                bookData = null;
+                renderApp();
+                populateBookSwitcher(null);
+            }
+        }
+
+        async function importSingleBookFromJSON(book) {
+            await clearBooksStore();
+            ensureUniqueIDs(book);
+            normalizeAuditDefaults(book);
+            bookData = book;
+            lastSavedBook = null;
+            activePath = { section: null, chapter: null };
+            migrateOldDataStructure();
+            ensureBookSchema(bookData);
+            renderApp();
+            saveBookToIndexedDB();
+        }
+
         function downloadBundle(content, filename = 's-data.js') {
             const blob = new Blob([content], { type: 'application/javascript;charset=utf-8' });
             const link = document.createElement('a');
@@ -5939,28 +6201,30 @@ controls.appendChild(trashBtn);
                 }
             });
 document.getElementById('approve-all-btn').addEventListener('click', approveAllChapters);
-            document.getElementById('json-upload').addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if(!file) return;
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-        clearAllBooksFromIndexedDB(() => {
-            try {
-                const data = JSON.parse(ev.target.result);
-                ensureUniqueIDs(data);
-                normalizeAuditDefaults(data);
-                bookData = data;
-                lastSavedBook = null;
-                activePath = { section: null, chapter: null };
-                migrateOldDataStructure();
-                renderApp();
-            } catch (error) {
-                alert('ملف JSON غير صالح');
-            }
-        });
-    };
-    reader.readAsText(file, 'utf-8');
-});
+            document.getElementById('json-upload').addEventListener('change', async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                try {
+                    const text = await file.text();
+                    const raw = JSON.parse(text);
+                    const payload = raw && typeof raw === 'object' && !Array.isArray(raw) && raw.SUBJECT_DATA
+                        ? raw.SUBJECT_DATA
+                        : raw;
+
+                    if (isSubjectBundlePayload(payload)) {
+                        await importSubjectBundleFromJSON(payload);
+                        alert('تم استيراد جميع الكتب بنجاح.');
+                    } else {
+                        await importSingleBookFromJSON(raw);
+                        alert('تم استيراد الكتاب بنجاح.');
+                    }
+                } catch (error) {
+                    console.error('Import failed:', error);
+                    alert('ملف JSON غير صالح');
+                } finally {
+                    e.target.value = '';
+                }
+            });
 
 
             document.getElementById('search-btn').addEventListener('click', openAdvancedSearch);

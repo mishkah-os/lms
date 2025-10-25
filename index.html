@@ -617,7 +617,7 @@
             const buttonContainer = document.getElementById('block-resources-button-container');
             buttonContainer.innerHTML = ''; // إفراغ الحاوية
              // Check specifically for pdfs to decide if the button should show
-            if (block.block_resources && block.block_resources.pdfs && Object.keys(block.block_resources.pdfs).length > 0) {
+            if (hasPdfResources(block.block_resources)) {
                 const buttonText = getLocalizedText({en: `View Block ${block.id} Sheets`, ar: `عرض ملفات الوحدة ${block.id}`}, currentLang);
                 buttonContainer.innerHTML = `
                     <button onclick="changeView('block-sheets', '${subjectId}', ${block.id})"
@@ -743,6 +743,31 @@
         /**
          * بناء أزرار الموارد للدرس الحالي
          */
+        function hasPdfResources(resourceSet) {
+            if (!resourceSet) return false;
+            const pdfSource = resourceSet.pdfs ?? resourceSet.pdf;
+            if (Array.isArray(pdfSource)) {
+                return pdfSource.some(item => {
+                    if (!item) return false;
+                    if (typeof item === 'string') return item.trim() !== '';
+                    if (typeof item === 'object') return !!item.url;
+                    return false;
+                });
+            }
+            if (pdfSource && typeof pdfSource === 'object') {
+                return Object.values(pdfSource).some(value => {
+                    if (!value) return false;
+                    if (typeof value === 'string') return value.trim() !== '';
+                    if (typeof value === 'object') return !!value.url;
+                    return false;
+                });
+            }
+            if (typeof pdfSource === 'string') {
+                return pdfSource.trim() !== '';
+            }
+            return false;
+        }
+
         function resolveQuizData(resources) {
             if (!resources) return [];
             if (Array.isArray(resources.quiz) && resources.quiz.length) {
