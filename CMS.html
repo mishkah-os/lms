@@ -2455,8 +2455,145 @@ function protectContentBeforeSwitch() {
             return '';
         }
         
-        function getWordCount(str) { return str.trim().split(/\s+/).filter(Boolean).length; }
-        function getCharCount(str) { return str.length; }
+        function normalizeValueToString(value, lang = currentLanguage || 'ar') {
+            if (value == null) return '';
+            if (typeof value === 'string') return value;
+
+            if (Array.isArray(value)) {
+                if (!value.length) return '';
+                const isLangArray = value.every(item => {
+                    if (!item || typeof item !== 'object') return false;
+                    const keys = Object.keys(item);
+                    return keys.length === 1 && typeof item[keys[0]] === 'string';
+                });
+                if (isLangArray) {
+                    return getFromLangArray(value, lang) || '';
+                }
+                return value.map(entry => normalizeValueToString(entry, lang)).filter(Boolean).join('\n');
+            }
+
+            if (typeof value === 'object') {
+                if (Object.prototype.hasOwnProperty.call(value, lang)) {
+                    return normalizeValueToString(value[lang], lang);
+                }
+
+                const prioritizedKeys = ['text', 'content', 'value', 'title', 'caption', 'description', 'body', 'html', 'markdown'];
+                for (const key of prioritizedKeys) {
+                    if (value[key] != null) {
+                        const normalized = normalizeValueToString(value[key], lang);
+                        if (normalized) return normalized;
+                    }
+                }
+
+                if (value.csv) {
+                    return normalizeValueToString(value.csv, lang);
+                }
+
+                if (Array.isArray(value.items)) {
+                    const normalizedItems = value.items
+                        .map(item => normalizeValueToString(item, lang))
+                        .filter(Boolean);
+                    if (normalizedItems.length) return normalizedItems.join('\n');
+                }
+
+                if (Array.isArray(value.lines)) {
+                    const normalizedLines = value.lines
+                        .map(item => normalizeValueToString(item, lang))
+                        .filter(Boolean);
+                    if (normalizedLines.length) return normalizedLines.join('\n');
+                }
+
+                return Object.keys(value)
+                    .filter(key => !['type', 'id', 'items', 'data', 'blocks', 'Chapters', 'resources', 'url', 'csv'].includes(key))
+                    .map(key => normalizeValueToString(value[key], lang))
+                    .filter(Boolean)
+                    .join('\n');
+            }
+
+            return String(value);
+        }
+
+        function extractBlockText(block, lang = currentLanguage || 'ar') {
+            if (!block) return '';
+            if (typeof block === 'string') return block;
+            if (Array.isArray(block)) {
+                return block.map(item => extractBlockText(item, lang)).filter(Boolean).join('\n');
+            }
+            if (typeof block !== 'object') return String(block);
+
+            if (block.type === 'table') {
+                const data = block.data || block;
+                if (typeof data === 'string') return data;
+                if (data.csv) return normalizeValueToString(data.csv, lang);
+                if (Array.isArray(data.rows)) {
+                    return data.rows
+                        .map(row => Array.isArray(row) ? row.join(', ') : normalizeValueToString(row, lang))
+                        .join('\n');
+                }
+            }
+
+            if (block.type === 'image') {
+                const data = block.data || block;
+                const parts = [data.title, data.caption]
+                    .map(part => normalizeValueToString(part, lang))
+                    .filter(Boolean);
+                return parts.join(' - ');
+            }
+
+            if (block.type === 'list') {
+                const data = block.data || {};
+                const items = Array.isArray(data.items) ? data.items : Array.isArray(data) ? data : [];
+                return items.map(item => normalizeValueToString(item, lang)).filter(Boolean).join('\n');
+            }
+
+            if (block.text != null) {
+                const text = normalizeValueToString(block.text, lang);
+                if (text) return text;
+            }
+
+            if (block.data != null) {
+                return normalizeValueToString(block.data, lang);
+            }
+
+            if (block.content != null) {
+                return normalizeValueToString(block.content, lang);
+            }
+
+            return '';
+        }
+
+        function extractChapterText(chapter, lang = currentLanguage || 'ar') {
+            if (!chapter) return { text: '', lines: 0 };
+            const parts = [];
+            const briefText = normalizeValueToString(chapter.brief, lang);
+            if (briefText) parts.push(briefText);
+
+            if (Array.isArray(chapter.content)) {
+                chapter.content
+                    .forEach(block => {
+                        const text = extractBlockText(block, lang);
+                        if (text) parts.push(text);
+                    });
+            }
+
+            const combined = parts.join('\n').trim();
+            if (!combined) {
+                return { text: '', lines: 0 };
+            }
+            const lineCount = combined.split(/\r?\n/).length;
+            return { text: combined, lines: lineCount };
+        }
+
+        function getWordCount(str, lang = currentLanguage || 'ar') {
+            const normalized = typeof str === 'string' ? str : normalizeValueToString(str, lang);
+            const trimmed = normalized.trim();
+            if (!trimmed) return 0;
+            return trimmed.split(/\s+/).filter(Boolean).length;
+        }
+        function getCharCount(str, lang = currentLanguage || 'ar') {
+            const normalized = typeof str === 'string' ? str : normalizeValueToString(str, lang);
+            return normalized.length;
+        }
 
         function initializeMarkdownEditor() {
             markdownEditor = document.getElementById('markdown-editor');
@@ -4992,34 +5129,41 @@ function openTrash(){
 
         function calculateStats() {
             if (!bookData) return null;
+            const lang = currentLanguage || 'ar';
             let totalChapters = 0;
             let totalWords = 0;
             let totalChars = 0;
+            let totalLines = 0;
 
-            const bioContent = bookData.bio || '';
-            const bioStats = {
-                words: getWordCount(bioContent),
-                chars: getCharCount(bioContent)
-            };
-            totalWords += bioStats.words;
-            totalChars += bioStats.chars;
+            const bioContent = normalizeValueToString(bookData.bio, lang);
+            const bioWords = getWordCount(bioContent, lang);
+            const bioChars = getCharCount(bioContent, lang);
+            const bioLines = bioContent ? bioContent.split(/\r?\n/).length : 0;
 
-            const sectionStats = bookData.sections.map(section => {
+            totalWords += bioWords;
+            totalChars += bioChars;
+            totalLines += bioLines;
+
+            const sectionStats = (bookData.sections || []).map(section => {
                 let sectionWords = 0;
                 let sectionChars = 0;
                 let sectionLines = 0;
-                section.Chapters.forEach(chapter => {
-                    const chapterContent = (chapter.content || []).map(b => (typeof b.data === 'string' ? b.data : (b.data.csv || ''))).join('\n');
-                    sectionWords += getWordCount(chapterContent);
-                    sectionChars += getCharCount(chapterContent);
-                    sectionLines += (chapterContent.match(/\n/g) || []).length + 1;
+
+                (section.Chapters || []).forEach(chapter => {
+                    const { text, lines } = extractChapterText(chapter, lang);
+                    sectionWords += getWordCount(text, lang);
+                    sectionChars += getCharCount(text, lang);
+                    sectionLines += lines;
                 });
-                totalChapters += section.Chapters.length;
+
+                totalChapters += (section.Chapters || []).length;
                 totalWords += sectionWords;
                 totalChars += sectionChars;
+                totalLines += sectionLines;
+
                 return {
                     name: section.section_name,
-                    chapters: section.Chapters.length,
+                    chapters: (section.Chapters || []).length,
                     words: sectionWords,
                     chars: sectionChars,
                     lines: sectionLines
@@ -5027,12 +5171,16 @@ function openTrash(){
             });
 
             return {
-                totalLines: allLines.length,
-                totalSections: bookData.sections.length,
+                totalLines,
+                totalSections: (bookData.sections || []).length,
                 totalChapters,
                 totalWords,
                 totalChars,
-                bioStats,
+                bioStats: {
+                    words: bioWords,
+                    chars: bioChars,
+                    lines: bioLines
+                },
                 sectionStats
             };
         }
@@ -5044,6 +5192,13 @@ function openTrash(){
                 return;
             }
             
+            const lang = currentLanguage || 'ar';
+            const bioContent = normalizeValueToString(bookData.bio, lang);
+            const formattedBio = bioContent
+                ? bioContent.replace(/\r\n/g, '\n').replace(/\n/g, '<br>')
+                : 'لا توجد مقدمة للكتاب';
+            const bioMeta = `(${stats.bioStats.words} كلمة, ${stats.bioStats.chars} حرف${stats.bioStats.lines ? `, ${stats.bioStats.lines} سطر` : ''})`;
+
             const contentDiv = document.getElementById('stats-content');
             contentDiv.innerHTML = `
                 <div class="mb-6 p-6 bg-gradient-to-r from-gray-700 to-gray-600 rounded-lg">
@@ -5073,8 +5228,8 @@ function openTrash(){
                 </div>
                 <div class="mb-6 p-6 bg-gradient-to-r from-gray-700 to-gray-600 rounded-lg">
                      <h3 class="text-xl font-bold mb-3 text-yellow-300">مقدمة الكتاب</h3>
-                     <div class="prose prose-invert max-w-none bg-gray-800 p-4 rounded-lg">${bookData.bio ? bookData.bio.replace(/\r\n/g, '\n').replace(/\n/g, '<br>') : 'لا توجد مقدمة للكتاب'}</div>
-                     <p class="text-sm text-gray-400 mt-3">(${stats.bioStats.words} كلمة, ${stats.bioStats.chars} حرف)</p>
+                     <div class="prose prose-invert max-w-none bg-gray-800 p-4 rounded-lg">${formattedBio}</div>
+                     <p class="text-sm text-gray-400 mt-3">${bioMeta}</p>
                 </div>
                 <div>
                     <h3 class="text-xl font-bold mb-4 text-yellow-300">تفاصيل الأقسام</h3>
