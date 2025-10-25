@@ -7550,113 +7550,107 @@ return{exportOneFile,buildHTML};
 })();
 </script>
 
-	<script>
+        <script>
+(function(){
+  'use strict';
 
-
-
- document.getElementById("export-onepage-btn")?.addEventListener("click", ()=>{
-    const book = window.editorState?.book || window.currentBook || window.book  || bookData || {};
-    MishkahOnePage.exportOneFile(book, { filename: "book-single.html" });
-  });
-
-	</script>
-<script>
-// ===== Helpers =====
-const __safeName = s => String(s ?? '').replace(/[\\\/:*?"<>|]/g, '_').trim() || 'untitled';
-const __pad2 = n => String(n).padStart(2,'0');
-function __ts() {
-  const d = new Date();
-  return d.getFullYear() + __pad2(d.getMonth()+1) + __pad2(d.getDate()) + '-' + __pad2(d.getHours()) + __pad2(d.getMinutes());
-}
-function __getLocalizedSectionName(section, lang) {
-  if (typeof getLocalizedSectionName === 'function') return getLocalizedSectionName(section, lang);
-  return section?.section_name || '';
-}
-function __ensureJSZip() {
-  if (window.JSZip) return Promise.resolve();
-  return new Promise((res, rej) => {
-    const s = document.createElement('script');
-    s.src = "https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js";
-    s.onload = () => res();
-    s.onerror = () => rej(new Error('فشل تحميل JSZip'));
-    document.head.appendChild(s);
-  });
-}
-
-// ===== Main: export all sections as ZIP of JSON files =====
-async function exportAllSectionsAsZip() {
-    const book = window.editorState?.book || window.currentBook || window.book  || bookData || {};
-
-  if (!book || !Array.isArray(book.sections) || !book.sections.length) {
-    alert('لا يوجد كتاب/أقسام للتصدير.');
-    return;
+  const exportOnePageBtn = document.getElementById('export-onepage-btn');
+  if (exportOnePageBtn && window.MishkahOnePage) {
+    exportOnePageBtn.addEventListener('click', () => {
+      const book = window.editorState?.book || window.currentBook || window.book || bookData || {};
+      MishkahOnePage.exportOneFile(book, { filename: 'book-single.html' });
+    });
   }
 
-  try {
-    // تحميل JSZip إذا لم يكن موجودًا
-    if (!window.JSZip) {
-      const s = document.createElement('script');
-      s.src = "https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js";
-      await new Promise((res, rej) => { s.onload = res; s.onerror = () => rej(new Error('فشل تحميل JSZip')); document.head.appendChild(s); });
+  const safeName = value => String(value ?? '').replace(/[\\/:*?"<>|]/g, '_').trim() || 'untitled';
+  const pad2 = n => String(n).padStart(2, '0');
+  const getSectionName = (section, lang) => {
+    if (typeof getLocalizedSectionName === 'function') {
+      return getLocalizedSectionName(section, lang) || '';
+    }
+    return section?.section_name || '';
+  };
+
+  const ensureJSZip = () => {
+    if (window.JSZip) {
+      return Promise.resolve();
+    }
+    return new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js';
+      script.onload = () => resolve();
+      script.onerror = () => reject(new Error('فشل تحميل JSZip'));
+      document.head.appendChild(script);
+    });
+  };
+
+  async function exportAllSectionsAsZip() {
+    const book = window.editorState?.book || window.currentBook || window.book || bookData || {};
+    if (!book || !Array.isArray(book.sections) || !book.sections.length) {
+      alert('لا يوجد كتاب/أقسام للتصدير.');
+      return;
     }
 
-    const zip = new JSZip();
-    const folder = zip.folder('sections');
+    try {
+      await ensureJSZip();
 
-    const lang = window.currentLanguage || 'ar';
-    const __safeName = s => String(s ?? '').replace(/[\\\/:*?"<>|]/g, '_').trim() || 'untitled';
-    const __pad2 = n => String(n).padStart(2,'0');
-    const secNameFn = (section) => (typeof getLocalizedSectionName === 'function' ? getLocalizedSectionName(section, lang) : section?.section_name) || '';
-
-    // ملف فهرس داخلي (اختياري مفيد)
-    const manifest = {
-      exported_at: new Date().toISOString(),
-      book: { name: (typeof getLocalizedBookName === 'function' ? getLocalizedBookName(book, lang) : (book.name || 'book')) },
-      sections: []
-    };
-
-    book.sections.forEach((sec, idx) => {
-      const secName = secNameFn(sec) || `section-${idx+1}`;
-      const fileName = `${__pad2(idx+1)}_${__safeName(secName)}.json`;
-
-      const payload = {
-        meta: {
-          exported_at: new Date().toISOString(),
-          section_index: idx,
-          section_name: secName
+      const zip = new JSZip();
+      const folder = zip.folder('sections');
+      const lang = (window.currentLanguage || 'ar').toLowerCase();
+      const manifest = {
+        exported_at: new Date().toISOString(),
+        book: {
+          name: typeof getLocalizedBookName === 'function'
+            ? (getLocalizedBookName(book, lang) || book.name || 'book')
+            : (book.name || 'book')
         },
-        section: sec // يحتوي الـ Chapters كما هي
+        sections: []
       };
 
-      folder.file(fileName, JSON.stringify(payload, null, 2));
-      manifest.sections.push({ index: idx, name: secName, file: `sections/${fileName}` });
-    });
+      (book.sections || []).forEach((section, idx) => {
+        const sectionName = getSectionName(section, lang) || `section-${idx + 1}`;
+        const fileName = `${pad2(idx + 1)}_${safeName(sectionName)}.json`;
 
-    zip.file('manifest.json', JSON.stringify(manifest, null, 2));
+        const payload = {
+          meta: {
+            exported_at: new Date().toISOString(),
+            section_index: idx,
+            section_name: sectionName
+          },
+          section
+        };
 
-    const blob = await zip.generateAsync({
-      type: 'blob',
-      compression: 'DEFLATE',
-      compressionOptions: { level: 6 }
-    });
+        folder.file(fileName, JSON.stringify(payload, null, 2));
+        manifest.sections.push({ index: idx, name: sectionName, file: `sections/${fileName}` });
+      });
 
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `book_sections_${new Date().toISOString().slice(0,10)}.zip`;
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 700);
-  } catch (err) {
-    console.error(err);
-    alert('حدث خطأ أثناء إنشاء ملف ZIP.');
+      zip.file('manifest.json', JSON.stringify(manifest, null, 2));
+
+      const blob = await zip.generateAsync({
+        type: 'blob',
+        compression: 'DEFLATE',
+        compressionOptions: { level: 6 }
+      });
+
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `book_sections_${new Date().toISOString().slice(0, 10)}.zip`;
+      document.body.appendChild(link);
+      link.click();
+      setTimeout(() => {
+        URL.revokeObjectURL(link.href);
+        link.remove();
+      }, 700);
+    } catch (error) {
+      console.error(error);
+      alert('حدث خطأ أثناء إنشاء ملف ZIP.');
+    }
   }
-}
 
-// ===== Bind the button =====
-(function bindExportAllSectionsZipBtn(){
-  const btn = document.getElementById('export-all-sections-zip-btn');
-  if (!btn) return;
-  btn.addEventListener('click', exportAllSectionsAsZip);
+  const exportZipBtn = document.getElementById('export-all-sections-zip-btn');
+  if (exportZipBtn) {
+    exportZipBtn.addEventListener('click', exportAllSectionsAsZip);
+  }
 })();
 </script>
 
