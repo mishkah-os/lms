@@ -1276,7 +1276,7 @@
                     <label for="book-switcher" class="block text-sm font-semibold text-gray-300 mb-1">
                         <span data-i18n-key="bookManager.label">📚 إدارة الكتب</span>
                     </label>
-                    <select id="book-switcher" class="w-full search-input bg-gray-800 border-gray-700"></select>
+<select id="book-switcher" class="w-full search-input"></select>
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                     <button id="new-book-btn" class="btn btn-secondary text-sm flex items-center justify-center gap-1">
@@ -2141,7 +2141,7 @@ function getSettingsTranslation(key, lang) {
 }
 
 function applySettingsTranslations(lang = currentLanguage) {
-    const elements = document.querySelectorAll('[data-i18n-key]');
+const elements = document.querySelectorAll('[data-i18n-key^="settings."]');
     elements.forEach(el => {
         const key = el.getAttribute('data-i18n-key');
         if (!key) return;
@@ -2675,17 +2675,28 @@ function loadUserPreferences() {
 
 function setLanguage(lang) {
     currentLanguage = (lang || 'ar').toLowerCase();
+
+    // 💡 إضافة: تحديث القائمة المنسدلة لتعكس اللغة الجديدة
+    const langSelect = document.getElementById('language-select');
+    if (langSelect) {
+        langSelect.value = currentLanguage;
+    }
+
     applyDocumentLanguage();
     applyTranslations(currentLanguage);
     applySettingsTranslations(currentLanguage);
-    directionMode = 'auto';
+    
+    // 💡 تعديل: يتم ضبط اتجاه المستند تلقائيًا بناءً على اللغة
+    // هذا يضمن أن اللغة هي التي تتحكم في الاتجاه (RTL/LTR)
+    directionMode = 'auto'; 
     localStorage.setItem('preferredDirMode', directionMode);
     localStorage.setItem('preferredLang', currentLanguage);
-    if (directionMode !== 'manual') {
-        syncDirectionWithLanguage(true);
-    } else {
-        updateDirectionUI();
-    }
+    
+    // سيقوم هذا دائمًا بتحديث الاتجاه (RTL/LTR) ليتناسب مع اللغة
+    // وسيقوم بتحديث أزرار (AR/EN) لتعكس الاتجاه الصحيح
+    syncDirectionWithLanguage(true); 
+
+    // 💡 إزالة: applyTranslations(currentLanguage); (كانت مكررة)
     saveUserPreferences();
 }
 function renderLanguageSelector() {
@@ -2714,9 +2725,14 @@ function renderLanguageSelector() {
         container.prepend(select);
     }
     select.value = currentLanguage || 'ar';
-    select.onchange = () => {
+   select.onchange = () => {
         const nextLang = select.value || 'ar';
-        setLanguage(nextLang);
+        
+        // 1. استدعاء الدالة المركزية لتغيير اللغة
+        // ستقوم هذه الدالة الآن بتحديث اللغة، الاتجاه، وحالة أزرار AR/EN
+        setLanguage(nextLang); 
+        
+        // 2. تحديث المحتوى النشط ليعكس اللغة الجديدة
         if (bookData && bookTitleInputEl) {
             bookTitleInputEl.value = getLocalizedBookName(bookData, currentLanguage) || '';
         }
@@ -2728,6 +2744,8 @@ function renderLanguageSelector() {
                 updateMarkdownPreview();
             }
         }
+        
+        // 3. إعادة رسم الشجرة لعرض الأسماء باللغة الجديدة
         renderTreeView();
         if (typeof renderViewerContentOnly === 'function') renderViewerContentOnly();
     };
@@ -3156,7 +3174,7 @@ function initializeJsonFromTxt() {
             treeContainer.innerHTML = '';
             
             const bookTitle = document.createElement('div');
-            bookTitle.className = 'tree-item p-3 rounded-lg cursor-pointer font-bold text-lg border-2 border-blue-500 bg-blue-900 slide-in';
+bookTitle.className = 'tree-item p-3 rounded-lg cursor-pointer font-bold text-lg border-2 border-blue-500 bg-blue-900 text-white slide-in';
             bookTitle.textContent = getLocalizedBookName(bookData, currentLanguage) || 'كتاب بدون عنوان';
             bookTitle.dataset.type = 'book';
             bookTitle.addEventListener('click', () => {
