@@ -1681,6 +1681,7 @@ min-width :48%;
                 </div>
             </div>
             <div class="flex justify-end gap-2 mt-6">
+                <button class="btn btn-primary" onclick="saveSectionResources()">حفظ التغييرات</button>
                 <button class="btn btn-secondary" onclick="toggleSectionResources(false)">إغلاق</button>
             </div>
         </div>
@@ -1720,7 +1721,8 @@ min-width :48%;
                     </div>
                 </div>
             </div>
-            <div class="flex justify-end gap-2 mt-6">
+           <div class="flex justify-end gap-2 mt-6">
+                <button class="btn btn-primary" onclick="saveChapterResources()">حفظ التغييرات</button>
                 <button class="btn btn-secondary" onclick="toggleChapterResources(false)">إغلاق</button>
             </div>
         </div>
@@ -5908,7 +5910,7 @@ function clearAllBooksFromIndexedDB(cb){
             }
             return Array.isArray(fallback) ? fallback : [];
         }
-        function openSectionResources(sectionIndex) {
+function openSectionResources(sectionIndex) {
             if (!bookData || !bookData.sections || !bookData.sections[sectionIndex]) return;
             activeSectionResourcesIndex = sectionIndex;
             const section = bookData.sections[sectionIndex];
@@ -5924,19 +5926,13 @@ function clearAllBooksFromIndexedDB(cb){
             const briefInput = document.getElementById('section-brief-input');
             if (briefInput) {
                 briefInput.value = getFromLangArray(section.brief, currentLanguage || 'ar') || '';
-                briefInput.oninput = (e) => {
-                    section.brief = setInLangArray(section.brief, currentLanguage || 'ar', e.target.value);
-                    saveBookToIndexedDB();
-                };
+                briefInput.oninput = null; // 💡 *** تم حذف الحفظ التلقائي ***
             }
 
             const quizInput = document.getElementById('section-quiz-input');
             if (quizInput) {
                 quizInput.value = section.resources.quizScript || '';
-                quizInput.oninput = (e) => {
-                    section.resources.quizScript = e.target.value;
-                    saveBookToIndexedDB();
-                };
+                quizInput.oninput = null; // 💡 *** تم حذف الحفظ التلقائي ***
             }
             const statusEl = document.getElementById('section-quiz-status');
             if (statusEl) statusEl.textContent = '';
@@ -5944,8 +5940,7 @@ function clearAllBooksFromIndexedDB(cb){
             renderSectionResourcesUI();
             toggleSectionResources(true);
         }
-
-        function renderSectionResourcesUI() {
+function renderSectionResourcesUI() {
             if (activeSectionResourcesIndex == null || !bookData) return;
             const section = bookData.sections[activeSectionResourcesIndex];
             if (!section) return;
@@ -5957,33 +5952,29 @@ function clearAllBooksFromIndexedDB(cb){
             const buildRow = (item, index, type, container, removeCallback) => {
                 const wrapper = document.createElement('div');
                 wrapper.className = 'bg-gray-700 p-3 rounded-lg space-y-2 md:space-y-0 md:flex md:items-center md:gap-3';
+                wrapper.dataset.id = item.id; // 💡 ربط الحقل بالـ ID
 
                 const titleInput = document.createElement('input');
                 titleInput.type = 'text';
                 titleInput.className = 'flex-1 p-2 rounded bg-gray-800 border border-gray-600 text-white';
                 titleInput.placeholder = type === 'pdf' ? 'عنوان الملف' : 'عنوان الفيديو';
                 titleInput.value = getFromLangArray(item.title, currentLanguage || 'ar') || '';
-                titleInput.oninput = (e) => {
-                    item.title = setInLangArray(item.title, currentLanguage || 'ar', e.target.value);
-                    saveBookToIndexedDB();
-                };
+                titleInput.oninput = null; // 💡 *** تم حذف الحفظ التلقائي ***
 
                 const urlInput = document.createElement('input');
                 urlInput.type = 'text';
                 urlInput.className = 'flex-1 p-2 rounded bg-gray-800 border border-gray-600 text-white';
                 urlInput.placeholder = 'https://...';
                 urlInput.value = item.url || '';
-                urlInput.oninput = (e) => {
-                    item.url = e.target.value.trim();
-                    saveBookToIndexedDB();
-                };
+                urlInput.oninput = null; // 💡 *** تم حذف الحفظ التلقائي ***
 
                 const removeBtn = document.createElement('button');
                 removeBtn.className = 'btn btn-danger text-sm';
                 removeBtn.textContent = 'حذف';
                 removeBtn.onclick = () => {
-                    removeCallback(index);
-                    saveBookToIndexedDB();
+                    // 💡 هذا الكود يزيل العنصر من الواجهة فقط
+                    // الحذف الفعلي سيتم عند الضغط على "حفظ التغييرات"
+                    wrapper.remove(); 
                 };
 
                 wrapper.appendChild(titleInput);
@@ -6002,8 +5993,7 @@ function clearAllBooksFromIndexedDB(cb){
                 } else {
                     section.resources.pdfs.forEach((pdf, index) => {
                         buildRow(pdf, index, 'pdf', pdfContainer, (idx) => {
-                            section.resources.pdfs.splice(idx, 1);
-                            renderSectionResourcesUI();
+                             // لا نفعل شيء هنا، الحذف يتم عبر زر الحفظ
                         });
                     });
                 }
@@ -6019,25 +6009,26 @@ function clearAllBooksFromIndexedDB(cb){
                 } else {
                     section.resources.videos.forEach((video, index) => {
                         buildRow(video, index, 'video', videoContainer, (idx) => {
-                            section.resources.videos.splice(idx, 1);
-                            renderSectionResourcesUI();
+                            // لا نفعل شيء هنا، الحذف يتم عبر زر الحفظ
                         });
                     });
                 }
             }
         }
-
-        function addSectionResource(type) {
+function addSectionResource(type) {
             if (activeSectionResourcesIndex == null || !bookData) return;
             const section = bookData.sections[activeSectionResourcesIndex];
             if (!section) return;
             ensureSectionSchema(section);
             const target = type === 'pdf' ? section.resources.pdfs : section.resources.videos;
+            // 💡 أضفنا العنصر إلى bookData مؤقتاً
             target.push(ensureResourceItem({ title: setInLangArray([], currentLanguage || 'ar', ''), url: '' }));
-            renderSectionResourcesUI();
-            saveBookToIndexedDB();
+            // 💡 أعدنا العرض ليظهر السطر الجديد
+            renderSectionResourcesUI(); 
+            // 💡 تم حذف الحفظ التلقائي. سيتم الحفظ عند ضغط الزر
         }
-
+       
+       
         function testSectionQuizScript() {
             if (activeSectionResourcesIndex == null || !bookData) return;
             const section = bookData.sections[activeSectionResourcesIndex];
@@ -6054,7 +6045,72 @@ function clearAllBooksFromIndexedDB(cb){
                 status.className = 'text-red-400 text-sm';
             }
         }
-        function openChapterResources(sectionIndex, chapterIndex) {
+      
+       function saveSectionResources() {
+            if (activeSectionResourcesIndex == null || !bookData) {
+                alert('لا يوجد قسم نشط لحفظه.');
+                return;
+            }
+            const section = bookData.sections[activeSectionResourcesIndex];
+            if (!section) return;
+            ensureSectionSchema(section);
+
+            console.log('جاري الحفظ...');
+
+            // 1. حفظ الحقول الثابتة (النبذة والاختبار)
+            section.brief = setInLangArray(section.brief, currentLanguage || 'ar', document.getElementById('section-brief-input').value);
+            section.resources.quizScript = document.getElementById('section-quiz-input').value;
+
+            // 2. مزامنة ملفات PDF من الـ DOM إلى الـ Object
+            const pdfContainer = document.getElementById('section-pdfs-list');
+            const pdfRows = pdfContainer.querySelectorAll('div[data-id]');
+            const newPdfs = [];
+            pdfRows.forEach(row => {
+                const id = row.dataset.id;
+                const item = section.resources.pdfs.find(p => p.id === id); // البحث عن العنصر الأصلي
+                if (item) {
+                    const titleInput = row.querySelector('input[placeholder*="عنوان الملف"]');
+                    const urlInput = row.querySelector('input[placeholder="https://..."]');
+                    item.title = setInLangArray(item.title, currentLanguage || 'ar', titleInput.value);
+                    item.url = urlInput.value.trim();
+                    newPdfs.push(item);
+                }
+            });
+            section.resources.pdfs = newPdfs; // استبدال المصفوفة بالكامل لضمان مزامنة الحذف
+
+            // 3. مزامنة الفيديوهات من الـ DOM إلى الـ Object
+            const videoContainer = document.getElementById('section-videos-list');
+            const videoRows = videoContainer.querySelectorAll('div[data-id]');
+            const newVideos = [];
+            videoRows.forEach(row => {
+                const id = row.dataset.id;
+                const item = section.resources.videos.find(v => v.id === id); // البحث عن العنصر الأصلي
+                if (item) {
+                    const titleInput = row.querySelector('input[placeholder*="عنوان الفيديو"]');
+                    const urlInput = row.querySelector('input[placeholder="https://..."]');
+                    item.title = setInLangArray(item.title, currentLanguage || 'ar', titleInput.value);
+                    item.url = urlInput.value.trim();
+                    newVideos.push(item);
+                }
+            });
+            section.resources.videos = newVideos; // استبدال المصفوفة بالكامل لضمان مزامنة الحذف
+            
+            // 4. الحفظ في قاعدة البيانات
+            saveBookToIndexedDB();
+            
+            alert('تم حفظ موارد الوحدة بنجاح!');
+        }
+       
+       
+        function openActiveChapterResources() {
+            if (activePath.section == null || activePath.chapter == null) {
+                alert('يرجى اختيار فصل أولاً.');
+                return;
+            }
+            openChapterResources(activePath.section, activePath.chapter);
+        }
+
+function openChapterResources(sectionIndex, chapterIndex) {
             if (!bookData || !bookData.sections || !bookData.sections[sectionIndex]) return;
             const section = bookData.sections[sectionIndex];
             if (!section.Chapters || !section.Chapters[chapterIndex]) return;
@@ -6072,19 +6128,13 @@ function clearAllBooksFromIndexedDB(cb){
             const briefInput = document.getElementById('chapter-brief-input');
             if (briefInput) {
                 briefInput.value = getFromLangArray(chapter.brief, currentLanguage || 'ar') || '';
-                briefInput.oninput = (e) => {
-                    chapter.brief = setInLangArray(chapter.brief, currentLanguage || 'ar', e.target.value);
-                    saveBookToIndexedDB();
-                };
+                briefInput.oninput = null; // 💡 *** تم حذف الحفظ التلقائي ***
             }
 
             const quizInput = document.getElementById('chapter-quiz-input');
             if (quizInput) {
                 quizInput.value = chapter.resources.quizScript || '';
-                quizInput.oninput = (e) => {
-                    chapter.resources.quizScript = e.target.value;
-                    saveBookToIndexedDB();
-                };
+                quizInput.oninput = null; // 💡 *** تم حذف الحفظ التلقائي ***
             }
             const statusEl = document.getElementById('chapter-quiz-status');
             if (statusEl) statusEl.textContent = '';
@@ -6092,16 +6142,7 @@ function clearAllBooksFromIndexedDB(cb){
             renderChapterResourcesUI();
             toggleChapterResources(true);
         }
-
-        function openActiveChapterResources() {
-            if (activePath.section == null || activePath.chapter == null) {
-                alert('يرجى اختيار فصل أولاً.');
-                return;
-            }
-            openChapterResources(activePath.section, activePath.chapter);
-        }
-
-        function renderChapterResourcesUI() {
+function renderChapterResourcesUI() {
             if (!bookData) return;
             const { section, chapter } = activeChapterResourcesPath || {};
             if (section == null || chapter == null) return;
@@ -6116,33 +6157,28 @@ function clearAllBooksFromIndexedDB(cb){
             const buildRow = (item, index, type, container, removeCallback) => {
                 const wrapper = document.createElement('div');
                 wrapper.className = 'bg-gray-700 p-3 rounded-lg space-y-2 md:space-y-0 md:flex md:items-center md:gap-3';
+                wrapper.dataset.id = item.id; // 💡 ربط الحقل بالـ ID
 
                 const titleInput = document.createElement('input');
                 titleInput.type = 'text';
                 titleInput.className = 'flex-1 p-2 rounded bg-gray-800 border border-gray-600 text-white';
                 titleInput.placeholder = type === 'pdf' ? 'عنوان الملف' : 'عنوان الفيديو';
                 titleInput.value = getFromLangArray(item.title, currentLanguage || 'ar') || '';
-                titleInput.oninput = (e) => {
-                    item.title = setInLangArray(item.title, currentLanguage || 'ar', e.target.value);
-                    saveBookToIndexedDB();
-                };
+                titleInput.oninput = null; // 💡 *** تم حذف الحفظ التلقائي ***
 
                 const urlInput = document.createElement('input');
                 urlInput.type = 'text';
                 urlInput.className = 'flex-1 p-2 rounded bg-gray-800 border border-gray-600 text-white';
                 urlInput.placeholder = 'https://...';
                 urlInput.value = item.url || '';
-                urlInput.oninput = (e) => {
-                    item.url = e.target.value.trim();
-                    saveBookToIndexedDB();
-                };
+                urlInput.oninput = null; // 💡 *** تم حذف الحفظ التلقائي ***
 
                 const removeBtn = document.createElement('button');
                 removeBtn.className = 'btn btn-danger text-sm';
                 removeBtn.textContent = 'حذف';
                 removeBtn.onclick = () => {
-                    removeCallback(index);
-                    saveBookToIndexedDB();
+                    // 💡 هذا الكود يزيل العنصر من الواجهة فقط
+                    wrapper.remove();
                 };
 
                 wrapper.appendChild(titleInput);
@@ -6161,8 +6197,7 @@ function clearAllBooksFromIndexedDB(cb){
                 } else {
                     ch.resources.pdfs.forEach((pdf, index) => {
                         buildRow(pdf, index, 'pdf', pdfContainer, (idx) => {
-                            ch.resources.pdfs.splice(idx, 1);
-                            renderChapterResourcesUI();
+                            // لا نفعل شيء هنا، الحذف يتم عبر زر الحفظ
                         });
                     });
                 }
@@ -6178,15 +6213,13 @@ function clearAllBooksFromIndexedDB(cb){
                 } else {
                     ch.resources.videos.forEach((video, index) => {
                         buildRow(video, index, 'video', videoContainer, (idx) => {
-                            ch.resources.videos.splice(idx, 1);
-                            renderChapterResourcesUI();
+                            // لا نفعل شيء هنا، الحذف يتم عبر زر الحفظ
                         });
                     });
                 }
             }
         }
-
-        function addChapterResource(type) {
+function addChapterResource(type) {
             const { section, chapter } = activeChapterResourcesPath || {};
             if (section == null || chapter == null || !bookData) return;
             const sec = bookData.sections[section];
@@ -6194,11 +6227,12 @@ function clearAllBooksFromIndexedDB(cb){
             const ch = sec.Chapters[chapter];
             ensureChapterSchema(ch);
             const target = type === 'pdf' ? ch.resources.pdfs : ch.resources.videos;
+            // 💡 أضفنا العنصر إلى bookData مؤقتاً
             target.push(ensureResourceItem({ title: setInLangArray([], currentLanguage || 'ar', ''), url: '' }));
+            // 💡 أعدنا العرض ليظهر السطر الجديد
             renderChapterResourcesUI();
-            saveBookToIndexedDB();
+            // 💡 تم حذف الحفظ التلقائي. سيتم الحفظ عند ضغط الزر
         }
-
         function testChapterQuizScript() {
             const { section, chapter } = activeChapterResourcesPath || {};
             if (section == null || chapter == null || !bookData) return;
@@ -6218,6 +6252,63 @@ function clearAllBooksFromIndexedDB(cb){
             }
         }
 
+
+        function saveChapterResources() {
+            const { section, chapter } = activeChapterResourcesPath || {};
+            if (section == null || chapter == null || !bookData) {
+                alert('لا يوجد درس نشط لحفظه.');
+                return;
+            }
+            const sec = bookData.sections[section];
+            if (!sec || !sec.Chapters || !sec.Chapters[chapter]) return;
+            const ch = sec.Chapters[chapter];
+            ensureChapterSchema(ch);
+
+            console.log('جاري الحفظ...');
+
+            // 1. حفظ الحقول الثابتة
+            ch.brief = setInLangArray(ch.brief, currentLanguage || 'ar', document.getElementById('chapter-brief-input').value);
+            ch.resources.quizScript = document.getElementById('chapter-quiz-input').value;
+
+            // 2. مزامنة ملفات PDF من الـ DOM إلى الـ Object
+            const pdfContainer = document.getElementById('chapter-pdfs-list');
+            const pdfRows = pdfContainer.querySelectorAll('div[data-id]');
+            const newPdfs = [];
+            pdfRows.forEach(row => {
+                const id = row.dataset.id;
+                const item = ch.resources.pdfs.find(p => p.id === id);
+                if (item) {
+                    const titleInput = row.querySelector('input[placeholder*="عنوان الملف"]');
+                    const urlInput = row.querySelector('input[placeholder="https://..."]');
+                    item.title = setInLangArray(item.title, currentLanguage || 'ar', titleInput.value);
+                    item.url = urlInput.value.trim();
+                    newPdfs.push(item);
+                }
+            });
+            ch.resources.pdfs = newPdfs;
+
+            // 3. مزامنة الفيديوهات من الـ DOM إلى الـ Object
+            const videoContainer = document.getElementById('chapter-videos-list');
+            const videoRows = videoContainer.querySelectorAll('div[data-id]');
+            const newVideos = [];
+            videoRows.forEach(row => {
+                const id = row.dataset.id;
+                const item = ch.resources.videos.find(v => v.id === id);
+                if (item) {
+                    const titleInput = row.querySelector('input[placeholder*="عنوان الفيديو"]');
+                    const urlInput = row.querySelector('input[placeholder="https://..."]');
+                    item.title = setInLangArray(item.title, currentLanguage || 'ar', titleInput.value);
+                    item.url = urlInput.value.trim();
+                    newVideos.push(item);
+                }
+            });
+            ch.resources.videos = newVideos;
+            
+            // 4. الحفظ في قاعدة البيانات
+            saveBookToIndexedDB();
+
+            alert('تم حفظ موارد الدرس بنجاح!');
+        }
         function extractTheoryContent(chapter) {
             if (!chapter || !Array.isArray(chapter.content) || !chapter.content.length) return {};
             const block = chapter.content[0];
