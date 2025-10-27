@@ -1902,6 +1902,68 @@ function applyDocumentDirection() {
         document.body.setAttribute('data-dir', dir);
     }
 }
+  async function exportAllSectionsAsZip() {
+    const book = window.editorState?.book || window.currentBook || window.book || bookData || {};
+    if (!book || !Array.isArray(book.sections) || !book.sections.length) {
+      alert('لا يوجد كتاب/أقسام للتصدير.');
+      return;
+    }
+
+    try {
+      await ensureJSZip();
+
+      const zip = new JSZip();
+      const folder = zip.folder('sections');
+      const lang = (window.currentLanguage || 'ar').toLowerCase();
+      const manifest = {
+        exported_at: new Date().toISOString(),
+        book: {
+          name: typeof getLocalizedBookName === 'function'
+            ? (getLocalizedBookName(book, lang) || book.name || 'book')
+            : (book.name || 'book')
+        },
+        sections: []
+      };
+
+      (book.sections || []).forEach((section, idx) => {
+        const sectionName = getSectionName(section, lang) || `section-${idx + 1}`;
+        const fileName = `${pad2(idx + 1)}_${safeName(sectionName)}.json`;
+
+        const payload = {
+          meta: {
+            exported_at: new Date().toISOString(),
+            section_index: idx,
+            section_name: sectionName
+          },
+          section
+        };
+
+        folder.file(fileName, JSON.stringify(payload, null, 2));
+        manifest.sections.push({ index: idx, name: sectionName, file: `sections/${fileName}` });
+      });
+
+      zip.file('manifest.json', JSON.stringify(manifest, null, 2));
+
+      const blob = await zip.generateAsync({
+        type: 'blob',
+        compression: 'DEFLATE',
+        compressionOptions: { level: 6 }
+      });
+
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `book_sections_${new Date().toISOString().slice(0, 10)}.zip`;
+      document.body.appendChild(link);
+      link.click();
+      setTimeout(() => {
+        URL.revokeObjectURL(link.href);
+        link.remove();
+      }, 700);
+    } catch (error) {
+      console.error(error);
+      alert('حدث خطأ أثناء إنشاء ملف ZIP.');
+    }
+  }
 
 function updateDirectionUI() {
     document.querySelectorAll('.direction-btn').forEach(btn => {
@@ -7696,68 +7758,6 @@ return{exportOneFile,buildHTML};
     });
   };
 
-  async function exportAllSectionsAsZip() {
-    const book = window.editorState?.book || window.currentBook || window.book || bookData || {};
-    if (!book || !Array.isArray(book.sections) || !book.sections.length) {
-      alert('لا يوجد كتاب/أقسام للتصدير.');
-      return;
-    }
-
-    try {
-      await ensureJSZip();
-
-      const zip = new JSZip();
-      const folder = zip.folder('sections');
-      const lang = (window.currentLanguage || 'ar').toLowerCase();
-      const manifest = {
-        exported_at: new Date().toISOString(),
-        book: {
-          name: typeof getLocalizedBookName === 'function'
-            ? (getLocalizedBookName(book, lang) || book.name || 'book')
-            : (book.name || 'book')
-        },
-        sections: []
-      };
-
-      (book.sections || []).forEach((section, idx) => {
-        const sectionName = getSectionName(section, lang) || `section-${idx + 1}`;
-        const fileName = `${pad2(idx + 1)}_${safeName(sectionName)}.json`;
-
-        const payload = {
-          meta: {
-            exported_at: new Date().toISOString(),
-            section_index: idx,
-            section_name: sectionName
-          },
-          section
-        };
-
-        folder.file(fileName, JSON.stringify(payload, null, 2));
-        manifest.sections.push({ index: idx, name: sectionName, file: `sections/${fileName}` });
-      });
-
-      zip.file('manifest.json', JSON.stringify(manifest, null, 2));
-
-      const blob = await zip.generateAsync({
-        type: 'blob',
-        compression: 'DEFLATE',
-        compressionOptions: { level: 6 }
-      });
-
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = `book_sections_${new Date().toISOString().slice(0, 10)}.zip`;
-      document.body.appendChild(link);
-      link.click();
-      setTimeout(() => {
-        URL.revokeObjectURL(link.href);
-        link.remove();
-      }, 700);
-    } catch (error) {
-      console.error(error);
-      alert('حدث خطأ أثناء إنشاء ملف ZIP.');
-    }
-  }
 
   const exportZipBtn = document.getElementById('export-all-sections-zip-btn');
   if (exportZipBtn) {
